@@ -1,0 +1,11 @@
+@media (min-width: 768px) {
+    aside {
+        height: 100%;
+    }
+}
+
+@media (max-width: 767px) {
+    body {
+        padding-top: 3em;
+    }
+}
