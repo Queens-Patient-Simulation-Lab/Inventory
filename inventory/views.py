@@ -11,3 +11,6 @@ def login(request):
 
 def homePage(request):
     return render(request, 'inventory/homepage.html')
+
+def sampleItem(request):
+    return render(request, 'inventory/sample-item.html')
