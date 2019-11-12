@@ -5,6 +5,7 @@
 	.text-box {
 		background-color: rgba(245, 245, 245, 0.4);
 		border: 1px solid gray;
+		height: 35px;
 	}
 	
 	
@@ -14,15 +15,15 @@
 		
 			<div class="w-50 m-2">
 				<h5>Item name</h5>
-				<p class="text-box rounded-lg" style="height: 30px;">name of item...</p>
+				<p class="text-box rounded-lg p-1" style="">name of item...</p>
 			</div>
 			
 			<div class="w-50 m-2">
 				<h5>Item material No.</h5>
-				<p class="text-box rounded-lg" style="height: 30px;">No. of item...</p>
+				<p class="text-box rounded-lg p-1" style="">No. of item...</p>
 			</div>
 			
-			<div id="carouselExampleIndicators" class="carousel slide w-50 m-1" data-ride="carousel">
+			<div id="carouselExampleIndicators" class="carousel slide w-50 m-2" data-ride="carousel">
 			  <ol class="carousel-indicators">
 				<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
 				<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
@@ -51,36 +52,73 @@
 		
 			<div class="w-50 m-2">
 				<h5>Unit</h5>
-				<p class="text-box rounded-lg" style="height: 30px;">unit of item...</p>
+				<p class="text-box rounded-lg p-1" style="">unit of item...</p>
 			</div>
 
 			<div class="w-50 m-2">
 				<h5>Item MA price</h5>
-				<p class="text-box rounded-lg" style="height: 30px;">price of item...</p>
+				<p class="text-box rounded-lg p-1" style="">price of item...</p>
 			</div>
 
 			<div class="w-50 m-2">
 				<h5>Description</h5>
-				<p class="text-box rounded-lg" style="height: 100px;">description of item...</p>
+				<p class="text-box rounded-lg p-1" style="height: 100px;">description of item...</p>
 			</div>
 			
-			<div class="w-50 m-2">
-				<div class="dropdown">
-					<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						location
-					</button>
-					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-						<a class="dropdown-item" href="#">Lab A</a>
-						<a class="dropdown-item" href="#">Lab B</a>
-						<a class="dropdown-item" href="#">Lab C</a>
-					</div>
-				</div>
-				<p class="text-box rounded-lg m-1" style="height: 30px;">stock of item in location...</p>
-			</div>
+			<table class="table table-striped w-50 m-2">
+				<thead>
+					<tr>
+						<th scope="col">Location</th>
+						<th scope="col">Stock</th>
+						<th scope="col"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th scope="row">Lab A</th>
+						<td>27</td>
+						<td>
+							<button class="btn btn-primary position-relative" type="submit">
+								+
+							</button>
+							
+							<button class="btn btn-secondary position-relative" type="submit">
+								-
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Lab B</th>
+						<td>46</td>
+						<td>
+							<button class="btn btn-primary position-relative" type="submit">
+								+
+							</button>
+							
+							<button class="btn btn-secondary position-relative" type="submit">
+								-
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Lab C</th>
+						<td>457</td>
+						<td>
+							<button class="btn btn-primary position-relative" type="submit">
+								+
+							</button>
+							
+							<button class="btn btn-secondary position-relative" type="submit">
+								-
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 
 			<div class="w-50 m-2">
 				<h5>Total Stock</h5>
-				<p class="text-box rounded-lg" style="height: 30px;">stock of item...</p>
+				<p class="text-box rounded-lg p-1" style="">stock of item...</p>
 			</div>
 			
 			<div class="w-50">
