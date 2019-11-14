@@ -1,16 +1,6 @@
 {% extends "inventory/chrome_template.html" %}
 {% load static %}
-{% block body %}
-<style>
-	.text-box {
-		background-color: rgba(245, 245, 245, 0.4);
-		border: 1px solid gray;
-		height: 35px;
-	}
-	
-	
-</style>
-		
+{% block body %}		
 <!--	
 	may use table to wrap around content
  -->
@@ -54,20 +44,36 @@
 				<span class="sr-only">Next</span>
 			  </a>
 			</div>
-
-			<div class="form-group">
-				<label for="unit">Unit</label>
-				<input type="unit_measure" class="form-control" id="unit" placeholder="unit of item...">
+			<div class="row m-1">
+				<button class="btn btn-outline-secondary col" type="button" data-toggle="collapse" data-target="#pictureSetting" aria-expanded="false" aria-controls="pictureSetting">
+					Edit pictures
+				</button>
 			</div>
-
+			
+			<div id="pictureSetting" class="collapse">
+				<div class="list-group list-group-horizontal m-2 row card card-body">
+					<img src="{% static 'inventory/puppy.jpeg' %}" alt="..." class="list-group-item rounded img-thumbnail col-sm-3">
+					<img src="{% static 'inventory/puppy.jpeg' %}" alt="..." class="list-group-item rounded img-thumbnail col-sm-3">
+					<img src="{% static 'inventory/puppy.jpeg' %}" alt="..." class="list-group-item rounded img-thumbnail col-sm-3">
+					<button class="btn btn-outline-secondary list-group-item col-sm-3" type="button">
+						<img src="{% static 'inventory/setting.png' %}" alt="..." class="rounded img-thumbnail">
+					</button>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="description">Description</label>
+				<input type="item_description" class="form-control" id="description" placeholder="description of item...">
+			</div>
+	
 			<div class="form-group">
 				<label for="itemPrice">Item MA price</label>
 				<input type="MA_price" class="form-control" id="itemPrice" placeholder="price of item...">
 			</div>
 
 			<div class="form-group">
-				<label for="description">Description</label>
-				<input type="item_description" class="form-control" id="description" placeholder="description of item...">
+				<label for="unit">Unit</label>
+				<input type="unit_measure" class="form-control" id="unit" placeholder="unit of item...">
 			</div>
 			
 			<table class="table table-striped">
@@ -75,58 +81,62 @@
 					<tr>
 						<th scope="col">Location</th>
 						<th scope="col">Stock</th>
-						<th scope="col"></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<th scope="row">Lab A</th>
-						<td>
-							<button class="btn btn-primary position-relative" type="submit">
-								+
+						<th scope="col">Lab A</th>
+						<td class="row">
+							<button class="btn btn-primary position-relative m-1" type="submit">
+								-
 							</button>
-							<div class="form-group">
+							<div class="form-group m-1">
 								<input type="item_amount" class="form-control" id="amount" placeholder="27" style="width: 80px;">
 							</div>
-							<button class="btn btn-secondary position-relative" type="submit">
-								-
+							<button class="btn btn-secondary position-relative m-1" type="submit">
+								+
 							</button>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row">Lab B</th>
-						<td>
-							<button class="btn btn-primary position-relative" type="submit">
-								+
+						<th scope="col">Lab B</th>
+						<td class="row">
+							<button class="btn btn-primary position-relative m-1" type="submit">
+								-
 							</button>
-							<div class="form-group">
+							<div class="form-group m-1">
 								<input type="item_amount" class="form-control" id="amount" placeholder="346" style="width: 80px;">
 							</div>
-							<button class="btn btn-secondary position-relative" type="submit">
-								-
+							<button class="btn btn-secondary position-relative m-1" type="submit">
+								+
 							</button>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">Lab C</th>
-						<td>
-							<button class="btn btn-primary position-relative" type="submit">
-								+
-							</button>
-							<div class="form-group">
-								<input type="item_amount" class="form-control" id="amount" placeholder="12" style="width: 80px;">
-							</div>
-							<button class="btn btn-secondary position-relative" type="submit">
+						<td class="row">
+							<button class="btn btn-primary position-relative m-1" type="submit">
 								-
 							</button>
+							<div class="form-group m-1">
+								<input type="item_amount" class="form-control" id="amount" placeholder="12" style="width: 80px;">
+							</div>
+							<button class="btn btn-secondary position-relative m-1" type="submit">
+								+
+							</button>
 						</td>
+					</tr>
+					<tr>
+						<th scope="row" colspan="2">
+							<button type="button" class="btn btn-outline-secondary col">assign a new location</button>
+						</th>
 					</tr>
 				</tbody>
 			</table>
 
 			<div class="form-group">
 				<label for="stock">Total Stock</label>
-				<input type="total_stock" class="form-control" id="stock" placeholder="stock of item...">
+				<input type="total_stock" class="form-control" id="stock" placeholder="385">
 			</div>
 			
 			<a href="" class="m-2">view history report</a>
@@ -135,7 +145,6 @@
 				<button class="btn btn-primary position-relative" type="submit">
 					Save
 				</button>
-				
 				<button class="btn btn-secondary position-relative" type="submit">
 					Close
 				</button>
