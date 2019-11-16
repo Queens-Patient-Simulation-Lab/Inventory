@@ -1,5 +1,45 @@
-{% extends "inventory/base_template.html" %}
+{% extends "inventory/chrome_template.html" %}
 {% load static %}
-{% block content %}
-  <img src="{% static 'inventory/puppy.jpeg' %}"  class="img-thumbnail">
-{% endblock content %}
+{% block body %}
+
+    <div class="md-form mt-0" >
+        <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+    </div>
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Image</th>
+          <th scope="col">Name</th>
+          <th scope="col">Location(s)</th>
+          <th scope="col">Units on Hand</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row"><img src="{% static 'inventory/nacl.jpg' %}"  class="img-thumbnail img-responsive img-rounded" style="max-height: 60px; max-width: 70px;"></th>
+          <td>NaCl 0.9% 500ml</td>
+          <td>Main Storage Area</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <th scope="row"><img src="{% static 'inventory/puppy.jpeg' %}"  class="img-thumbnail img-responsive img-rounded" style="max-height: 60px; max-width: 100px;"></th>
+          <td>Puppy</td>
+          <td>Kennel</td>
+          <td>32</td>
+        </tr>
+        <tr>
+          <th scope="row"><img src="{% static 'inventory/puppy2.jpeg' %}"  class="img-thumbnail img-responsive img-rounded" style="max-height: 60px; max-width: 100px;"></th>
+          <td>Puppy 2</td>
+          <td>Kennel</td>
+          <td>50</td>
+        </tr>
+      </tbody>
+    </table>
+
+    {# Drop down list for editing item quantities per row #}
+
+
+
+
+{% endblock body %}
