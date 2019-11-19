@@ -1,7 +1,6 @@
-{% extends "inventory/chrome_template.html" %}
+
 {% load static %}
-{% block body %}		
-<!--	
+<!--
 	may use table to wrap around content
  -->
 
@@ -12,12 +11,12 @@
 				<label for="itemName">Item Name</label>
 				<input type="name" class="form-control" id="itemName" placeholder="name of item...">
 			</div>
-			
+
 			<div class="form-group m-2">
 				<label for="materialNo">Item material No.</label>
 				<input type="item_id" class="form-control" id="materialNo" placeholder="No. of item...">
 			</div>
-			
+
 			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 			  <ol class="carousel-indicators">
 				<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -49,7 +48,7 @@
 					Edit pictures
 				</button>
 			</div>
-			
+
 			<div id="pictureSetting" class="collapse">
 				<div class="list-group list-group-horizontal m-2 row card card-body">
 					<img src="{% static 'inventory/puppy.jpeg' %}" alt="..." class="list-group-item rounded img-thumbnail col-sm-3">
@@ -60,12 +59,12 @@
 					</button>
 				</div>
 			</div>
-			
+
 			<div class="form-group m-2">
 				<label for="description">Description</label>
 				<input type="item_description" class="form-control" id="description" placeholder="description of item...">
 			</div>
-			
+
 			<div class="form-group m-2">
 				<label>Tagging</label>
 				<div class="row">
@@ -78,7 +77,7 @@
 					</button>
 				</div>
 			</div>
-	
+
 			<div class="form-group m-2">
 				<label for="itemPrice">Item MA price</label>
 				<input type="MA_price" class="form-control" id="itemPrice" placeholder="price of item...">
@@ -88,7 +87,7 @@
 				<label for="unit">Unit</label>
 				<input type="unit_measure" class="form-control" id="unit" placeholder="unit of item...">
 			</div>
-			
+
 			<table class="table table-striped m-2">
 				<thead>
 					<tr>
@@ -151,21 +150,11 @@
 				<label for="stock">Total Stock</label>
 				<input type="total_stock" class="form-control" id="stock" placeholder="385">
 			</div>
-			
+
 			<a href="" class="m-2">view history report</a>
-			
-			
-			<div class="row m-2">
-				<button class="btn btn-primary col-sm" type="submit">
-					Save
-				</button>
-				<button class="btn btn-secondary col-sm" type="submit">
-					Close
-				</button>
-			</div>
+
 		</form>
 
 </div>
 
-{% endblock body %}
 
