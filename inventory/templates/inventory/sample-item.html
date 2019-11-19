@@ -9,12 +9,12 @@
 		<form>
 			<div class="form-group m-2">
 				<label for="itemName">Item Name</label>
-				<input type="name" class="form-control" id="itemName" placeholder="name of item...">
+				<input type="name" class="form-control" id="itemName" placeholder="Puppy">
 			</div>
 
 			<div class="form-group m-2">
-				<label for="materialNo">Item material No.</label>
-				<input type="item_id" class="form-control" id="materialNo" placeholder="No. of item...">
+				<label for="materialNo">KGH ID</label>
+				<input type="item_id" class="form-control" id="materialNo" placeholder="22222">
 			</div>
 
 			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -23,7 +23,7 @@
 				<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
 				<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
 			  </ol>
-			  <div class="carousel-inner">
+			  <div class="carousel-inner" style="max-width: 500px; margin: auto">
 				<div class="carousel-item active">
 				  <img src="{% static 'inventory/puppy.jpeg' %}" class="d-block w-100 rounded" alt="...">
 				</div>
@@ -62,16 +62,16 @@
 
 			<div class="form-group m-2">
 				<label for="description">Description</label>
-				<input type="item_description" class="form-control" id="description" placeholder="description of item...">
+				<input type="item_description" class="form-control" id="description" placeholder="A puppy">
 			</div>
 
 			<div class="form-group m-2">
 				<label>Tagging</label>
 				<div class="row">
-					<span class="badge badge-info m-1">tag1</span>
-					<span class="badge badge-info m-1">tag2</span>
-					<span class="badge badge-info m-1">tag3</span>
-					<span class="badge badge-info m-1">tag4</span>
+					<span class="badge badge-info m-1" style="line-height: 2.5">dog</span>
+					<span class="badge badge-info m-1" style="line-height: 2.5">animal</span>
+					<span class="badge badge-info m-1" style="line-height: 2.5">therapy</span>
+					<span class="badge badge-info m-1" style="line-height: 2.5">cute</span>
 					<button class="btn btn-outline-secondary m-1" type="button">
 						Edit tags
 					</button>
@@ -79,13 +79,13 @@
 			</div>
 
 			<div class="form-group m-2">
-				<label for="itemPrice">Item MA price</label>
-				<input type="MA_price" class="form-control" id="itemPrice" placeholder="price of item...">
+				<label for="itemPrice">Item price</label>
+				<input type="MA_price" class="form-control" id="itemPrice" placeholder="$1000">
 			</div>
 
 			<div class="form-group m-2">
-				<label for="unit">Unit</label>
-				<input type="unit_measure" class="form-control" id="unit" placeholder="unit of item...">
+				<label for="unit">Unit of Measurement</label>
+				<input type="unit_measure" class="form-control" id="unit" placeholder="Individual">
 			</div>
 
 			<table class="table table-striped m-2">
@@ -148,7 +148,7 @@
 
 			<div class="form-group m-2">
 				<label for="stock">Total Stock</label>
-				<input type="total_stock" class="form-control" id="stock" placeholder="385">
+				<input readonly type="total_stock" class="form-control" id="stock" placeholder="385">
 			</div>
 
 			<a href="" class="m-2">view history report</a>
