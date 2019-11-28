@@ -13,3 +13,11 @@ Alternatively, your IDE may have support for activating and debugging inside vir
 
 # Links
 Great video series on using Django: https://www.youtube.com/watch?v=UmljXZIypDc
+
+
+#Migrations
+When any database models change, the person who changed it should generate a migration file with:
+python manage.py makemigrations
+
+To use the latest migration file, simply call:
+python manage.py migrate
