@@ -21,3 +21,10 @@ python manage.py makemigrations
 
 To use the latest migration file, simply call:
 python manage.py migrate
+
+# Pre-populate data
+
+(In development only): We created a command populate_db that pre-populates the database
+To run it, call 'python manage.py populate_db'
+To modify the command, view the class called populate_db.py
+WARNING: This command will clear your development database (it will ask for confirmation)

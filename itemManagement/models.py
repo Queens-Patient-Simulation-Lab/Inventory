@@ -1,11 +1,11 @@
 from django.db import models
-from datetime import datetime
 
 # Create your models here.
 #TODO: Set field restrictions to more well considered values
 
 # ID is created as primary key by default
 from django.db.models import Count, Sum
+from django.utils import timezone
 
 
 class Location(models.Model):
@@ -20,7 +20,7 @@ class Item(models.Model):
     description = models.TextField()
     unit = models.CharField(max_length=20, null=True)
     # Note I don't call now() - It will be called when the object is created
-    lastUsed = models.DateTimeField(default=datetime.now)
+    lastUsed = models.DateTimeField(default=timezone.now)
     price = models.DecimalField(max_digits=7,decimal_places=2, null=True)
     # tags = ArrayField(models.CharField(max_length=20))
     deleted = models.BooleanField(default=False)
