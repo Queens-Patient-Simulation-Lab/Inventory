@@ -26,13 +26,17 @@ class Command(BaseCommand):
         kennel = Location.objects.create(name="Kennel")
 
         itemOne = Item.objects.create(
-            title="NaCl 0.9% 500ml"
+            title="NaCl 0.9% 500ml",
+            description="itemOne"
         )
         itemTwo = Item.objects.create(
-            title="Puppy"
+            title="Puppy",
+            description="item Two"
+
         )
         itemThree = Item.objects.create(
-            title="Puppy 2"
+            title="Puppy 2",
+            description="item Three"
         )
 
         ItemStorage.objects.create(item=itemOne, location=mainStorage, quantity=15)

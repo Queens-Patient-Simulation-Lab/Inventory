@@ -19,5 +19,6 @@ def homePage(request):
 
 
 @xframe_options_exempt
-def sampleItem(request):
-    return render(request, 'itemManagement/sample-item.html')
+def sampleItem(request, itemId):
+    context = Item.objects.filter(id=itemId).first().getItemDetails()
+    return render(request, 'itemManagement/item_details.html', context=context)
