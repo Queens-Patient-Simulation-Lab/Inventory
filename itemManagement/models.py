@@ -32,6 +32,14 @@ class Item(models.Model):
         # return sum(location.count for location in self.locations.all())
         return self.locations.aggregate(Sum('itemstorage__quantity'))['itemstorage__quantity__sum']
 
+    def getItemSummary(self):
+        return {
+                'name': self.title,
+                'locations': [x.name for x in self.locations.all()],
+                'totalQuantity': self.totalQuantity,
+                'images': [x.data for x in self.photo_set.all()]
+            }
+
 
 # TODO: Set primary keys
 class ItemStorage(models.Model):

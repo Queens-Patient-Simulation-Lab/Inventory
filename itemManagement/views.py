@@ -8,18 +8,12 @@ from itemManagement.models import Item, Location, ItemStorage, Photo
 
 @xframe_options_exempt
 def homePage(request):
+
     context = {
-        'items': []
+        'items': [
+            item.getItemSummary() for item in Item.objects.all()
+        ]
     }
-    for item in Item.objects.all():
-        context['items'].append(
-            {
-                'name': item.title,
-                'locations':  [x.name for x in item.locations.all()],
-                'totalQuantity': item.totalQuantity,
-                'images': [x.data for x in  item.photo_set.all()]
-            }
-        )
 
     return render(request, 'itemManagement/homepage.html', context=context)
 
