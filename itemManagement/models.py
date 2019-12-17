@@ -1,17 +1,24 @@
 from django.db import models
-from datetime import datetime
 
 # Create your models here.
 #TODO: Set field restrictions to more well considered values
 
 # ID is created as primary key by default
 from django.db.models import Count, Sum
+from django.utils import timezone
 
 
 class Location(models.Model):
     name = models.CharField(max_length=40)
     description = models.TextField()
     deleted = models.BooleanField(default=False)
+
+    def getLocationDetailsForItem(self, item):
+        return {
+            'name': self.name,
+            'description': self.description,
+            'quantity' : self.itemstorage_set.get(item=item).quantity
+        }
 
 
 class Item(models.Model):
@@ -20,8 +27,8 @@ class Item(models.Model):
     description = models.TextField()
     unit = models.CharField(max_length=20, null=True)
     # Note I don't call now() - It will be called when the object is created
-    lastUsed = models.DateTimeField(default=datetime.now)
-    price = models.DecimalField(max_digits=7,decimal_places=2, null=True)
+    lastUsed = models.DateTimeField(default=timezone.now)
+    price = models.DecimalField(max_digits=7,decimal_places=2, null=True, default=0)
     # tags = ArrayField(models.CharField(max_length=20))
     deleted = models.BooleanField(default=False)
     alertThreshold = models.PositiveSmallIntegerField(null=True)
@@ -31,6 +38,28 @@ class Item(models.Model):
     def totalQuantity(self):
         # return sum(location.count for location in self.locations.all())
         return self.locations.aggregate(Sum('itemstorage__quantity'))['itemstorage__quantity__sum']
+
+    def getItemSummary(self):
+        return {
+                'itemId' : self.id,
+                'name': self.title,
+                'locations': [x.name for x in self.locations.all()],
+                'totalQuantity': self.totalQuantity,
+                'images': [x.data for x in self.photo_set.all()]
+            }
+    def getItemDetails(self):
+        return {
+            'itemId': self.id,
+            'name': self.title,
+            'kghId': self.kghID,
+            'images': [x.data for x in self.photo_set.all()],
+            'description' : self.description,
+            'tags': [], #TODO
+            'price' : self.price,
+            'unit' : self.unit,
+            'locations': [x.getLocationDetailsForItem(self) for x in self.locations.all()],
+            'totalQuantity': self.totalQuantity
+        }
 
 
 # TODO: Set primary keys

@@ -7,7 +7,7 @@
         <input class="form-control form-control-lg" id="input" type="text" placeholder="Search" aria-label="Search">
     </div>
 
-    <table class="table table-hover">
+    <table id="itemTable" class="table table-hover">
       <thead>
         <tr>
           <th scope="col">Image</th>
@@ -18,10 +18,10 @@
       </thead>
       <tbody>
       {% for item in items %}
-        <tr>
+        <tr data-access-url="{% url 'item-details' item.itemId %}" data-toggle="modal" data-target="#exampleModal">
           <th scope="row"><img src="{% static item.images.0 %}" class="img-thumbnail img-responsive img-rounded" style="max-height: 60px; max-width: 70px;"></th>
           <td>{{ item.name }}</td>
-          <td>{{ item.locations }}</td>
+          <td>{{ item.locations.0 }}</td>
           <td>{{ item.totalQuantity }}</td>
         </tr>
       {% endfor %}
@@ -30,7 +30,7 @@
     </div>
 
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" >
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -55,9 +55,10 @@
 
     {# Drop down list for editing item quantities per row #}
     <script>
-        $.ajax("{% url 'sample-item'%}").done((data)=>{
-            $("#modalContainer").append(data);
+       $('#itemTable tr').click(function (){
+           $("#modalContainer").load($(this).attr('data-access-url'));
         });
+
     </script>
 
 
