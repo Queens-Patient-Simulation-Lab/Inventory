@@ -9,12 +9,12 @@
 		<form>
 			<div class="form-group m-2">
 				<label for="itemName">Item Name</label>
-				<input type="name" class="form-control" id="itemName" placeholder="Puppy">
+				<input type="name" class="form-control" id="itemName" value="{{ name }}">
 			</div>
 
 			<div class="form-group m-2">
 				<label for="materialNo">KGH ID</label>
-				<input type="item_id" class="form-control" id="materialNo" placeholder="22222">
+				<input type="item_id" class="form-control" id="materialNo" value="{{ kghId }}">
 			</div>
 
 			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -25,13 +25,13 @@
 			  </ol>
 			  <div class="carousel-inner" style="max-width: 500px; margin: auto">
 				<div class="carousel-item active">
-				  <img src="{% static 'itemManagement/puppy.jpeg' %}" class="d-block w-100 rounded" alt="...">
+				  <img src="{% static images.0 %}" class="d-block w-100 rounded" alt="...">
 				</div>
 				<div class="carousel-item">
-				  <img src="{% static 'itemManagement/puppy.jpeg' %}" class="d-block w-100 rounded" alt="...">
+				  <img src="{% static images.0 %}" class="d-block w-100 rounded" alt="...">
 				</div>
 				<div class="carousel-item">
-				  <img src="{% static 'itemManagement/puppy.jpeg' %}" class="d-block w-100 rounded" alt="...">
+				  <img src="{% static images.0 %}" class="d-block w-100 rounded" alt="...">
 				</div>
 			  </div>
 			  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -62,7 +62,7 @@
 
 			<div class="form-group m-2">
 				<label for="description">Description</label>
-				<input type="item_description" class="form-control" id="description" placeholder="A puppy">
+				<input type="item_description" class="form-control" id="description" value="{{ description }}">
 			</div>
 
 			<div class="form-group m-2">
@@ -80,12 +80,12 @@
 
 			<div class="form-group m-2">
 				<label for="itemPrice">Item price</label>
-				<input type="MA_price" class="form-control" id="itemPrice" placeholder="$1000">
+				<input type="MA_price" class="form-control" id="itemPrice" value="${{ price }}">
 			</div>
 
 			<div class="form-group m-2">
 				<label for="unit">Unit of Measurement</label>
-				<input type="unit_measure" class="form-control" id="unit" placeholder="Individual">
+				<input type="unit_measure" class="form-control" id="unit" value="{{ unit }}">
 			</div>
 
 			<table class="table table-striped m-2">
@@ -96,48 +96,23 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<th scope="col">Lab A</th>
+                    {% for location in locations %}
+                        <tr>
+						<th scope="col">{{ location.name }}</th>
 						<td class="row">
 							<button class="btn btn-primary position-relative m-1" type="submit">
 								-
 							</button>
 							<div class="form-group m-1">
-								<input type="item_amount" class="form-control" id="amount" placeholder="27" style="width: 80px;">
+								<input type="item_amount" class="form-control" id="amount" value="{{ location.quantity }}" style="width: 80px;">
 							</div>
 							<button class="btn btn-secondary position-relative m-1" type="submit">
 								+
 							</button>
 						</td>
 					</tr>
-					<tr>
-						<th scope="col">Lab B</th>
-						<td class="row">
-							<button class="btn btn-primary position-relative m-1" type="submit">
-								-
-							</button>
-							<div class="form-group m-1">
-								<input type="item_amount" class="form-control" id="amount" placeholder="346" style="width: 80px;">
-							</div>
-							<button class="btn btn-secondary position-relative m-1" type="submit">
-								+
-							</button>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row">Lab C</th>
-						<td class="row">
-							<button class="btn btn-primary position-relative m-1" type="submit">
-								-
-							</button>
-							<div class="form-group m-1">
-								<input type="item_amount" class="form-control" id="amount" placeholder="12" style="width: 80px;">
-							</div>
-							<button class="btn btn-secondary position-relative m-1" type="submit">
-								+
-							</button>
-						</td>
-					</tr>
+                    {% endfor %}
+
 					<tr>
 						<th scope="row" colspan="2">
 							<button type="button" class="btn btn-outline-secondary col">assign a new location</button>
@@ -148,7 +123,7 @@
 
 			<div class="form-group m-2">
 				<label for="stock">Total Stock</label>
-				<input readonly type="total_stock" class="form-control" id="stock" placeholder="385">
+				<input readonly type="total_stock" class="form-control" id="stock" value="{{ totalQuantity }}">
 			</div>
 
 			<a href="" class="m-2">view history report</a>
