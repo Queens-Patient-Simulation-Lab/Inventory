@@ -29,7 +29,6 @@ class Item(models.Model):
     # Note I don't call now() - It will be called when the object is created
     lastUsed = models.DateTimeField(default=timezone.now)
     price = models.DecimalField(max_digits=7,decimal_places=2, null=True, default=0)
-    # tags = ArrayField(models.CharField(max_length=20))
     deleted = models.BooleanField(default=False)
     alertThreshold = models.PositiveSmallIntegerField(null=True)
     locations = models.ManyToManyField(Location, through='ItemStorage')
@@ -54,7 +53,7 @@ class Item(models.Model):
             'kghId': self.kghID,
             'images': [x.data for x in self.photo_set.all()],
             'description' : self.description,
-            'tags': [], #TODO
+            'tags': [x.name for x in self.tag_set.all()],
             'price' : self.price,
             'unit' : self.unit,
             'locations': [x.getLocationDetailsForItem(self) for x in self.locations.all()],
@@ -75,5 +74,11 @@ class Photo(models.Model):
     data = models.CharField(max_length=200)     #todo: When photos become uploadable, change this field
     order = models.PositiveSmallIntegerField()
     depicts = models.ForeignKey(Item, on_delete=models.CASCADE) # TODO: On delete we probably need to do more
+
+class Tag(models.Model):
+    name = models.CharField(max_length=20)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ['name', 'item']
 
 
