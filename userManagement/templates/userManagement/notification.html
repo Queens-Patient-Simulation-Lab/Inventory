@@ -4,15 +4,6 @@
 <form class="p-2" method="POST">
     {% csrf_token %}
     {{ n_form|crispy }}
-    <!--div class="row justify-content-between align-items-center">
-        <div class="col-6">
-            <p>Notify when stock below par level</p>
-        </div>
-        <div class="custom-control custom-switch col-1">
-            <input type="checkbox" class="custom-control-input" id="parLevelNotification">
-            <label class="custom-control-label" for="parLevelNotification"></label>
-        </div>
-    </div-->
     <div class="row justify-content-end border-top border-primary m-1">
         <div class="col-sm-2">
             <button type="submit" class="btn btn-primary mt-2">Submit</button>
