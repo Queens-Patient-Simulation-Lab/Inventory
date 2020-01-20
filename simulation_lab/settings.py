@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'kghDataManagement.apps.KghdatamanagementConfig',
     'reports.apps.ReportsConfig',
     'userManagement.apps.UserManagementConfig',
+    'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -132,3 +133,5 @@ STATIC_URL = '/static/'
 #X_FRAME_OPTIONS = 'SAMEORIGIN'
 AUTH_USER_MODEL = 'security.User'
 LOGIN_URL = 'login'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
