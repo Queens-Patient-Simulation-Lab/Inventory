@@ -9,30 +9,24 @@ from .forms import notificationUpdateForm
 
 
 def settings(request):
-    return render(request, 'userManagement/settings.html')
-
-
-def change_password(request):
     if request.method == 'POST':
-        form = PasswordChangeForm(request.user, request.POST)
-        if form.is_valid():
-            user = form.save()
+        p_form = PasswordChangeForm(request.user, request.POST)
+        n_form = notificationUpdateForm(request.POST, instance=request.user)
+        if p_form.is_valid():
+            user = p_form.save()
             update_session_auth_hash(request, user)  # Important!
             messages.success(request, 'Your password was successfully updated!')
             return redirect('settings-home')
-    else:
-        form = PasswordChangeForm(request.user)
-    return render(request, 'userManagement/change_password.html', {'form': form})
-
-
-def notification(request):
-    if request.method == 'POST':
-        n_form = notificationUpdateForm(request.POST, instance=request.user)
         if n_form.is_valid():
             n_form.save()
             messages.success(request, 'Your notification status was successfully updated!')
             return redirect('settings-home')
     else:
+        p_form = PasswordChangeForm(request.user)
         n_form = notificationUpdateForm(instance=request.user)
 
-    return render(request, 'userManagement/notification.html', {'n_form': n_form})
+    context = {
+        "n_form": n_form,
+        "p_form": p_form,
+    }
+    return render(request, 'userManagement/settings.html', context)
