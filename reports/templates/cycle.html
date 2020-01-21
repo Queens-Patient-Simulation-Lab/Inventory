@@ -1,0 +1,37 @@
+{% extends "itemManagement/chrome_template.html" %}
+{% block body %}
+<div class="container">
+  <h3>Cycle Count</h3>
+  <h5>Generated on {% now "Y-n-j" %}</h5>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Item</th>
+        <th scope="col" class="text-center">Expected</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      {% for item in items %}
+      <tr>
+        <td class="font-weight-bold">{{item.name}}</td>
+        <td class="text-center">
+          {% if not item.locations %}
+          0
+          {% endif %}
+        </td>
+
+      </tr>
+      {% for location in item.locations %}
+      <tr>
+        <td class="pl-5">{{location.location}}</td>
+        <td class="text-center">{{location.quantity}}</td>
+      </tr>
+      {% endfor %}
+      {% endfor %}
+
+
+    </tbody>
+  </table>
+</div>
+{% endblock body %}
