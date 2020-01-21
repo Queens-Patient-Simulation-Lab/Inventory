@@ -3,6 +3,7 @@
 <div class="container">
   <h3>Inventory on Hand</h3>
   <h5>Generated on {% now "Y-n-j" %}</h5>
+  <a class="btn btn-primary" href="{% url 'inventory-on-hand' format='csv' %}">Download CSV</a>
   <table class="table">
     <thead>
       <tr>
