@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from itemManagement.models import Item
 
+def MainPage(request):
+    return render(request, 'main.html')
+
+
 def CycleCount(request):
     data = []
     for item in Item.objects.all():
