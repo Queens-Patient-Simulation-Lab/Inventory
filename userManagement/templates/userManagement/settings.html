@@ -1,13 +1,35 @@
 {% extends "itemManagement/chrome_template.html" %}
+{% load crispy_forms_tags %}
 {% block body %}
     <ul class="list-group ">
-        <a class="list-group-item list-group-item-action btn border-primary mt-2" href="{% url "change-password" %}">
+        <button class="list-group-item list-group-item-action btn btn-primary text-center mt-2" type="button" data-toggle="collapse" data-target="#change_password" aria-expanded="false" aria-controls="change_password">
             Change Password
-        </a>
+        </button>
+        <div class="collapse" id="change_password">
+            <form class="p-2 bg-light" method="POST">
+                {% csrf_token %}
+                {{ p_form|crispy }}
+                <div class="row justify-content-end border-top border-primary m-1">
+                    <div class="col-sm-2 ">
+                        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
 
-        <a class="list-group-item list-group-item-action btn border-primary mt-2" href="{% url "notification" %}">
+        <button class="list-group-item list-group-item-action btn btn-primary text-center mt-2" type="button" data-toggle="collapse" data-target="#notification" aria-expanded="false" aria-controls="notification">
             Notification
-        </a>
-
+        </button>
+        <div class="collapse" id="notification">
+            <form class="p-2 bg-light" method="POST">
+                {% csrf_token %}
+                {{ n_form|crispy }}
+                <div class="row justify-content-end border-top border-primary m-1">
+                    <div class="col-sm-2">
+                        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </ul>
 {% endblock body %}
