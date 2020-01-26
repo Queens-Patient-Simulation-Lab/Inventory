@@ -3,7 +3,7 @@ from security.models import User
 
 
 class notificationUpdateForm(forms.ModelForm):
-    receivesAlerts = forms.BooleanField(required=False)
+    receivesAlerts = forms.BooleanField(required=False, label='Receive alerts')
 
     class Meta:
         model = User
