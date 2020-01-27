@@ -1,6 +1,8 @@
 from django.shortcuts import render
+from .models import Location
 
-# Create your views here.
 
 def locationList(request):
-    return render(request, 'locations.html')
+    locations = Location.objects.all().order_by('name')
+    return render(request, 'locations.html', {'locations': locations})
+
