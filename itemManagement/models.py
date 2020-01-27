@@ -76,4 +76,3 @@ class Photo(models.Model):
     order = models.PositiveSmallIntegerField()
     depicts = models.ForeignKey(Item, on_delete=models.CASCADE) # TODO: On delete we probably need to do more
 
-

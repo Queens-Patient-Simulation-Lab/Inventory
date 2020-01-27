@@ -1,9 +1,9 @@
 {% extends "itemManagement/chrome_template.html" %}
 {% block body %}
 
-<h1>Locations</h1>
 
 <div class="container">
+<h1>Locations</h1>
 
     <div class="container">
     <table id="itemTable" class="table table-hover">
@@ -18,7 +18,7 @@
         <tr data-access-url="{% url 'location-list' %}" data-toggle="modal">
           <td>{{ location.name }}</td>
           <td>{{ location.description }}</td>
-{#        TODO once search is finished, implement button to query for all items at clicked row's location#}
+        {#TODO once search is finished, implement button to query for all items at clicked row's location#}
         </tr>
       {% endfor %}
       </tbody>
