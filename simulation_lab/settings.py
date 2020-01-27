@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'kghDataManagement.apps.KghdatamanagementConfig',
     'reports.apps.ReportsConfig',
     'userManagement.apps.UserManagementConfig',
+    'locations.apps.LocationsConfig',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
