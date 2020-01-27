@@ -67,11 +67,11 @@
 
 			<div class="form-group m-2">
 				<label>Tagging</label>
+
 				<div class="row">
-					<span class="badge badge-info m-1" style="line-height: 2.5">dog</span>
-					<span class="badge badge-info m-1" style="line-height: 2.5">animal</span>
-					<span class="badge badge-info m-1" style="line-height: 2.5">therapy</span>
-					<span class="badge badge-info m-1" style="line-height: 2.5">cute</span>
+                    {% for tag in tags %}
+                        <span class="badge badge-info m-1" style="line-height: 2.5">{{ tag }}</span>
+                    {%  endfor %}
 					<button class="btn btn-outline-secondary m-1" type="button">
 						Edit tags
 					</button>
