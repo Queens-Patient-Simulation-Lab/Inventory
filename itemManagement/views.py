@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 
 # Create your views here.
-from itemManagement.models import Item, Location, ItemStorage, Photo, Location
+from itemManagement.models import Item, Location, ItemStorage, Photo
 
 
 def homePage(request):
