@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
-from itemManagement.models import Location, Item, Photo, ItemStorage
+from itemManagement.models import Location, Item, Photo, ItemStorage, Tag
 from security.models import User
 
 
@@ -60,6 +60,23 @@ class Command(BaseCommand):
             data='itemManagement/puppy2.jpeg',
             order=1,
             depicts=itemThree
+        )
+
+        Tag.objects.create(
+            name="solution",
+            item=itemOne
+        )
+        Tag.objects.create(
+            name="dog",
+            item=itemTwo
+        )
+        Tag.objects.create(
+            name="gold",
+            item=itemTwo
+        )
+        Tag.objects.create(
+            name="dog",
+            item=itemThree
         )
 
     def handle(self, *args, **options):

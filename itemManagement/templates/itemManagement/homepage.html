@@ -19,7 +19,7 @@
       <tbody>
       {% for item in items %}
         <tr data-access-url="{% url 'item-details' item.itemId %}" data-toggle="modal" data-target="#exampleModal">
-          <th scope="row"><img src="{% static item.images.0 %}" class="img-thumbnail img-responsive img-rounded" style="max-height: 60px; max-width: 70px;"></th>
+          <td scope="row"><img src="{% static item.images.0 %}" class="img-thumbnail img-responsive img-rounded" style="max-height: 60px; max-width: 70px;"></td>
           <td>{{ item.name }}</td>
           <td>{{ item.locations.0 }}</td>
           <td>{{ item.totalQuantity }}</td>

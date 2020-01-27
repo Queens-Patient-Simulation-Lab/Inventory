@@ -18,7 +18,7 @@ def homePage(request):
 def sampleItem(request, itemId):
     print(f"Item ID requested: {itemId}")
 
-    context = Item.objects.filter(id=itemId).first().getItemDetails()
+    context = Item.objects.get(id=itemId).getItemDetails()
     return render(request, 'itemManagement/item_details.html', context=context)
 
 
