@@ -75,6 +75,7 @@ class Photo(models.Model):
     order = models.PositiveSmallIntegerField()
     depicts = models.ForeignKey(Item, on_delete=models.CASCADE) # TODO: On delete we probably need to do more
 
+
 class Tag(models.Model):
     name = models.CharField(max_length=20)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
