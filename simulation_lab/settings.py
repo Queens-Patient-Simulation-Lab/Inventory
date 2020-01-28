@@ -13,8 +13,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from django.contrib import messages
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -26,7 +27,6 @@ SECRET_KEY = 'li84equk#urmy64b5&ut22afkya=tl&j#5t%6nt0!4=$4#-4+6'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'global_login_required.GlobalLoginRequiredMiddleware' # https://django-glrm.readthedocs.io/en/latest/readme.html
+    'global_login_required.GlobalLoginRequiredMiddleware'  # https://django-glrm.readthedocs.io/en/latest/readme.html
 ]
 
 ROOT_URLCONF = 'simulation_lab.urls'
@@ -77,7 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'simulation_lab.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
@@ -87,7 +86,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -107,7 +105,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger'  # Bootstrap alert color tags use danger instead of error
+}
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -121,16 +121,14 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
 
+# Xframeoptions (For embedding in revealjs presentation)
 
-#Xframeoptions (For embedding in revealjs presentation)
-
-#X_FRAME_OPTIONS = 'SAMEORIGIN'
+# X_FRAME_OPTIONS = 'SAMEORIGIN'
 AUTH_USER_MODEL = 'security.User'
 LOGIN_URL = 'login'
 

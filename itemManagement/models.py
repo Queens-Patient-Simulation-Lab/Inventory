@@ -9,8 +9,8 @@ from django.utils import timezone
 
 
 class Location(models.Model):
-    name = models.CharField(max_length=40)
-    description = models.TextField()
+    name = models.CharField(max_length=40, blank=False)
+    description = models.TextField(blank=True)
     deleted = models.BooleanField(default=False)
 
     def getLocationDetailsForItem(self, item):
