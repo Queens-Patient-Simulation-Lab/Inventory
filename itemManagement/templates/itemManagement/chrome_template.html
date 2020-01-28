@@ -44,7 +44,7 @@
         <main class="col offset-md-2 bg-faded py-3">
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
+                    <div class="alert alert-{{ message.level_tag }}">
                         {{ message }}
                     </div>
                 {% endfor %}
