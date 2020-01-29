@@ -1,24 +1,36 @@
-<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="addLocationModalLabel">
+<!--
+    This template is used in the locations page. There are two versions of it, one to add new locations and
+    one to edit existing locations. It needs the following variables:
+        templateId
+        modalTitle: The text  shown at the top of the modal
+        locationExists: False iff this is the add modal page
+-->
+
+<div class="modal fade" id="{{ templateId }}" tabindex="-1" role="dialog"
+     aria-labelledby="{{ templateId|add:"Label" }}">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addLocationModalLabel">Add Location</h5>
+                <h5 class="modal-title" id="{{ templateId }}">{{ modalTitle }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <div id="modalContainer">
+                <div class="modalContainer">
                     <form method="POST">
                         {% csrf_token %}
+                        {% if locationExists %}
+                            <input type="hidden" id="modalLocationId" name="id">
+                        {% endif %}
                         <div class="form-group">
-                            <label for="name">Location Name</label>
-                            <input type="text" name="name" class="form-control" id="name"
+                            <label for="modalName">Location Name</label>
+                            <input id="modalName" type="text" name="name" class="form-control"
                                    aria-describedby="location name" placeholder="Enter Location Name">
                         </div>
                         <div class="form-group">
-                            <label for="description">Description</label>
-                            <textarea name="description" type="text" class="form-control" id="description"
+                            <label for="modalDescription">Description</label>
+                            <textarea id="modalDescription" name="description" type="text" class="form-control"
                                       placeholder=""></textarea>
                         </div>
                         <div class="modal-footer">
@@ -28,7 +40,6 @@
                     </form>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
