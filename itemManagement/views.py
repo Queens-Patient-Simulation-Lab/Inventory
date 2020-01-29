@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.db import IntegrityError
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -65,15 +66,16 @@ class LocationView(TemplateView):
     def delete(self, request, id, *args, **kwargs):
         Location.objects.filter(id=id).update(deleted=True)
         messages.success(request, "Successfully deleted")
-        return self.get(request, *args, **kwargs)
+        return HttpResponse(status=204)
 
     def _updateLocation(self, request, id, name, description):
         locations = Location.objects.filter(id=id, deleted=False)
         if not locations.exists():
-            messages.error("This location does not exist")
+            messages.error(request, "This location does not exist")
             return self.get(request)
         locations.update(
             name = name,
             description = description
         )
+        messages.success(request, "Location modified successfully")
         return self.get(request)
