@@ -29,11 +29,15 @@ def sampleItem(request, itemId):
 class LocationView(TemplateView):
     def get(self, request, *args, **kwargs):
         locations = Location.objects.filter(deleted=False).all().order_by('name')
-        return render(request, 'itemManagement/locations.html', {'locations': locations})
+        return render(request, 'itemManagement/locationView/locations.html', {'locations': locations})
 
     def post(self, request, *args, **kwargs):
+        id = request.POST.get('id', "").strip()
         name = request.POST.get('name', "").strip()
         description = request.POST.get('description', "").strip()
+
+        if id != "":
+            return self._updateLocation(request, id, name, description)
 
         if (len(name) < 3):
             messages.error(request, "Name must be at least 3 characters")
@@ -62,3 +66,14 @@ class LocationView(TemplateView):
         Location.objects.filter(id=id).update(deleted=True)
         messages.success(request, "Successfully deleted")
         return self.get(request, *args, **kwargs)
+
+    def _updateLocation(self, request, id, name, description):
+        locations = Location.objects.filter(id=id, deleted=False)
+        if not locations.exists():
+            messages.error("This location does not exist")
+            return self.get(request)
+        locations.update(
+            name = name,
+            description = description
+        )
+        return self.get(request)
