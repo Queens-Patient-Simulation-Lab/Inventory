@@ -47,11 +47,11 @@ class LocationView(TemplateView):
 
         if (len(name) < 3):
             messages.error(request, "Name must be at least 3 characters")
-            return redirect("location-list")
+            return self.get(request)
 
         if (Location.objects.filter(deleted=False, name=name).exists()):
             messages.error(request, "You cannot have two locations with the same name.")
-            return redirect("location-list")
+            return self.get(request)
         try:
             newLocation = Location(name=name, description=description)
             newLocation.save()
@@ -63,8 +63,6 @@ class LocationView(TemplateView):
                 messages.error(request, str(e))
             else:
                 messages.error("This submission violated the database constraints")
-
-        return redirect("location-list")
 
         return self.get(request)
 
