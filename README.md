@@ -28,3 +28,8 @@ python manage.py migrate
 To run it, call 'python manage.py populate_db'
 To modify the command, view the class called populate_db.py
 WARNING: This command will clear your development database (it will ask for confirmation)
+
+# Tests
+There are two types of tests: ModelTests and ViewTests
+ModelTests checks the logic and functions of the models (e.g LocationModel)
+ViewTests checks the Logic of views (e.g functions in views.py). These tests are validated by looking at the context returned from the response as well as seeing how the call affected the database. Note that you must simulate logging in to test secured views
