@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -19,12 +20,16 @@ def homePage(request):
 
     return render(request, 'itemManagement/homepage.html', context=context)
 
+class ItemDetailsView(TemplateView):
+    def get(self, request, itemId, *args, **kwargs):
+        isAdmin = True # TODO, admin check
 
-def sampleItem(request, itemId):
-    print(f"Item ID requested: {itemId}")
+        print(f"Item ID requested: {itemId}")
 
-    context = Item.objects.get(id=itemId).getItemDetails()
-    return render(request, 'itemManagement/item_details.html', context=context)
+        context = Item.objects.get(id=itemId).getItemDetails()
+        context['isAdmin'] = True
+        return render(request, 'itemManagement/item_details.html', context=context)
+
 
 
 class LocationView(TemplateView):

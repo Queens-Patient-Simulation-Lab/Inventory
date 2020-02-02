@@ -61,6 +61,12 @@ class Command(BaseCommand):
             order=1,
             depicts=itemThree
         )
+        Photo.objects.create(
+            mimeType="jpeg",
+            data='itemManagement/puppy2.jpeg',
+            order=1,
+            depicts=itemTwo
+        )
 
         Tag.objects.create(
             name="solution",
