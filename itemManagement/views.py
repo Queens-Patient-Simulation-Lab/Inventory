@@ -20,16 +20,17 @@ def homePage(request):
 
     return render(request, 'itemManagement/homepage.html', context=context)
 
+
 class ItemDetailsView(TemplateView):
     def get(self, request, itemId, *args, **kwargs):
-        isAdmin = True # TODO, admin check
+        isAdmin = True  # TODO, admin check
 
         print(f"Item ID requested: {itemId}")
 
         context = Item.objects.get(id=itemId).getItemDetails()
-        context['isAdmin'] = True
+        context['isAdmin'] = isAdmin
+        context['readonly'] = "" if isAdmin else "readonly" # In the template, we add the readonly property iff user is not an admin
         return render(request, 'itemManagement/item_details.html', context=context)
-
 
 
 class LocationView(TemplateView):
@@ -62,7 +63,7 @@ class LocationView(TemplateView):
             newLocation.save()
             messages.success(request, f"Successfully added '{name}'")
 
-        except IntegrityError as e: # If a database constraint fails
+        except IntegrityError as e:  # If a database constraint fails
             print(str(e))
             if getattr(settings, "DEBUG", False):
                 messages.error(request, str(e))
@@ -75,19 +76,20 @@ class LocationView(TemplateView):
     def delete(self, request, id, *args, **kwargs):
         Location.objects.filter(id=id).update(deleted=True)
         messages.success(request, "Successfully deleted")
-        return HttpResponse(status=204) # Return an OK status with no content
+        return HttpResponse(status=204)  # Return an OK status with no content
 
     """
     Called  when a request to edit a location is made. Thows an error if the location does not exist
     """
+
     def _updateLocation(self, request, id, name, description):
         locations = Location.objects.filter(id=id, deleted=False)
         if not locations.exists():
             messages.error(request, "This location does not exist")
             return self.get(request)
         locations.update(
-            name = name,
-            description = description
+            name=name,
+            description=description
         )
         messages.success(request, "Location modified successfully")
         return self.get(request)
