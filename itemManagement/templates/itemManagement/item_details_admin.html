@@ -2,19 +2,19 @@
 
 
 <div class="container">
-
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
     <form>
         <div class="form-group m-2">
             <label for="itemName">Item Name</label>
-            <input type="name" class="form-control" id="itemName" value="{{ name }}" {{ readonly }}>
+            <input type="name" class="form-control" id="itemName" value="{{ name }}">
         </div>
 
-        {% if isAdmin %}
-            <div class="form-group m-2">
-                <label for="materialNo">KGH ID</label>
-                <input type="item_id" class="form-control" id="materialNo" value="{{ kghId }}">
-            </div>
-        {% endif %}
+        <div class="form-group m-2">
+            <label for="materialNo">KGH ID</label>
+            <input type="item_id" class="form-control" id="materialNo" value="{{ kghId }}">
+        </div>
 
         <div id="itemImageCarousel" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
@@ -43,14 +43,12 @@
                 <span class="sr-only">Next</span>
             </a>
         </div>
-        {% if isAdmin %}
-            <div class="row m-1">
-                <button class="btn btn-outline-secondary col" type="button" data-toggle="collapse"
-                        data-target="#pictureSetting" aria-expanded="false" aria-controls="pictureSetting">
-                    Edit pictures
-                </button>
-            </div>
-        {% endif %}
+        <div class="row m-1">
+            <button class="btn btn-outline-secondary col" type="button" data-toggle="collapse"
+                    data-target="#pictureSetting" aria-expanded="false" aria-controls="pictureSetting">
+                Edit pictures
+            </button>
+        </div>
 
         <div id="pictureSetting" class="collapse">
             <div class="list-group list-group-horizontal m-2 row card card-body">
@@ -67,7 +65,7 @@
         <div class="form-group m-2">
             <label for="description">Description</label>
             <textarea type="item_description" class="form-control" id="description"
-                      value="{{ description }}" {{ readonly }}/>
+                      value="{{ description }}"/>
         </div>
 
         <div class="form-group m-2">
@@ -77,66 +75,62 @@
                 {% for tag in tags %}
                     <span class="badge badge-info m-1" style="line-height: 2.5">{{ tag }}</span>
                 {% endfor %}
-            {% if isAdmin %}
+                {#todo use contenteditable to allow editable badges#}
                 <button class="btn btn-outline-secondary m-1" type="button">
                     Edit tags
                 </button>
-            {% endif %}
+
             </div>
-        </div>
 
-        <div class="form-group m-2">
-            <label for="itemPrice">Item price</label>
-            <input type="MA_price" class="form-control" id="itemPrice" value="${{ price }}" {{ readonly }}>
-        </div>
+            <div class="form-group m-2">
+                <label for="itemPrice">Item price</label>
+                <input type="MA_price" class="form-control" id="itemPrice" value="${{ price }}">
+            </div>
+            <div class="form-group m-2">
+                <label for="unit">Unit of Measurement</label>
+                <input type="unit_measure" class="form-control" id="unit" value="{{ unit }}">
+            </div>
 
-        <div class="form-group m-2">
-            <label for="unit">Unit of Measurement</label>
-            <input type="unit_measure" class="form-control" id="unit" value="{{ unit }}">
-        </div>
-
-        <table class="table table-striped m-2">
-            <thead>
-            <tr>
-                <th scope="col">Location</th>
-                <th scope="col">Stock</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for location in locations %}
+            <table class="table table-striped m-2">
+                <thead>
                 <tr>
-                    <th scope="col">{{ location.name }}</th>
-                    <td class="row">
-                        <button class="btn btn-primary position-relative m-1 decrement" type="button">
-                            -
-                        </button>
-                        <div class="form-group m-1">
-                            <input class=" form-control item_quantity" id="amount" value="{{ location.quantity }}"
-                                   style="width: 80px;" type="decimal">
-                        </div>
-                        <button class="btn btn-secondary position-relative m-1 increment" type="button">
-                            +
-                        </button>
-                    </td>
+                    <th scope="col">Location</th>
+                    <th scope="col">Stock</th>
                 </tr>
-            {% endfor %}
+                </thead>
+                <tbody>
+                {% for location in locations %}
+                    <tr>
+                        <th scope="col">{{ location.name }}</th>
+                        <td class="row">
+                            <button class="btn btn-primary position-relative m-1 decrement" type="button">
+                                -
+                            </button>
+                            <div class="form-group m-1">
+                                <input class=" form-control item_quantity" id="amount" value="{{ location.quantity }}"
+                                       style="width: 80px;" type="decimal">
+                            </div>
+                            <button class="btn btn-secondary position-relative m-1 increment" type="button">
+                                +
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
 
-            <tr>
-                <th scope="row" colspan="2">
-                    <button type="button" class="btn btn-outline-secondary col">assign a new location</button>
-                </th>
-            </tr>
-            </tbody>
-        </table>
+                <tr>
+                    <th scope="row" colspan="2">
+                        <button type="button" class="btn btn-outline-secondary col">assign a new location</button>
+                    </th>
+                </tr>
+                </tbody>
+            </table>
 
-        <div class="form-group m-2">
-            <label for="stock">Total Stock</label>
-            <input readonly type="total_stock" class="form-control" id="stock" value="{{ totalQuantity }}">
-        </div>
+            <div class="form-group m-2">
+                <label for="stock">Total Stock</label>
+                <input readonly type="total_stock" class="form-control" id="stock" value="{{ totalQuantity }}">
+            </div>
 
-    {% if isAdmin %}
-        <a href="" class="m-2">view history report</a>
-    {% endif %}
+            <a href="" class="m-2">view history report</a>
     </form>
 
 </div>

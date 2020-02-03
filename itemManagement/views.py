@@ -23,14 +23,15 @@ def homePage(request):
 
 class ItemDetailsView(TemplateView):
     def get(self, request, itemId, *args, **kwargs):
-        isAdmin = True  # TODO, admin check
+        isAdmin = False  # TODO, admin check
 
         print(f"Item ID requested: {itemId}")
 
         context = Item.objects.get(id=itemId).getItemDetails()
-        context['isAdmin'] = isAdmin
-        context['readonly'] = "" if isAdmin else "readonly" # In the template, we add the readonly property iff user is not an admin
-        return render(request, 'itemManagement/item_details.html', context=context)
+        if isAdmin:
+            return render(request, 'itemManagement/item_details_admin.html', context=context)
+        else:
+            return render(request, 'itemManagement/item_details_assistant.html', context=context)
 
 
 class LocationView(TemplateView):
