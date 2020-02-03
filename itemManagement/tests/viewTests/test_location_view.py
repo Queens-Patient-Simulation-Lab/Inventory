@@ -95,7 +95,7 @@ class PostLocationViewTests(BaseTestCaseView):
 
     def test_addLocation_shortName_failsWithMessage(self):
         data = {
-            'name': "abc",
+            'name': "ab",
             "description": " TestDescription"
         }
         response = self.makeCall(data)
