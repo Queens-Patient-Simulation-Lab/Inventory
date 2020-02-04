@@ -2,6 +2,7 @@
 A page where the admin can see and modify all locations that an item can be pleaced
 -->
 {% extends "itemManagement/chrome_template.html" %}
+{% load render_bundle from webpack_loader %}
 {% block body %}
 
 
@@ -54,31 +55,5 @@ A page where the admin can see and modify all locations that an item can be plea
 
 
     </div>
-    <script>
-        $(".deleteBtn").click(function () {
-            locationId = $(this).closest("tr").attr("id")
-            $.ajax({
-                type: "DELETE",
-                url: "{% url 'location-list' %}" + locationId,
-                headers: {"X-CSRFToken": "{{ csrf_token }}"},
-                complete: function (msg) {
-                    location.reload()
-                }
-            });
-        })
-        $(".editBtn").click(function () {
-            locationElem = $(this).closest("tr")
-            modalElem = $("#changeLocationModal")
-
-            locationId = locationElem.attr("id")
-            locationName = locationElem.find("#locationName").text()
-            locationDescription= locationElem.find("#locationDescription").text()
-
-
-            modalElem.find("#modalLocationId").val(locationId)
-            modalElem.find("#modalName").val(locationName)
-            modalElem.find("#modalDescription").val(locationDescription)
-        })
-
-    </script>
+    {% render_bundle 'locations' %}
 {% endblock body %}

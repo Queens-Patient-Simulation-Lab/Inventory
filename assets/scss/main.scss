@@ -1,3 +1,7 @@
+@import "~bootstrap/scss/bootstrap";
+
+
+// Sidebar
 @media (min-width: 768px) {
     aside {
         height: 100%;
@@ -8,4 +12,9 @@
     body {
         padding-top: 3em;
     }
+}
+
+.img-thumbnail {
+    max-height: 60px;
+    max-width: 70px;
 }
