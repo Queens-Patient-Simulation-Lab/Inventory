@@ -1,9 +1,16 @@
 {% extends "itemManagement/chrome_template.html" %}
 {% block body %}
 <div class="container">
-  <h3>Cycle Count</h3>
-  <h5>Generated on {% now "Y-n-j" %}</h5>
-  <a class="btn btn-primary" href="{% url 'cycle-count' format='csv' %}">Download CSV</a>
+  <div class="d-flex flex-row align-items-center flex-wrap justify-content-between">
+    <div >
+      <h3>Cycle Count</h3>
+      <h5>Generated on {% now "Y-n-j" %}</h5>
+    </div>
+    <div class="text-center">
+      <a class="btn btn-primary m-1" href="{% url 'cycle-count-csv' %}">Download CSV</a>
+      <a class="btn btn-primary m-1" href="{% url 'cycle-count-pdf' %}">Download PDF</a>  
+    </div>
+  </div>
   <table class="table">
     <thead>
       <tr>

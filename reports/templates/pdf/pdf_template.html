@@ -1,0 +1,36 @@
+{% extends "itemManagement/base_template.html" %}
+{% load static %}
+{% block content %}
+<div class="container-fluid h-100">
+    <div class="row h-100">
+        <main class="col offset-md-2 bg-faded py-3">
+            <!-- CSP doesn't apply to pdfs -->
+            <style>
+                /* Numbers were getting weird with the default font stack */
+                * {
+                    font-family: Arial, Helvetica, sans-serif
+                }
+                table {
+                    width: 7.5in !important;
+                    font-size: 12pt !important;
+                }
+                @page {
+                    size: letter;
+                    margin: 0in 0.44in 0.4in 0.44in;
+                    counter-increment: page;
+
+                    @bottom-right {
+                        content: "Page "counter(page) " of "counter(pages);
+                        border-top: .25pt solid #666;
+                        width: 50%;
+                    }
+                }
+            </style>
+            <div>
+                <h3>{{title}}</h3>
+                <h5>Generated on {% now "Y-n-j" %}</h5>
+            </div>
+            {% block body %}{%endblock body%}
+        </main>
+    </div>
+    {% endblock content %}
