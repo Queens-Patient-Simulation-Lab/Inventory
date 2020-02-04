@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -20,11 +21,17 @@ def homePage(request):
     return render(request, 'itemManagement/homepage.html', context=context)
 
 
-def sampleItem(request, itemId):
-    print(f"Item ID requested: {itemId}")
+class ItemDetailsView(TemplateView):
+    def get(self, request, itemId, *args, **kwargs):
+        isAdmin = False  # TODO, admin check
 
-    context = Item.objects.get(id=itemId).getItemDetails()
-    return render(request, 'itemManagement/item_details.html', context=context)
+        print(f"Item ID requested: {itemId}")
+
+        context = Item.objects.get(id=itemId).getItemDetails()
+        if isAdmin:
+            return render(request, 'itemManagement/item_details_admin.html', context=context)
+        else:
+            return render(request, 'itemManagement/item_details_assistant.html', context=context)
 
 
 class LocationView(TemplateView):
@@ -57,7 +64,7 @@ class LocationView(TemplateView):
             newLocation.save()
             messages.success(request, f"Successfully added '{name}'")
 
-        except IntegrityError as e: # If a database constraint fails
+        except IntegrityError as e:  # If a database constraint fails
             print(str(e))
             if getattr(settings, "DEBUG", False):
                 messages.error(request, str(e))
@@ -70,19 +77,20 @@ class LocationView(TemplateView):
     def delete(self, request, id, *args, **kwargs):
         Location.objects.filter(id=id).update(deleted=True)
         messages.success(request, "Successfully deleted")
-        return HttpResponse(status=204) # Return an OK status with no content
+        return HttpResponse(status=204)  # Return an OK status with no content
 
     """
     Called  when a request to edit a location is made. Thows an error if the location does not exist
     """
+
     def _updateLocation(self, request, id, name, description):
         locations = Location.objects.filter(id=id, deleted=False)
         if not locations.exists():
             messages.error(request, "This location does not exist")
             return self.get(request)
         locations.update(
-            name = name,
-            description = description
+            name=name,
+            description=description
         )
         messages.success(request, "Location modified successfully")
         return self.get(request)
