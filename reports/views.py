@@ -80,3 +80,15 @@ def InventoryObsolescence(request, format=None):
         return __PDFResponseGenerator("inventory-obsolescence", "Inventory Obsolescence", 'pdf/obsolescence.html', {"items": data})
     else:
         return render(request, 'web/obsolescence.html', {"items": data})
+
+
+def ReorderList(request, format=None):
+    items = Item.objects.all().order_by("title")
+    belowThreshold = filter(lambda x: x.alertThreshold is not None and x.totalQuantity < x.alertThreshold, items)
+    data = [{"id": x.id, "name": x.title, "total": x.totalQuantity, "par": x.alertThreshold, "kghID": x.kghID} for x in belowThreshold]
+    if format == "csv":
+        return __CSVResponseGenerator("reorder", ["Name", "KGH ID", "Current Total", "Par Level"], [[x["name"], x["kghID"], x["total"], x["par"]] for x in data])
+    elif format == "pdf":
+        return __PDFResponseGenerator("reorder", "Reorder List", 'pdf/reorder.html', {"items": data})
+    else:
+        return render(request, 'web/reorder.html', {"items": data})
