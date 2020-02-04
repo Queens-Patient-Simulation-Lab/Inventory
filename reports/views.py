@@ -92,3 +92,15 @@ def ReorderList(request, format=None):
         return __PDFResponseGenerator("reorder", "Reorder List", 'pdf/reorder.html', {"items": data})
     else:
         return render(request, 'web/reorder.html', {"items": data})
+
+
+def InventoryValuation(request, format=None):
+    data = [{"id": x.id, "name": x.title, "quantity": x.totalQuantity, "price": x.price, "value": x.totalQuantity * x.price} for x in Item.objects.all()]
+    data.sort(key=lambda x: x["value"], reverse=True)
+    total = sum(map(lambda x: x["value"], data))
+    if format == "csv":
+        return __CSVResponseGenerator("valuation", ["Name", "Quantity", "Price", "Value"], [[x["name"], x["quantity"], x["price"], x["value"]] for x in data])
+    elif format == "pdf":
+        return __PDFResponseGenerator("valuation", "Inventory Valuation", 'pdf/valuation.html', {"items": data, "total": total})
+    else:
+        return render(request, 'web/valuation.html', {"items": data, "total": total})

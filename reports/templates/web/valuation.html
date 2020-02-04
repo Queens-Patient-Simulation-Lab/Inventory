@@ -1,0 +1,42 @@
+{% extends "itemManagement/chrome_template.html" %}
+{% load humanize %}
+{% block body %}
+<div class="container">
+  <div class="d-flex flex-row align-items-center flex-wrap justify-content-between">
+    <div>
+      <h3>Inventory Valuation</h3>
+      <h5>Generated on {% now "Y-n-j" %}</h5>
+    </div>
+    <div class="text-center">
+      <a class="btn btn-primary" href="{% url 'valuation' format='csv' %}">Download CSV</a>
+      <a class="btn btn-primary" href="{% url 'valuation' format='pdf' %}">Download PDF</a>
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Item</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Price</th>
+        <th scope="col">Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td><a href="{% url 'item-details' itemId=item.id %}">{{item.name}}</a></td>
+        <td class="text-right">{{item.quantity}}</td>
+        <td class="text-right">${{item.price|intcomma}}</td>
+        <td class="text-right">${{item.value|intcomma}}</td>
+      </tr>
+      {% endfor %}
+      <tr class="font-weight-bold">
+        <td>Total</td>
+        <td></td>
+        <td></td>
+        <td class="text-right">${{total|intcomma}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock body %}
