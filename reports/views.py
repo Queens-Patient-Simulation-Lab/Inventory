@@ -37,7 +37,7 @@ def __GetFormattedDate():
 
 def CycleCountHTML(request):
     data = []
-    items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title"))
+    items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title").filter(deleted=False))
     for item in items:
         locations = [{"location": x["name"], "quantity": x["quantity"]} for x in item["locations"]]
         data.append({"name": item["name"], "id": item["itemId"], "locations": locations})
@@ -46,7 +46,7 @@ def CycleCountHTML(request):
 
 def CycleCountCSV(request):
     data = []
-    items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title"))
+    items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title").filter(deleted=False))
     for item in items:
         for location in item["locations"]:
             data.append([item["name"], location["name"], location["quantity"]])
@@ -55,7 +55,7 @@ def CycleCountCSV(request):
 
 def CycleCountPDF(request):
     data = []
-    items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title"))
+    items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title").filter(deleted=False))
     for item in items:
         locations = [{"location": x["name"], "quantity": x["quantity"]} for x in item["locations"]]
         data.append({"name": item["name"], "locations": locations})
@@ -63,7 +63,7 @@ def CycleCountPDF(request):
 
 
 def InventoryOnHand(request, format=None):
-    data = [{"id": x.id, "name": x.title, "total": x.totalQuantity} for x in Item.objects.all().order_by("title")]
+    data = [{"id": x.id, "name": x.title, "total": x.totalQuantity} for x in Item.objects.all().order_by("title").filter(deleted=False)]
     if format == "csv":
         return __CSVResponseGenerator("Inventory-on-Hand", ["Name", "Count"], [[x["name"], x["total"]] for x in data])
     elif format == "pdf":
@@ -73,7 +73,7 @@ def InventoryOnHand(request, format=None):
 
 
 def InventoryObsolescence(request, format=None):
-    data = [{"id": x.id, "name": x.title, "lastUsed": x.lastUsed} for x in Item.objects.filter(lastUsed__lte=timezone.now() - timezone.timedelta(days=365)).order_by("title")]
+    data = [{"id": x.id, "name": x.title, "lastUsed": x.lastUsed} for x in Item.objects.filter(deleted=False).filter(lastUsed__lte=timezone.now() - timezone.timedelta(days=365)).order_by("title")]
     if format == "csv":
         return __CSVResponseGenerator("inventory-obsolescence", ["Name", "Last Used"], [[x["name"], x["lastUsed"]] for x in data])
     elif format == "pdf":
@@ -83,7 +83,7 @@ def InventoryObsolescence(request, format=None):
 
 
 def ReorderList(request, format=None):
-    items = Item.objects.all().order_by("title")
+    items = Item.objects.all().order_by("title").filter(deleted=False)
     belowThreshold = filter(lambda x: x.alertThreshold is not None and x.totalQuantity < x.alertThreshold, items)
     data = [{"id": x.id, "name": x.title, "total": x.totalQuantity, "par": x.alertThreshold, "kghID": x.kghID} for x in belowThreshold]
     if format == "csv":
@@ -95,7 +95,7 @@ def ReorderList(request, format=None):
 
 
 def InventoryValuation(request, format=None):
-    data = [{"id": x.id, "name": x.title, "quantity": x.totalQuantity, "price": x.price, "value": x.totalQuantity * x.price} for x in Item.objects.all()]
+    data = [{"id": x.id, "name": x.title, "quantity": x.totalQuantity, "price": x.price, "value": x.totalQuantity * x.price} for x in Item.objects.all().filter(deleted=False)]
     data.sort(key=lambda x: x["value"], reverse=True)
     total = sum(map(lambda x: x["value"], data))
     if format == "csv":
