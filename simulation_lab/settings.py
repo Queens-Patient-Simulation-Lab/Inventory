@@ -56,7 +56,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'global_login_required.GlobalLoginRequiredMiddleware'  # https://django-glrm.readthedocs.io/en/latest/readme.html
+    'global_login_required.GlobalLoginRequiredMiddleware', # https://django-glrm.readthedocs.io/en/latest/readme.html
+    'simulation_lab.SecurityHeaderAdder.SecurityHeaderAdder'
 ]
 
 ROOT_URLCONF = 'simulation_lab.urls'
