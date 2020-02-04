@@ -22,7 +22,7 @@
 
       {% for item in items %}
       <tr>
-        <td>{{item.name}}</td>
+        <td><a href="{% url 'item-details' itemId=item.id %}">{{item.name}}</a></td>
         <td class="text-center">{{item.total}}</td>
       </tr>
       {% endfor %}

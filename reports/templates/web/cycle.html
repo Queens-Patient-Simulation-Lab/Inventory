@@ -22,7 +22,7 @@
 
       {% for item in items %}
       <tr>
-        <td class="font-weight-bold">{{item.name}}</td>
+        <td class="font-weight-bold"><a href="{% url 'item-details' itemId=item.id %}">{{item.name}}</a></td>
         <td class="text-center">
           {% if not item.locations %}
           0

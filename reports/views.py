@@ -33,13 +33,15 @@ def __PDFResponseGenerator(filenamePrefix, title, template, args):
 def __GetFormattedDate():
     return date.today().strftime("%Y-%m-%d")
 
+
 def CycleCountHTML(request):
     data = []
     items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title"))
     for item in items:
         locations = [{"location": x["name"], "quantity": x["quantity"]} for x in item["locations"]]
-        data.append({"name": item["name"], "locations": locations})
+        data.append({"name": item["name"], "id": item["itemId"], "locations": locations})
     return render(request, 'web/cycle.html', {"items": data})
+
 
 def CycleCountCSV(request):
     data = []
@@ -49,6 +51,7 @@ def CycleCountCSV(request):
             data.append([item["name"], location["name"], location["quantity"]])
     return __CSVResponseGenerator("CycleCount", ["Name", "Location", "Quantity"], data)
 
+
 def CycleCountPDF(request):
     data = []
     items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title"))
@@ -57,8 +60,9 @@ def CycleCountPDF(request):
         data.append({"name": item["name"], "locations": locations})
     return __PDFResponseGenerator("CycleCount", "Cycle Count", 'pdf/cycle.html', {"items": data})
 
+
 def InventoryOnHand(request, format=None):
-    data = [{"name": x.title, "total": x.totalQuantity} for x in Item.objects.all().order_by("title")]
+    data = [{"id": x.id, "name": x.title, "total": x.totalQuantity} for x in Item.objects.all().order_by("title")]
     if format == "csv":
         return __CSVResponseGenerator("Inventory-on-Hand", ["Name", "Count"], [[x["name"], x["total"]] for x in data])
     elif format == "pdf":
