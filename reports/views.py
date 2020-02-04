@@ -6,6 +6,7 @@ from itemManagement.models import Item
 from django.http import HttpResponse, FileResponse
 from datetime import date
 from weasyprint import HTML
+from django.utils import timezone
 
 
 def MainPage(request):
@@ -69,3 +70,13 @@ def InventoryOnHand(request, format=None):
         return __PDFResponseGenerator("Inventory-on-Hand", "Inventory on Hand", 'pdf/onHand.html', {"items": data})
     else:
         return render(request, 'web/onHand.html', {"items": data})
+
+
+def InventoryObsolescence(request, format=None):
+    data = [{"id": x.id, "name": x.title, "lastUsed": x.lastUsed} for x in Item.objects.filter(lastUsed__lte=timezone.now() - timezone.timedelta(days=365)).order_by("title")]
+    if format == "csv":
+        return __CSVResponseGenerator("inventory-obsolescence", ["Name", "Last Used"], [[x["name"], x["lastUsed"]] for x in data])
+    elif format == "pdf":
+        return __PDFResponseGenerator("inventory-obsolescence", "Inventory Obsolescence", 'pdf/obsolescence.html', {"items": data})
+    else:
+        return render(request, 'web/obsolescence.html', {"items": data})
