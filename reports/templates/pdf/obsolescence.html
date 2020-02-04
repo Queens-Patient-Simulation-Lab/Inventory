@@ -1,0 +1,20 @@
+{% extends "pdf/pdf_template.html" %}
+{% block body %}
+<table class="table">
+  <thead>
+      <tr>
+          <th scope="col">Item</th>
+          <th scope="col" class="text-center">Last Used</th>
+      </tr>
+  </thead>
+  <tbody>
+
+      {% for item in items %}
+      <tr>
+          <td>{{item.name}}</td>
+          <td class="text-center">{{item.lastUsed |date:'F jS Y'}}</td>
+      </tr>
+      {% endfor %}
+  </tbody>
+</table>
+{% endblock body %}

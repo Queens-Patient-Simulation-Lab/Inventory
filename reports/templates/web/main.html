@@ -1,0 +1,52 @@
+{% extends "itemManagement/chrome_template.html" %}
+{% block body %}
+<div class="container">
+  <h1>Reports</h1>
+  <div class="list-group">
+
+    <a href="{% url 'cycle-count'%}" class="list-group-item list-group-item-action flex-column align-items-start">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">Cycle Count</h5>
+      </div>
+      <p class="mb-1">Lists the counts of every item broken down by the locations they are stored at</p>
+    </a>
+
+    <a href="{% url 'inventory-on-hand'%}" class="list-group-item list-group-item-action flex-column align-items-start">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">Inventory On Hand</h5>
+      </div>
+      <p class="mb-1">Lists the total quantity of every item</p>
+    </a>
+
+    <a href="{% url 'inventory-obsolecense'%}" class="list-group-item list-group-item-action flex-column align-items-start">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">Inventory Obsolecense</h5>
+      </div>
+      <p class="mb-1">Lists items that haven't been used in the last year</p>
+    </a>
+
+
+    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">User History</h5>
+      </div>
+      <p class="mb-1">Lists the actions a user has preformed</p>
+    </a>
+
+    <a href="{% url 'reorder'%}" class="list-group-item list-group-item-action flex-column align-items-start">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">Reorder List</h5>
+      </div>
+      <p class="mb-1">Lists items that are below par level</p>
+    </a>
+
+    <a href="{% url 'valuation'%}" class="list-group-item list-group-item-action flex-column align-items-start">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">Inventory Valuation</h5>
+      </div>
+      <p class="mb-1">Lists and totals the cost of items</p>
+    </a>
+
+  </div>
+</div>
+{% endblock body %}

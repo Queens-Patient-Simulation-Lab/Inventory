@@ -1,0 +1,35 @@
+{% extends "itemManagement/chrome_template.html" %}
+{% block body %}
+<div class="container">
+  <div class="d-flex flex-row align-items-center flex-wrap justify-content-between">
+    <div>
+      <h3>Reorder List</h3>
+      <h5>Generated on {% now "Y-n-j" %}</h5>
+    </div>
+    <div class="text-center">
+      <a class="btn btn-primary" href="{% url 'reorder' format='csv' %}">Download CSV</a>
+      <a class="btn btn-primary" href="{% url 'reorder' format='pdf' %}">Download PDF</a>
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Item</th>
+        <th scope="col">KGH ID</th>
+        <th scope="col">Current Total</th>
+        <th scope="col">Par</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td><a href="{% url 'item-details' itemId=item.id %}">{{item.name}}</a></td>
+        <td>{{item.kghID}}</td>
+        <td>{{item.total}}</td>
+        <td>{{item.par}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock body %}

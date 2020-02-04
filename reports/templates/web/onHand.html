@@ -1,0 +1,32 @@
+{% extends "itemManagement/chrome_template.html" %}
+{% block body %}
+<div class="container">
+  <div class="d-flex flex-row align-items-center flex-wrap justify-content-between">
+    <div>
+      <h3>Inventory on Hand</h3>
+      <h5>Generated on {% now "Y-n-j" %}</h5>
+    </div>
+    <div class="text-center">
+      <a class="btn btn-primary" href="{% url 'inventory-on-hand' format='csv' %}">Download CSV</a>
+      <a class="btn btn-primary" href="{% url 'inventory-on-hand' format='pdf' %}">Download PDF</a>
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Item</th>
+        <th scope="col" class="text-center">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      {% for item in items %}
+      <tr>
+        <td><a href="{% url 'item-details' itemId=item.id %}">{{item.name}}</a></td>
+        <td class="text-center">{{item.total}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock body %}
