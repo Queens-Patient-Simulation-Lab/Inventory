@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from itemManagement.models import Location
+from itemManagement.models import Location, Item, ItemStorage
 from itemManagement.urls import URL_LOCATION_LIST
 from simulation_lab.BaseTestCaseView import BaseTestCaseView
 
@@ -47,7 +47,7 @@ class PostLocationViewTests(BaseTestCaseView):
         self.createLoggedInUser(isAdmin=True)
 
     def makeCall(self, data):
-        return self.client.post(reverse(URL_LOCATION_LIST), data=data)
+        return self.client.post(reverse(URL_LOCATION_LIST), data=data, follow=True)
 
     def test_addLocation_happyPath_givesSuccessMessage(self):
         Location.objects.create(name="TestLocationOne")
@@ -70,6 +70,14 @@ class PostLocationViewTests(BaseTestCaseView):
         self.assertEqual("TEST", first.name)
         self.assertEqual("TestDescription", first.description)
 
+    def test_addLocation_happyPath_redirects(self):
+        Location.objects.create(name="TestLocationOne")
+        data = {
+            'name': "TEST",
+            "description": " TestDescription"
+        }
+        response = self.makeCall(data)
+        self.assertRedirects(response, reverse(URL_LOCATION_LIST))
     def test_addLocation_emptyName_failsWithMessage(self):
         data = {
             'name': "",
@@ -187,3 +195,35 @@ class DeleteLocationViewTests(BaseTestCaseView):
         self.assertEqual(Location.objects.count(), 1, "Hard delete occurred")
         location = Location.objects.get(id=11)
         self.assertEqual(location.deleted, True, "Soft delete didn't occur")
+
+    def test_deleteFails_givesErrorCode400(self):
+        testLocation = Location.objects.create(id=11, name="testLocation")
+        item = Item.objects.create(title="TestItem")
+        storage = ItemStorage.objects.create(item=item, location=testLocation, quantity=13)
+
+        response = self.client.delete(reverse("location-list", args=(11,)))
+        self.assertEqual(response.status_code, 400)
+
+    def test_locationHasRelatedItems_cantDelete(self):
+        testLocation = Location.objects.create(id=11,name="testLocation")
+        item = Item.objects.create(title="TestItem")
+        storage = ItemStorage.objects.create(item=item, location=testLocation, quantity=13)
+
+        response = self.client.delete(reverse("location-list", args=(11,)))
+        self.assertEqual(response.status_code, 400)
+        response = self.client.get(reverse("location-list"))
+
+        self.assertEqual(response.context['locations'].count(), 1)
+        self.assertMessageLevel(response, self.MESSAGE_ERROR)
+
+    def test_locationHasRelatedItemsOfNoQuantity_canDelete(self):
+        testLocation = Location.objects.create(id=11,name="testLocation")
+        item = Item.objects.create(title="TestItem")
+        storage = ItemStorage.objects.create(item=item, location=testLocation, quantity=0)
+
+        response = self.client.delete(reverse("location-list", args=(11,)))
+        self.assertEqual(response.status_code, 204)
+        response = self.client.get(reverse("location-list"))
+
+        self.assertEqual(response.context['locations'].count(), 0)
+        self.assertMessageLevel(response, self.MESSAGE_SUCCESS)

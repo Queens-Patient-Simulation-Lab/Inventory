@@ -75,9 +75,18 @@ class LocationView(TemplateView):
 
     # Soft delete a location. We never hard delete locations
     def delete(self, request, id, *args, **kwargs):
-        Location.objects.filter(id=id).update(deleted=True)
+        location = Location.objects.get(id=id)
+        if location is None:
+            messages.error(request, "ID did not match any locations")
+            return HttpResponse(status=400)
+        if location.itemstorage_set.filter(quantity__gt=0).exists(): # If this location has an item with >0 quantity
+            messages.error(request, "You can't delete a location that is holding items")
+            return HttpResponse(status=400)
+        location.deleted = True
+        location.save()
         messages.success(request, "Successfully deleted")
-        return HttpResponse(status=204)  # Return an OK status with no content
+        # Todo, throw error response on failure,  and status code  400
+        return HttpResponse(status=204) # Return an OK status with no content
 
     """
     Called  when a request to edit a location is made. Throws an error if the location does not exist
