@@ -54,11 +54,11 @@ class LocationView(TemplateView):
 
         if (len(name) < 3):
             messages.error(request, "Name must be at least 3 characters")
-            return self.get(request)
+            return redirect(request.path_info)
 
         if (Location.objects.filter(deleted=False, name=name).exists()):
             messages.error(request, "You cannot have two locations with the same name.")
-            return self.get(request)
+            return redirect(request.path_info)
         try:
             newLocation = Location(name=name, description=description)
             newLocation.save()
@@ -69,9 +69,9 @@ class LocationView(TemplateView):
             if getattr(settings, "DEBUG", False):
                 messages.error(request, str(e))
             else:
-                messages.error("This submission violated the database constraints")
+                messages.error(request, "This submission violated the database constraints")
 
-        return self.get(request)
+        return redirect(request.path_info)
 
     # Soft delete a location. We never hard delete locations
     def delete(self, request, id, *args, **kwargs):
@@ -80,17 +80,17 @@ class LocationView(TemplateView):
         return HttpResponse(status=204)  # Return an OK status with no content
 
     """
-    Called  when a request to edit a location is made. Thows an error if the location does not exist
+    Called  when a request to edit a location is made. Throws an error if the location does not exist
     """
 
     def _updateLocation(self, request, id, name, description):
         locations = Location.objects.filter(id=id, deleted=False)
         if not locations.exists():
             messages.error(request, "This location does not exist")
-            return self.get(request)
+            return redirect(request.path_info)
         locations.update(
             name=name,
             description=description
         )
         messages.success(request, "Location modified successfully")
-        return self.get(request)
+        return redirect(request.path_info)
