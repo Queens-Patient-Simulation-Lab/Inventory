@@ -61,7 +61,7 @@ A page where the admin can see and modify all locations that an item can be plea
                 type: "DELETE",
                 url: "{% url 'location-list' %}" + locationId,
                 headers: {"X-CSRFToken": "{{ csrf_token }}"},
-                success: function (msg) {
+                complete: function (msg) {
                     location.reload()
                 }
             });
