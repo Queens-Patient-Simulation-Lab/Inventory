@@ -1,0 +1,84 @@
+{% extends "itemManagement/chrome_template.html" %}
+{% load crispy_forms_tags %}
+{% block body %}
+    <h1>Staff</h1>
+    <div class="table-responsive-sm">
+        <table id="staffTable" class="table table-hover ">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Role</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for person in staff %}
+              {% if person.deleteFlag == False %}
+                <tr>
+                    <th>{{ person.name }}</th>
+                    <td>{{ person.email }}</td>
+                <td>
+                    {% if person.is_superuser %}
+                        Admin
+                    {% else %}
+                        Lab Assistance
+                    {% endif %}
+                </td>
+                <td class="row">
+                    <form method="POST" action="{% url 'user-role' person.email %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-info m-1">
+                            {% if person.is_superuser %}
+                                switch to lab assistance
+                            {% else %}
+                                switch to admin
+                            {% endif %}
+                        </button>
+                    </form>
+                    <form method="POST" action="{% url 'user-delete' person.email %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger m-1">delete user</button>
+                    </form>
+                </td>
+                </tr>
+              {% endif %}
+          {% endfor %}
+          </tbody>
+        </table>
+    </div>
+
+    <div class="row justify-content-end m-1">
+        <button type="button" class="btn btn-outline-primary col-sm-1" data-toggle="modal" data-target="#userCreation">
+            Add a user
+        </button>
+    </div>
+    <div class="modal fade" id="userCreation" tabindex="-1" role="dialog" aria-labelledby="userCreationLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form class="p-2 bg-light" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="userCreationLabel">User Creation</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                            {% csrf_token %}
+                            {{ c_form|crispy }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add user</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--script>
+        $('#userCreation').on('hide.bs.modal', function() {
+            this.style.display = "block";
+        });
+    </script-->
+{% endblock body %}

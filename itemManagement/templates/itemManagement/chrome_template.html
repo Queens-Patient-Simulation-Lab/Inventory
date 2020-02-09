@@ -13,20 +13,22 @@
                         <li class="nav-item">
                             <a class="nav-link pl-0" href="{% url 'homepage'%}">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link pl-0" href="{% url 'reports'%}">Reports</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pl-0" href="#">User Accounts</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pl-0" href="{% url 'location-list'%}">Locations</a>
-                        </li>
+                        {% if request.user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link pl-0" href="{% url 'reports'%}">Reports</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link pl-0" href="{% url 'user-account'%}">User Accounts</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link pl-0" href="#">Locations</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link pl-0" href="#">KGH Catalog</a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link pl-0" href="{% url 'settings-home'%}">Settings</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pl-0" href="#">KGH Catalog</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link pl-0" href="#">Tutorial</a>

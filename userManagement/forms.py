@@ -1,5 +1,6 @@
 from django import forms
 from security.models import User
+from django.contrib.auth.forms import UserCreationForm
 
 
 class notificationUpdateForm(forms.ModelForm):
@@ -9,3 +10,18 @@ class notificationUpdateForm(forms.ModelForm):
         model = User
         fields = ['receivesAlerts']
 
+
+class userCreationForm(UserCreationForm):
+    email = forms.EmailField()
+    name = forms.CharField(max_length=100)
+
+    class Meta:
+        model = User
+        fields = ['name', 'email', 'password1', 'password2']
+
+class userRoleForm(forms.ModelForm):
+    is_superuser = forms.BooleanField(required=False, label='Admin')
+
+    class Meta:
+        model = User
+        fields = ['is_superuser']
