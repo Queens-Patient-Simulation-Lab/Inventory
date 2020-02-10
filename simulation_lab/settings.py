@@ -135,4 +135,6 @@ LOGIN_URL = 'login'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-django_heroku.settings(locals())
+# attempting to use heroku config on travis fails
+if "DYNO" in os.environ:
+    django_heroku.settings(locals())

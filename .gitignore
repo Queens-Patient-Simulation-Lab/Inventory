@@ -125,3 +125,4 @@ env
 .vscode/
 .venv/
 .idea/
+staticfiles/
