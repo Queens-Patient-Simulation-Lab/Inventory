@@ -11,6 +11,8 @@ django = "*"
 django-glrm = "*"
 django-crispy-forms = "*"
 weasyprint = "*"
+django-heroku = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3"

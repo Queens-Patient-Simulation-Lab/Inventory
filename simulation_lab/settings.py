@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
+import django_heroku
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -134,3 +134,5 @@ AUTH_USER_MODEL = 'security.User'
 LOGIN_URL = 'login'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+django_heroku.settings(locals())
