@@ -1,7 +1,6 @@
 {% extends "itemManagement/base_template.html" %}
 {% load static %}
 {% block content %}
-
 <div class="container-fluid h-100">
     <div class="row h-100">
         <aside class="col-12 col-md-2 p-0 bg-dark fixed-top">
@@ -21,7 +20,7 @@
                                 <a class="nav-link pl-0" href="{% url 'user-account'%}">User Accounts</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link pl-0" href="#">Locations</a>
+                                <a class="nav-link pl-0" href="{% url 'location-list'%}">Locations</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link pl-0" href="#">KGH Catalog</a>

@@ -19,27 +19,31 @@
                     <th>{{ person.name }}</th>
                     <td>{{ person.email }}</td>
                 <td>
-                    {% if person.is_superuser %}
-                        Admin
+                    {% if person.email !=  request.user.email %}
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {% if person.is_superuser %}
+                                    Admin
+                                {% else %}
+                                    Lab Assistance
+                                {% endif %}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="{% url 'user-admin' person.email %}">Admin</a>
+                                <a class="dropdown-item" href="{% url 'user-lab-assistance' person.email %}">Lab Assistance</a>
+                            </div>
+                        </div>
                     {% else %}
-                        Lab Assistance
+                        <a class="btn btn-sm btn-outline-secondary text-secondary">Admin</a>
                     {% endif %}
                 </td>
                 <td class="row">
-                    <form method="POST" action="{% url 'user-role' person.email %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-outline-info m-1">
-                            {% if person.is_superuser %}
-                                switch to lab assistance
-                            {% else %}
-                                switch to admin
-                            {% endif %}
-                        </button>
-                    </form>
-                    <form method="POST" action="{% url 'user-delete' person.email %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-outline-danger m-1">delete user</button>
-                    </form>
+                    {% if person.email !=  request.user.email %}
+                        <form method="POST" action="{% url 'user-delete' person.email %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger m-1">delete user</button>
+                        </form>
+                    {% endif %}
                 </td>
                 </tr>
               {% endif %}
@@ -53,6 +57,7 @@
             Add a user
         </button>
     </div>
+    <!-- TODO EmailInvitation -->
     <div class="modal fade" id="userCreation" tabindex="-1" role="dialog" aria-labelledby="userCreationLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -75,10 +80,4 @@
             </div>
         </div>
     </div>
-
-    <!--script>
-        $('#userCreation').on('hide.bs.modal', function() {
-            this.style.display = "block";
-        });
-    </script-->
 {% endblock body %}

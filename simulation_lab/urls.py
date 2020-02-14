@@ -15,12 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls import (
+handler403, handler404, handler500
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('security.urls')), # TODO: This path should be security but for now its the index
     path('item/', include('itemManagement.urls')),
     path('reports/', include('reports.urls')),
-    path('userManagement/', include('userManagement.urls'))
+    path('userManagement/', include('userManagement.urls')),
 
 ]
+
+handler403 = 'security.views.handler403'
+handler404 = 'security.views.handler404'
+handler500 = 'security.views.handler500'

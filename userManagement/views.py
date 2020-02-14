@@ -35,11 +35,15 @@ def settings(request):
 
 
 def userAccount(request):
+    if request.method == 'GET':
+        if not request.user.is_superuser:
+            return render(request, "security/403.html", status=403)
+
     if request.method == 'POST':
         c_form = userCreationForm(request.POST)
         if c_form.is_valid():
             c_form.save()
-            messages.success(request, 'Account was successfully created!')
+            messages.success(request, f'Account was successfully created!')
             return redirect('user-account')
     else:
         c_form = userCreationForm(request.POST)
@@ -51,13 +55,13 @@ def userAccount(request):
 
     return render(request, 'userManagement/userAccount.html', context)
 
-
+#TODO The page is to create a user account when user clicks the link in the invitation email
 def userRegister(request):
     if request.method == 'POST':
         c_form = userCreationForm(request.POST)
         if c_form.is_valid():
             c_form.save()
-            messages.success(request, 'Account was successfully created!')
+            messages.success(request, f'Account was successfully created!')
             return redirect('user-account')
     else:
         c_form = userCreationForm(request.POST)
@@ -75,23 +79,22 @@ def userDelete(request, email):
     u.groups.all().delete()
     u.deleteFlag = True
     u.save()
-    messages.success(request, 'Account was successfully deleted!')
+    messages.success(request, f'Account {email} was successfully deleted!')
 
     return redirect('user-account')
 
-def userRole(request, email):
+def userAdmin(request, email):
     u = User.objects.filter(email=email).first()
-    admin = Group.objects.get(name="admin")
-    labAssistance = Group.objects.get(name="labAssistance")
-    if u.is_superuser:
-        u.is_superuser = False
-        admin.user_set.remove(u)
-        labAssistance.user_set.add(u)
-    else:
-        u.is_superuser = True
-        labAssistance.user_set.remove(u)
-        admin.user_set.add(u)
+    u.is_superuser = True
     u.save()
-    messages.success(request, 'Account role was successfully changed!')
+    messages.success(request, f'{email}\'s account role was successfully changed!')
+
+    return redirect('user-account')
+
+def userLabAssistance(request, email):
+    u = User.objects.filter(email=email).first()
+    u.is_superuser = False
+    u.save()
+    messages.success(request, f'{email}\'s account role was successfully changed!')
 
     return redirect('user-account')
