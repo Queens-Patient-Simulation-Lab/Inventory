@@ -6,19 +6,32 @@ from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.views.generic import TemplateView
+from haystack.generic_views import SearchView
+from haystack.query import SearchQuerySet
 
 from itemManagement.models import Item, Location
 from simulation_lab import settings
 
 
-def homePage(request):
-    context = {
-        'items': [
-            item.getItemSummary() for item in Item.objects.all()
-        ]
-    }
+class HomePage(SearchView):
+    template_name = "itemManagement/homepage.html"
 
-    return render(request, 'itemManagement/homepage.html', context=context)
+    def get_queryset(self):
+        queryset = super(HomePage, self).get_queryset()
+        return queryset.filter(deleted=False)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(HomePage, self).get_context_data(*args, **kwargs)
+        print(context)
+        objectList = context['object_list']
+        if (len(objectList) == 0):
+            context['items'] = [item.getItemSummary() for item in Item.objects.all()]  # Todo, return list of most recently used items
+        else:
+            context['items'] = [item.object.getItemSummary() for item in objectList]
+
+        if (len(objectList) == 0 and len(context['query']) != 0):
+            messages.warning(self.request, "No results were found. Showing recently used items instead.")
+        return context
 
 
 class ItemDetailsView(TemplateView):
@@ -44,6 +57,7 @@ class LocationView(TemplateView):
     Handles post requests to the page. If an ID is supplied, it updates an existing location. Otherwise
     it creates a new one. 
     """
+
     def post(self, request, *args, **kwargs):
         id = request.POST.get('id', "").strip()
         name = request.POST.get('name', "").strip()
@@ -79,14 +93,14 @@ class LocationView(TemplateView):
         if location is None:
             messages.error(request, "ID did not match any locations")
             return HttpResponse(status=400)
-        if location.itemstorage_set.filter(quantity__gt=0).exists(): # If this location has an item with >0 quantity
+        if location.itemstorage_set.filter(quantity__gt=0).exists():  # If this location has an item with >0 quantity
             messages.error(request, "You can't delete a location that is holding items")
             return HttpResponse(status=400)
         location.deleted = True
         location.save()
         messages.success(request, "Successfully deleted")
         # Todo, throw error response on failure,  and status code  400
-        return HttpResponse(status=204) # Return an OK status with no content
+        return HttpResponse(status=204)  # Return an OK status with no content
 
     """
     Called  when a request to edit a location is made. Throws an error if the location does not exist

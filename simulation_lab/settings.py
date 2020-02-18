@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'reports.apps.ReportsConfig',
     'userManagement.apps.UserManagementConfig',
     'crispy_forms',
+    "haystack",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -109,6 +110,19 @@ AUTH_PASSWORD_VALIDATORS = [
 MESSAGE_TAGS = {
     messages.ERROR: 'danger'  # Bootstrap alert color tags use danger instead of error
 }
+
+import os
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+    },
+}
+# Update one index every time an Item (or any indexed model) is saved or deleted
+# This is synchronous and can be slow in larger databases but works for the current use.
+# This keeps indices as up to date as possible. The alternative is scheduling index updating every x period of time
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
