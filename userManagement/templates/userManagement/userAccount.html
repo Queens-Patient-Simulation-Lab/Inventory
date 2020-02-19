@@ -13,8 +13,7 @@
             </tr>
           </thead>
           <tbody>
-          {% for person in staff %}
-              {% if person.deleteFlag == False %}
+            {% for person in staff %}
                 <tr>
                     <th>{{ person.name }}</th>
                     <td>{{ person.email }}</td>
@@ -25,12 +24,12 @@
                                 {% if person.is_superuser %}
                                     Admin
                                 {% else %}
-                                    Lab Assistance
+                                    Lab Assistant
                                 {% endif %}
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item" href="{% url 'user-admin' person.email %}">Admin</a>
-                                <a class="dropdown-item" href="{% url 'user-lab-assistance' person.email %}">Lab Assistance</a>
+                                <a class="dropdown-item" href="{% url 'user-lab-assistant' person.email %}">Lab Assistant</a>
                             </div>
                         </div>
                     {% else %}
@@ -46,8 +45,7 @@
                     {% endif %}
                 </td>
                 </tr>
-              {% endif %}
-          {% endfor %}
+            {% endfor %}
           </tbody>
         </table>
     </div>

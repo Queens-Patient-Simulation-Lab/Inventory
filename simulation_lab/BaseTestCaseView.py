@@ -12,8 +12,7 @@ class BaseTestCaseView(TestCase):
 
     def createLoggedInUser(self, isAdmin):
         if isAdmin:
-            User.objects.create_superuser("test@test.com", "Test1234")
+            User.objects.create_user(email="test@test.com", password="Test1234", is_superuser=True)
         else:
             User.objects.create_user("test@test.com", "Test1234")
-
-        #self.client.force_login(User.objects.create_user("test@a.com", "test"))
+        self.client.login(email="test@test.com", password="Test1234")

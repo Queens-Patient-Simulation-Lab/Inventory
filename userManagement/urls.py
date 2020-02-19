@@ -7,5 +7,5 @@ urlpatterns = [
     path('user_register/', views.userRegister, name="user-register"),
     path('user_delete/<str:email>/', views.userDelete, name="user-delete"),
     path('user_admin/<str:email>/', views.userAdmin, name="user-admin"),
-    path('user_labAssistance/<str:email>/', views.userLabAssistance, name="user-lab-assistance"),
+    path('user_labAssistant/<str:email>/', views.userLabAssistant, name="user-lab-assistant"),
 ]

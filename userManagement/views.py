@@ -2,14 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.models import Group
 from .forms import notificationUpdateForm, userCreationForm
+from global_login_required import login_not_required
 from security.models import User
 
 
 # Create your views here.
-
-
 def settings(request):
     if request.method == 'POST':
         p_form = PasswordChangeForm(request.user, request.POST)
@@ -49,7 +47,7 @@ def userAccount(request):
         c_form = userCreationForm(request.POST)
 
     context = {
-        'staff': User.objects.all(),
+        'staff': User.objects.filter(deleteFlag=False),
         'c_form': c_form,
     }
 
@@ -76,12 +74,12 @@ def userRegister(request):
 
 def userDelete(request, email):
     u = User.objects.filter(email=email).first()
-    u.groups.all().delete()
     u.deleteFlag = True
     u.save()
     messages.success(request, f'Account {email} was successfully deleted!')
 
     return redirect('user-account')
+
 
 def userAdmin(request, email):
     u = User.objects.filter(email=email).first()
@@ -91,7 +89,8 @@ def userAdmin(request, email):
 
     return redirect('user-account')
 
-def userLabAssistance(request, email):
+
+def userLabAssistant(request, email):
     u = User.objects.filter(email=email).first()
     u.is_superuser = False
     u.save()
