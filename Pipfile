@@ -13,6 +13,8 @@ django-crispy-forms = "*"
 weasyprint = "*"
 django-heroku = "*"
 gunicorn = "*"
+django-haystack = {git = "https://github.com/django-haystack/django-haystack.git",ref = "master"} #TODO, change to release once release works
+whoosh = "*"
 
 [requires]
 python_version = "3"

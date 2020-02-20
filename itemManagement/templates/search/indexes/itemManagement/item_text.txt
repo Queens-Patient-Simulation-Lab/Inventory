@@ -1,0 +1,6 @@
+{# https://django-haystack.readthedocs.io/en/master/tutorial.html #}
+{# This template decides what text is searchable for the Item object #}
+{{ object.title }}
+{% for tag in object.tag_set.all %}
+    {{ tag.name }}
+{% endfor %}
