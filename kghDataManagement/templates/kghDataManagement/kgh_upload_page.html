@@ -1,0 +1,30 @@
+{% extends "itemManagement/chrome_template.html" %}
+{% load static %}
+{% block body %}
+    <div class="jumbotron mx-auto col-lg-6">
+        <h1 class="mx-auto text-center">Upload Your KGH Spreadsheet</h1>
+
+        {#    TODO Instruction. Explain how it works and what formats are accepted#}
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque eveniet incidunt officiis optio, quae
+            quas repellat rerum sed? Aspernatur assumenda commodi explicabo iure mollitia neque praesentium. Accusantium
+            et nihil nostrum!</p>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                {% csrf_token %}
+
+                <label for="uploadKghFile">Uploading the KGH spreadsheet here:</label>
+                {#                TODO, more file types#}
+                <div class="row">
+                    <input type="file" class="form-control-file col-6" accept=".csv" id="uploadKghFile" name="kghFile">
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary">Click here to download a template of what the spreadsheet should look like</button>
+
+        </form>
+    </div>
+
+{% endblock %}
