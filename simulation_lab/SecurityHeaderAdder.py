@@ -27,7 +27,7 @@ def SecurityHeaderAdder(get_response):
 
         # requires that the tls cert the page is served with is published in a trusted certificate transparency log
         # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Expect-CT
-        # response["Expect-CT"] = "max-age=86400, enforce" enable after verifying hosting is in CT log
+        response["Expect-CT"] = "max-age=86400, enforce"
 
         # requires the domain and all subdomains be served over https (doesn't effect localhost)
         # it has a long period and may be preloaded so can't be easily disabled
