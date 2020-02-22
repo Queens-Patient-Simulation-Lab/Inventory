@@ -5,6 +5,8 @@ python:
 install:
   - pip install pipenv
   - pipenv sync
+  - npm ci
+  - ./node_modules/.bin/webpack --config webpack.config.js --mode=production
 # command to run tests
 script:
   - pipenv run python manage.py test
