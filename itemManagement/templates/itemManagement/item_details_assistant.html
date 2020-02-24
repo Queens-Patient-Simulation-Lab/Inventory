@@ -27,9 +27,9 @@
                                     -
                                     <span class="glyphicon glyphicon-minus"></span>
                                 </button>
-                                <input type="text" id="amount"
-                                    class="form-control item_quantity col-4 col-sm-3 text-center"
-                                    value="{{ location.quantity }}" type="number">
+                                <input type="number" min="0" inputmode="numeric" pattern="[0-9]*" title="Non-negative integer" id="amount"
+                                       class="form-control item_quantity col-4 col-sm-3 text-center"
+                                       value="{{ location.quantity }}">
                                 <button type="button" class="btn btn-success increment rounded-0"> +
                                     <span class="glyphicon glyphicon-plus"></span>
                                 </button>
@@ -46,10 +46,10 @@
         <div class="row">
             <div class="container col-lg-6 col-lg-offset-8"></div>
             <div class="container-fluid col-lg-3 col-6">
-                <button type="button" class="btn btn-danger col-12">Reset</button>
+                <button type="button" class="btn btn-danger col-12" data-dismiss="modal">Reset</button>
             </div>
             <div class="container-fluid col-lg-3 col-6">
-                <button type="button" class="btn btn-primary col-12">Confirm</button>
+                <button type="submit" class="btn btn-primary col-12 confirm_quantity">Confirm</button>
             </div>
         </div>
 

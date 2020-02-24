@@ -51,10 +51,19 @@ class ItemDetailsView(TemplateView):
         print(f"Item ID requested: {itemId}")
 
         context = Item.objects.get(id=itemId).getItemDetails()
+
         if isAdmin:
             return render(request, 'itemManagement/item_details_admin.html', context=context)
         else:
             return render(request, 'itemManagement/item_details_assistant.html', context=context)
+
+    def post(request):
+        data = []
+        items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title").filter(deleted=False))
+        for item in items:
+            locations = [{"quantity": x["quantity"]} for x in item["locations"]]
+            data.append({"name": item["name"], "id": item["itemId"], "locations": locations})
+        return render(request, 'web/cycle.html', {"items": data})
 
 
 class LocationView(TemplateView):
