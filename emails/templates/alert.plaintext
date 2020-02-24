@@ -1,0 +1,1 @@
+{{name}} is now at {{level}} {{unit|default_if_none:"units"}}. The par level is set at {{par}} {{unit|default_if_none:"units"}}.
