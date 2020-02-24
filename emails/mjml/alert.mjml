@@ -1,0 +1,9 @@
+<mjml>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text><a href="{{link}}">{{name}}</a> is now at {{level}} {{unit|default_if_none:"units"}}. The par level is set at {{par}} {{unit|default_if_none:"units"}}.</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
