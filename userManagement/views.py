@@ -5,10 +5,14 @@ from django.contrib.auth.forms import PasswordChangeForm
 from .forms import notificationUpdateForm, userCreationForm
 from global_login_required import login_not_required
 from security.models import User
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
 def settings(request):
+    logger.warning(f"settings page")
     if request.method == 'POST':
         p_form = PasswordChangeForm(request.user, request.POST)
         n_form = notificationUpdateForm(request.POST, instance=request.user)
@@ -16,10 +20,12 @@ def settings(request):
             user = p_form.save()
             update_session_auth_hash(request, user)  # Important!
             messages.success(request, 'Your password was successfully updated!')
+            logger.debug(f"changed password")
             return redirect('settings-home')
         elif n_form.is_valid() and 'notification' in request.POST:
             n_form.save()
             messages.success(request, 'Your notification status was successfully updated!')
+            logger.debug(f"changed notification status")
             return redirect('settings-home')
     else:
         p_form = PasswordChangeForm(request.user)

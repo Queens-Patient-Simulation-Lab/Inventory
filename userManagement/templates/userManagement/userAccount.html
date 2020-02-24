@@ -68,7 +68,7 @@
                     </div>
                     <div class="modal-body">
                             {% csrf_token %}
-                            {{ c_form|crispy }}
+                            {% crispy c_form %}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

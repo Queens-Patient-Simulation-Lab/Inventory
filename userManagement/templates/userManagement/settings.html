@@ -8,7 +8,7 @@
         <div class="collapse" id="change_password">
             <form class="p-2 bg-light" method="POST">
                 {% csrf_token %}
-                {{ p_form|crispy }}
+                {% crispy p_form %}
                 <div class="row justify-content-end border-top border-primary m-1">
                     <div class="col-sm-2 ">
                         <button type="submit" class="btn btn-outline-primary mt-2" name="changePassword">Submit</button>
@@ -24,7 +24,7 @@
             <div class="collapse" id="notification">
                 <form class="p-2 bg-light" method="POST">
                     {% csrf_token %}
-                    {{ n_form|crispy }}
+                    {% crispy n_form %}
                     <div class="row justify-content-end border-top border-primary m-1">
                         <div class="col-sm-2">
                             <button type="submit" class="btn btn-outline-primary mt-2" name="notification">Submit</button>
