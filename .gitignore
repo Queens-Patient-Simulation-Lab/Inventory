@@ -131,6 +131,3 @@ webpack-stats.json
 staticfiles/
 
 simulation_lab/whoosh_index
-
-
-package-lock.json
