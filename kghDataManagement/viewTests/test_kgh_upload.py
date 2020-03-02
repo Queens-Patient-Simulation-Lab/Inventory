@@ -121,7 +121,27 @@ class PostKghSpreadsheet(BaseTestCaseView):
         self.assertEqual(itemOne.title, "Item One")
 
     def test_kghItemsSoftDeleted_doesNothingAndSucceeds(self):
-        raise Exception
+        itemOne = Item.objects.create(
+            title="Item One",
+            kghID=11,
+            price=5.45,
+            deleted=True
+        )
+
+        itemList = [
+            self.createCsvRowData(material="11", maPrice="11.50", materialDescription="somethingDifferent"),
+            self.createCsvRowData(material="22", maPrice="3.75")
+        ]
+        response = self.makeCallWithCSV(itemList)
+
+        self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
+
+        itemOne.refresh_from_db()
+
+        self.assertEqual(itemOne.kghID, "11")
+        self.assertEqual(itemOne.price, Decimal("5.45"))
+        self.assertEqual(itemOne.title, "Item One")
+        self.assertEqual(itemOne.deleted,True)
 
     def test_kghItemsInDatabase_updatesItemsToCorrectValues(self):
         itemOne = Item.objects.create(
@@ -309,8 +329,8 @@ class PostKghSpreadsheet(BaseTestCaseView):
 
         itemList = [
             self.createCsvRowData(material="11", maPrice="11.50"),
-            self.createCsvRowData(material="123456789123456789123456789", oldMaterialNumbers="22"),  # KGH ID maxlength currently 20
-            self.createCsvRowData(material="22", maPrice="3.75")
+            self.createCsvRowData(material="22", maPrice="dd"),
+            self.createCsvRowData(material="33", maPrice="3.75")
         ]
         response = self.makeCallWithCSV(itemList)
 

@@ -88,12 +88,6 @@ class KghUploadPage(TemplateView):
             return redirect('kgh-upload')
 
 
-        # If there are any items with wrong ID's (not in spreadsheet), give warning. Multiple ways
-        # 1. At the end, check that database id's are a subset of material ID's
-        # 2. After each item is updated, remove item from dictionary
-
-        # Show table of changes (or lack thereof)
-
         messages.success(request, "File upload successful")
         context = {
             "changes": changes
@@ -103,15 +97,16 @@ class KghUploadPage(TemplateView):
     def handleItemPriceChange(self, row, kghItem):
         newPriceString = row.get(self.ROW_PRICE).strip()
         newPrice = StringUtils.getFloatOrNone(newPriceString)
-        if (newPrice != None):
-            oldPrice = kghItem.price
-            if oldPrice != newPrice:
-                kghItem.price = float(newPrice)
-                return ({
-                    self.CHANGE_TITLE: kghItem.title,
-                    self.CHANGE_OLD_PRICE: oldPrice,
-                    self.CHANGE_NEW_PRICE: newPrice
-                })
+        if newPrice == None:
+            raise Exception(f"Could not parse material price for item with KGH ID: {kghItem.kghID}. Please make sure it is a decimal with no non-digit characters.")
+        oldPrice = kghItem.price
+        if oldPrice != newPrice:
+            kghItem.price = float(newPrice)
+            return ({
+                self.CHANGE_TITLE: kghItem.title,
+                self.CHANGE_OLD_PRICE: oldPrice,
+                self.CHANGE_NEW_PRICE: newPrice
+            })
         return {}
 
     def getItemMatchingOldIds(self, oldIds, itemDictionary):
