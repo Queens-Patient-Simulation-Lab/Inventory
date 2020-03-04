@@ -34,6 +34,7 @@ def logout(request):
     return redirect('login')
 
 
+@login_not_required
 def handler403(request, *args, **argv):
     return render(request, 'security/404.html', status=404)
 

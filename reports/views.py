@@ -7,8 +7,8 @@ from django.http import HttpResponse, FileResponse
 from datetime import date
 from weasyprint import HTML
 from django.utils import timezone
-
-
+from emails.email import EmailManager
+from itemManagement.models import Item
 def MainPage(request):
     return render(request, 'web/main.html')
 

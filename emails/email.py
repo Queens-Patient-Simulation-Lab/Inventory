@@ -45,18 +45,18 @@ class EmailManager:
         EmailManager.__sendEmail(to=emails, subject=f"Inventory Level Alert: {item.title}", plaintext=plain, html=html)
 
     @staticmethod
-    def sendPasswordResetEmail(user, token):
+    def sendPasswordResetEmail(user, token, uidb64):
         EmailManager.__throwIfEmailIsntConfigured()
-        args = {"link": f"https://{os.environ['DOMAIN']}{reverse('password-reset', args=(token,))}"}
+        args = {"link": f"https://{os.environ['DOMAIN']}{reverse('forget-password-confirm', args=(uidb64, token,))}"}
         html = render_to_string('reset.html', args)
         plain = render_to_string('reset.plaintext', args)
         EmailManager.__sendEmail(to=user.email, subject=f"Patient Simulation Lab Inventory Password Reset Request", plaintext=plain, html=html)
 
 
     @staticmethod
-    def sendAccountSetupEmail(user, token):
+    def sendAccountSetupEmail(user, token, uidb64):
         EmailManager.__throwIfEmailIsntConfigured()
-        args = {"link": f"https://{os.environ['DOMAIN']}{reverse('account-setup', args=(token,))}"}
+        args = {"link": f"https://{os.environ['DOMAIN']}{reverse('user-register', args=(uidb64, token,))}"}
         html = render_to_string('newAccount.html', args)
         plain = render_to_string('newAccount.plaintext', args)
         EmailManager.__sendEmail(to=user.email, subject=f"Patient Simulation Lab Inventory Account Creation", plaintext=plain, html=html)

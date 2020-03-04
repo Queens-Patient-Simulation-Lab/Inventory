@@ -12,12 +12,11 @@ class notificationUpdateForm(forms.ModelForm):
 
 
 class userCreationForm(UserCreationForm):
-    email = forms.EmailField()
     name = forms.CharField(max_length=100)
 
     class Meta:
         model = User
-        fields = ['name', 'email', 'password1', 'password2']
+        fields = ['name', 'password1', 'password2']
 
 class userRoleForm(forms.ModelForm):
     is_superuser = forms.BooleanField(required=False, label='Admin')

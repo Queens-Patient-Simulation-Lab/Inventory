@@ -52,7 +52,7 @@
 
     <div class="row justify-content-end m-1">
         <button type="button" class="btn btn-outline-primary col-sm-1" data-toggle="modal" data-target="#userCreation">
-            Add a user
+            Invite user
         </button>
     </div>
     <!-- TODO EmailInvitation -->
@@ -61,18 +61,19 @@
             <div class="modal-content">
                 <form class="p-2 bg-light" method="POST">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="userCreationLabel">User Creation</h5>
+                        <h5 class="modal-title" id="userCreationLabel">User Invitation</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                             {% csrf_token %}
-                            {% crispy c_form %}
+                            <label for="email">Enter email:</label>
+                            <input type="email" id="email" name="email">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add user</button>
+                        <button type="submit" class="btn btn-primary">send email</button>
                     </div>
                 </form>
             </div>
