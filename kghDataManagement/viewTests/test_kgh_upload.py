@@ -141,7 +141,7 @@ class PostKghSpreadsheet(BaseTestCaseView):
         self.assertEqual(itemOne.kghID, "11")
         self.assertEqual(itemOne.price, Decimal("5.45"))
         self.assertEqual(itemOne.title, "Item One")
-        self.assertEqual(itemOne.deleted,True)
+        self.assertEqual(itemOne.deleted, True)
 
     def test_kghItemsInDatabase_updatesItemsToCorrectValues(self):
         itemOne = Item.objects.create(
@@ -211,20 +211,35 @@ class PostKghSpreadsheet(BaseTestCaseView):
 
         changesOne = next(x for x in changes if x["kghId"] == "11")  # Find the first element with kghId = "11"
         self.assertIsNotNone(changesOne)
-        assert "oldKghId" not in changesOne
         self.assertEqual(changesOne["title"], "Item One")
-        self.assertEqual(changesOne["oldPrice"],Decimal(0))
+        self.assertEqual(changesOne["oldPrice"], Decimal(0))
         self.assertEqual(changesOne["newPrice"], Decimal("11.5"))
 
         changesTwo = next(x for x in changes if x["kghId"] == "22")  # Find the first element with kghId = "22"
         self.assertIsNotNone(changesTwo)
-        assert "oldKghId" not in changesTwo
         self.assertEqual(changesTwo["title"], "Item Two")
         self.assertEqual(changesTwo["oldPrice"], Decimal("77"))
         self.assertEqual(changesTwo["newPrice"], Decimal("3.75"))
 
     def test_noFieldsChange_contextShowsNoChanges(self):
-        raise Exception
+        itemOne = Item.objects.create(
+            title="Item One",
+            kghID=11,
+            price=55
+        )
+
+        itemList = [
+            self.createCsvRowData(material="11", maPrice="55")
+        ]
+        response = self.makeCallWithCSV(itemList)
+
+        self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
+
+        # [kghId, oldKghId, title, oldPrice, newPrice]
+        changes = response.context['changes']
+        self.assertEqual(len(changes), 0)
+        self.assertEqual(response.context['catalogUploaded'], True)
+
     # Old material no. can be presented as one or more numbers separated by a space
     def test_kghOldMaterialNumberSingleElementMatchesItem_updatesItemIdAndProperties(self):
         itemOne = Item.objects.create(
@@ -304,8 +319,8 @@ class PostKghSpreadsheet(BaseTestCaseView):
         self.assertEqual(len(changes), 1)
 
         changesOne = changes[0]
-        self.assertEqual(changesOne["kghId"], 25)
-        self.assertEqual(changesOne["oldKghId"], 11)
+        self.assertEqual(changesOne["kghId"], "25")
+        self.assertEqual(changesOne["oldKghId"], "11")
         self.assertEqual(changesOne["title"], "Item One")
         self.assertEqual(changesOne["oldPrice"], 3)
         self.assertEqual(changesOne["newPrice"], 78)
@@ -350,22 +365,42 @@ class PostKghSpreadsheet(BaseTestCaseView):
         self.assertEqual(itemThree.kghID, "33")
         self.assertEqual(itemThree.price, Decimal("12"))
 
-    def test_kghItemPriceMissing_doesntOverwriteDatabasePrice(self):
+    def test_kghItemPriceMissing_throwsExceptionAndMakesNoChanges(self):
         itemOne = Item.objects.create(
             title="Item One",
-            price="3",
+            price=27,
             kghID=11
+        )
+        itemTwo = Item.objects.create(
+            title="Item Two",
+            price="77",
+            kghID=22
+        )
+        itemThree = Item.objects.create(
+            title="Item Three",
+            price="12",
+            kghID=33
         )
 
         itemList = [
-            self.createCsvRowData(material="11"),
+            self.createCsvRowData(material="11", maPrice="11.50"),
+            self.createCsvRowData(material="22", maPrice=""), # No price given
+            self.createCsvRowData(material="33", maPrice="3.75")
         ]
         response = self.makeCallWithCSV(itemList)
 
-        self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
+        self.assertMessageLevel(response, self.MESSAGE_ERROR)
 
         itemOne.refresh_from_db()
+        itemTwo.refresh_from_db()
+        itemThree.refresh_from_db()
 
         self.assertEqual(itemOne.kghID, "11")
-        self.assertEqual(itemOne.price, Decimal("3"))
+        self.assertEqual(itemOne.price, Decimal("27"))
         self.assertEqual(itemOne.title, "Item One")
+
+        self.assertEqual(itemTwo.kghID, "22")
+        self.assertEqual(itemTwo.price, Decimal("77.0"))
+
+        self.assertEqual(itemThree.kghID, "33")
+        self.assertEqual(itemThree.price, Decimal("12"))

@@ -1,5 +1,6 @@
 import csv
 import traceback
+from decimal import Decimal
 
 from django.contrib import messages
 from django.db import transaction, IntegrityError
@@ -59,23 +60,23 @@ class KghUploadPage(TemplateView):
                     if kghItem is not None:  # If an Item has the material number
                         change = self.handleItemPriceChange(row, kghItem)
                         # If a change was made
-                        if (len(change) is not 0):
+                        if (len(change) != 0):
                             change[self.CHANGE_KGH_ID] = kghItem.kghID
                             changes.append(change)
 
+                    # If an item matches an old KGH item ID
                     elif (kghItem := self.getItemMatchingOldIds(row.get(self.ROW_OLD_MATERIAL), kghIdDict)) is not None:
                         change = self.handleItemPriceChange(row, kghItem)
 
-
                         title = kghItem.title
-                        oldKghId = kghItem.kghID
                         newKghId = row.get(self.ROW_MATERIAL)
 
                         change[self.CHANGE_TITLE] = title
-                        change[self.CHANGE_OLD_KGH_ID] = oldKghId
                         change[self.CHANGE_KGH_ID] = newKghId
 
                         kghItem.kghID = newKghId
+
+                        changes.append(change)
 
                 Item.objects.bulk_update(list(kghIdDict.values()), ["kghID", "price"])
         except IntegrityError as e:
@@ -87,28 +88,39 @@ class KghUploadPage(TemplateView):
             traceback.print_exc()
             return redirect('kgh-upload')
 
-
         messages.success(request, "File upload successful")
         context = {
-            "changes": changes
+            "changes": changes,
+            "catalogUploaded": True
         }
+        #  TODO, make a table of all changes (context already provided)
+        # If no changes are made, let the user know
+        # Use the global keys to reference each field
+
         return render(request, 'kghDataManagement/kgh_upload_page.html', context=context)
 
+    # row: A row (as a dictionary) of the KGH catalog, as parsed from decode_utf8()
+    # kghItem: An [Item] that has a valid KGH ID (either outdated or present)
+    # Updates kghItem price and returns a dictionary of the changes made for the response context
     def handleItemPriceChange(self, row, kghItem):
         newPriceString = row.get(self.ROW_PRICE).strip()
         newPrice = StringUtils.getFloatOrNone(newPriceString)
         if newPrice == None:
-            raise Exception(f"Could not parse material price for item with KGH ID: {kghItem.kghID}. Please make sure it is a decimal with no non-digit characters.")
+            raise Exception(
+                f"Could not parse material price for item with KGH ID: {kghItem.kghID}. Please make sure it is a decimal with no non-digit characters.")
         oldPrice = kghItem.price
-        if oldPrice != newPrice:
-            kghItem.price = float(newPrice)
+        if float(oldPrice) != newPrice:
+            kghItem.price = newPrice
             return ({
                 self.CHANGE_TITLE: kghItem.title,
                 self.CHANGE_OLD_PRICE: oldPrice,
-                self.CHANGE_NEW_PRICE: newPrice
+                self.CHANGE_NEW_PRICE: newPrice,
+                self.CHANGE_OLD_KGH_ID: kghItem.kghID
             })
         return {}
 
+    # oldIds: A space separated string of old KGH IDs
+    # itemDictionary: itemDictionary[kghID] == Item
     def getItemMatchingOldIds(self, oldIds, itemDictionary):
         ids = oldIds.split(" ")
         for oldId in ids:

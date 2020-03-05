@@ -1,18 +1,16 @@
 {% extends "itemManagement/chrome_template.html" %}
 {% load static %}
 {% block body %}
-    <div class="jumbotron mx-auto col-lg-6">
-        <h1 class="mx-auto text-center">Upload Your KGH Spreadsheet</h1>
 
-        {#    TODO Instruction. Explain how it works and what formats are accepted#}
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque eveniet incidunt officiis optio, quae
-            quas repellat rerum sed? Aspernatur assumenda commodi explicabo iure mollitia neque praesentium. Accusantium
-            et nihil nostrum!</p>
+    <div class="jumbotron mx-auto col-lg-8">
+        <h1 class="mx-auto text-center">Upload Your KGH Catalog</h1>
+
+        <br>
         <form method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 {% csrf_token %}
 
-                <label for="uploadKghFile">Uploading the KGH spreadsheet here:</label>
+                <label for="uploadKghFile">Upload the new KGH catalog here to update item prices:</label>
                 {#                TODO, more file types#}
                 <div class="row">
                     <input type="file" class="form-control-file col-6" accept=".csv" id="uploadKghFile" name="kghFile">
@@ -22,9 +20,48 @@
                 </div>
             </div>
 
-            <button type="button" class="btn btn-primary">Click here to download a template of what the spreadsheet should look like</button>
+            <button type="button" class="btn btn-primary">Click here to download a template of what the spreadsheet
+                should look like
+            </button>
 
         </form>
     </div>
+
+    {% if catalogUploaded %}
+        <div class="jumbotron mx-auto col-lg-8">
+            {% if changes %}
+                <h3>Changes Found</h3>
+                <table class="table text-center">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Item Name</th>
+                    <th scope="col">Old ID</th>
+                    <th scope="col">New ID</th>
+                    <th scope="col">Old Price</th>
+                    <th scope="col">New Price</th>
+                </tr>
+                <tbody>
+
+
+            {% endif %}
+            {% for change in changes %}
+                <tr>
+                    <td>{{ change.title }}</td>
+                    <td>{{ change.oldKghId }}</td>
+                    <td>{{ change.kghId }}</td>
+                    <td>{{ change.oldPrice }}</td>
+                    <td>{{ change.newPrice }}</td>
+                </tr>
+            {% empty %}
+                <h3>No changes been found</h3>
+            {% endfor %}
+            {% if changes %}
+                </tbody>
+                </table>
+            {% endif %}
+        </div>
+
+    {% endif %}
+
 
 {% endblock %}

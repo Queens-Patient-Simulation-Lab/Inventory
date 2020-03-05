@@ -8,7 +8,7 @@ class BaseTestCaseView(TestCase):
     MESSAGE_ERROR = "danger"
 
     def assertMessageLevel(self, response, messageLevel):
-        assert messageLevel in [x.tags for x in response.context['messages']],f"{messageLevel} banner was not provided"
+        assert messageLevel in [x.tags for x in response.context['messages']],f"{messageLevel} banner was not provided."
 
     def createLoggedInUser(self, isAdmin):
         # TODO: Implement logic for admin
