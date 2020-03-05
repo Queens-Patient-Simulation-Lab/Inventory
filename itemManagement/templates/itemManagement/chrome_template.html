@@ -1,8 +1,5 @@
 {% extends "itemManagement/base_template.html" %}
 {% load static %}
-{% block head %}
-<link rel="stylesheet" href="{% static 'itemManagement/chrome.css' %}">
-{% endblock head %}
 {% block content %}
 
 <div class="container-fluid h-100">
@@ -10,7 +7,7 @@
         <aside class="col-12 col-md-2 p-0 bg-dark fixed-top">
             <nav class="navbar navbar-expand-md navbar-dark bg-dark flex-md-column flex-row align-items-start py-2">
                 <a class="navbar-brand" href="#"><span class="font-weight-bold">Brand</span></a>
-                <a class="navbar-toggler" href="#" data-toggle="collapse" data-target=".navbar-collapse"><span class="navbar-toggler-icon"></a>
+                <a class="navbar-toggler" href="#" data-toggle="collapse" data-target=".navbar-collapse"><img src="{% static 'itemManagement/hamburger.svg' %}"></a>
                 <div class="collapse navbar-collapse align-items-start">
                     <ul class="flex-column navbar-nav w-100 justify-content-between">
                         <li class="nav-item">
@@ -43,13 +40,13 @@
         </aside>
         <main class="col offset-md-2 bg-faded py-3">
             {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.level_tag }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.level_tag }}">
+                {{ message }}
+            </div>
+            {% endfor %}
             {% endif %}
             {% block body %}{%endblock body%}
         </main>
     </div>
-{% endblock content %}
+    {% endblock content %}

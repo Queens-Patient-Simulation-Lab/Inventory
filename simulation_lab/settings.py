@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "django.contrib.humanize"
+    "django.contrib.humanize",
+    'webpack_loader'
 ]
 
 MIDDLEWARE = [
@@ -56,7 +57,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'global_login_required.GlobalLoginRequiredMiddleware'  # https://django-glrm.readthedocs.io/en/latest/readme.html
+    'global_login_required.GlobalLoginRequiredMiddleware',  # https://django-glrm.readthedocs.io/en/latest/readme.html
+    'simulation_lab.SecurityHeaderAdder.SecurityHeaderAdder'
 ]
 
 ROOT_URLCONF = 'simulation_lab.urls'
@@ -140,7 +142,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'assets'),  # We do this so that django's collectstatic copies or our bundles to the STATIC_ROOT or syncs them to whatever storage we use.
+)
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
 # Xframeoptions (For embedding in revealjs presentation)
 
 # X_FRAME_OPTIONS = 'SAMEORIGIN'

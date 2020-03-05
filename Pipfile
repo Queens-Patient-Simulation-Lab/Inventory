@@ -15,6 +15,7 @@ django-heroku = "*"
 gunicorn = "*"
 django-haystack = {git = "https://github.com/django-haystack/django-haystack.git",ref = "master"} #TODO, change to release once release works
 whoosh = "*"
+django-webpack-loader = "*"
 
 [requires]
 python_version = "3"

@@ -1,10 +1,14 @@
 # Installation
-Install python3, git and pipenv from your preferred sources
-1. `git clone https://github.com/zfreeds/Simulation-Lab.git`
+Install python3, git, node, npm and pipenv from your preferred sources
+1. `git clone https://github.com/Queens-Patient-Simulation-Lab/Inventory.git`
 2. `cd Simulation-Lab`
-3. `pipenv install` to install the project dependencies
+3. `pipenv install` to install the backend dependencies
+4. `npm install` to install the frontend dependencies
 
 # Running
+Run `./node_modules/.bin/webpack --config webpack.config.js` to build the frontend.
+You can use `./node_modules/.bin/webpack --config webpack.config.js --watch` to continuous build when the frontend files change.
+
 You can start the server by running `pipenv shell` to spawn a shell inside the project and then running `python manage.py runsever`.
 
 This can be combined into `pipenv run python manage.py runserver`
