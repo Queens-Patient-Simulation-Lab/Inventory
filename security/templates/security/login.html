@@ -1,23 +1,34 @@
 {% extends "itemManagement/base_template.html" %}
 {% block content %}
-<div class="container bg-secondary col-12 vh-100 pt-5">
-  <div class="jumbotron mx-auto col-lg-6">
-    <h1 class="mx-auto">Queen's Simulation Lab</h1>
-    <form method="POST">
-      <div class="form-group">
-        <label for="exampleInputEmail1">Email address</label>
-        <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-      </div>
-      <div class="form-group">
-        {% csrf_token %}
-        <label for="exampleInputPassword1">Password</label>
-        <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-      </div>
-      <button type="submit" class="btn btn-primary col-12">Submit</button>
-      <div class="row">
-        <a class="mx-auto" href="#">Forgot your password?</a>
-      </div>
-    </form>
-  </div>
-</div>
+    <div class="container bg-secondary col-12 vh-100 pt-5">
+        <div class="jumbotron mx-auto col-lg-6">
+            <h1 class="mx-auto">Queen's Simulation Lab</h1>
+            <form method="POST">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input name="email" type="email" class="form-control" id="exampleInputEmail1"
+                           aria-describedby="emailHelp" placeholder="Enter email" required>
+                </div>
+                <div class="form-group">
+                    {% csrf_token %}
+                    <label for="exampleInputPassword1">Password</label>
+                    <input name="password" type="password" class="form-control" id="exampleInputPassword1"
+                           placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary col-12">Submit</button>
+                <div class="row">
+                    <a class="mx-auto" href="#">Forgot your password?</a>
+                </div>
+            </form>
+            <br>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.level_tag }} mb-0">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+        </div>
+    </div>
 {% endblock content %}
