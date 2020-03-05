@@ -5,8 +5,11 @@ from decimal import Decimal
 from django.contrib import messages
 from django.db import transaction, IntegrityError
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 
 # Create your views here.
+from django.urls import reverse
+from django.utils.encoding import smart_str
 from django.views.generic import TemplateView
 
 # TODO, lock down admin only (both get and post request)
@@ -148,3 +151,17 @@ class KghUploadPage(TemplateView):
                 self.ROW_PRICE: row[9]
                 # "currency": row[10]
             }
+
+
+# TODO Admin Check
+def downloadKghTemplate(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="KGH Catalog Template.csv"'
+
+    with open("kghDataManagement/kghCatalogTemplate.csv") as file:
+        reader = csv.reader(file)
+        writer = csv.writer(response)
+        writer.writerows(reader)
+
+    return response
