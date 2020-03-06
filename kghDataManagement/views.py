@@ -40,7 +40,6 @@ class KghUploadPage(TemplateView):
         try:
             kghFile = request.FILES['kghFile'] or None
 
-
             reader = self.decode_utf8(kghFile)
 
             # Lazy query for all Items that  have a non-empty kghID and are not deleted
@@ -51,6 +50,7 @@ class KghUploadPage(TemplateView):
                 .all()
             # Convert allKghItems to dictionary for fast comparisons
             kghIdDict = {x.kghID: x for x in allKghItems}
+            unmatchedItems = kghIdDict.copy()
 
             with transaction.atomic():  # If any errors propagate, rollback all changes
                 changes = []  # List of all changes made for the Context
@@ -58,14 +58,15 @@ class KghUploadPage(TemplateView):
                     kghItem = kghIdDict.get(row.get(self.ROW_MATERIAL))
 
                     if kghItem is not None:  # If an Item has the material number
+                        unmatchedItems.pop(kghItem.kghID)
                         change = self.handleItemPriceChange(row, kghItem)
                         # If a change was made
                         if (len(change) != 0):
                             change[self.CHANGE_KGH_ID] = kghItem.kghID
                             changes.append(change)
-
                     # If an item matches an old KGH item ID
                     elif (kghItem := self.getItemMatchingOldIds(row.get(self.ROW_OLD_MATERIAL), kghIdDict)) is not None:
+                        unmatchedItems.pop(kghItem.kghID)
                         change = self.handleItemPriceChange(row, kghItem)
 
                         title = kghItem.title
@@ -89,13 +90,20 @@ class KghUploadPage(TemplateView):
             return redirect('kgh-upload')
 
         messages.success(request, "File upload successful")
+
+        if len(unmatchedItems) > 0:
+            messages.warning(request, "Warning: Some items could not match their KGH ID")
+
+        unmatchedFields = [{
+            "kghID": x.kghID,
+            "name": x.title
+        } for x in unmatchedItems.values()]
+
         context = {
             "changes": changes,
-            "catalogUploaded": True
+            "catalogUploaded": True,
+            "unmatchedFields": unmatchedFields
         }
-        #  TODO, make a table of all changes (context already provided)
-        # If no changes are made, let the user know
-        # Use the global keys to reference each field
 
         return render(request, 'kghDataManagement/kgh_upload_page.html', context=context)
 
@@ -134,7 +142,7 @@ class KghUploadPage(TemplateView):
         # Skip the first row of the file which is the header
         iterator = iter(file)
         header = next(iterator).decode('utf-8-sig').rstrip().split(',')
-        header = [x.strip() for x in header] # Remove any spacing added to cells
+        header = [x.strip() for x in header]  # Remove any spacing added to cells
         materialIndex = header.index("Material")
         oldMaterialIndex = header.index("Old material no.")
         priceIndex = header.index("MA price")

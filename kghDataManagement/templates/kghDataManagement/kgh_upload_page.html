@@ -62,5 +62,30 @@
 
     {% endif %}
 
+    {% if unmatchedFields %}
+        <div class="jumbotron mx-auto col-lg-8 pb-2">
+            <h3>Could not match some items</h3>
+            <table class="table text-center">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">KGH ID</th>
+                    <th scope="col">Item Name</th>
+                </tr>
+                <tbody>
+
+
+                {% for unmatched in unmatchedFields %}
+                    <tr>
+                        <td>{{ unmatched.kghID }}</td>
+                        <td>{{ unmatched.name }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% endif %}
+
+
 
 {% endblock %}

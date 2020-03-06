@@ -379,3 +379,27 @@ class PostKghSpreadsheet(BaseTestCaseView):
 
         self.assertEqual(itemThree.kghID, "33")
         self.assertEqual(itemThree.price, Decimal("12"))
+
+    def test_kghItemModelHasNoMatch_contextShowsUnmatchedField(self):
+        itemOne = Item.objects.create(
+            title="Item One",
+            price=3,
+            kghID=11
+        )
+
+        itemList = [
+            self.createCsvRowData(material="999999", maPrice="11.50", materialDescription="somethingDifferent"),
+        ]
+        response = self.makeCallWithCSV(itemList)
+
+        self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
+        self.assertMessageLevel(response, self.MESSAGE_WARNING)
+
+        unmatchedFields =  response.context['unmatchedFields']
+        self.assertEqual(len(unmatchedFields), 1)
+
+        unmatchedElement = unmatchedFields[0]
+
+        self.assertEqual(unmatchedElement['kghID'], "11")
+        self.assertEqual(unmatchedElement['name'], "Item One")
+
