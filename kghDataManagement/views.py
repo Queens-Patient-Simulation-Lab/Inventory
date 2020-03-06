@@ -92,7 +92,7 @@ class KghUploadPage(TemplateView):
         messages.success(request, "File upload successful")
 
         if len(unmatchedItems) > 0:
-            messages.warning(request, "Warning: Some items could not match their KGH ID")
+            messages.warning(request, "Warning: Some database items have KGH ID's that could not be matched")
 
         unmatchedFields = [{
             "kghID": x.kghID,
