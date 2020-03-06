@@ -40,9 +40,6 @@ class KghUploadPage(TemplateView):
         try:
             kghFile = request.FILES['kghFile'] or None
 
-            if kghFile is None or not kghFile.name.endswith('.csv'):
-                messages.error(request, 'Error: File must be CSV type.')
-                return redirect('kgh-upload')
 
             reader = self.decode_utf8(kghFile)
 
@@ -136,20 +133,18 @@ class KghUploadPage(TemplateView):
     def decode_utf8(self, file):
         # Skip the first row of the file which is the header
         iterator = iter(file)
-        next(iterator)
+        header = next(iterator).decode('utf-8-sig').rstrip().split(',')
+        header = [x.strip() for x in header] # Remove any spacing added to cells
+        materialIndex = header.index("Material")
+        oldMaterialIndex = header.index("Old material no.")
+        priceIndex = header.index("MA price")
+
         for line in iterator:
-            row = line.decode('utf-8').replace('\r\n', '').split(',')
+            row = line.decode('utf-8-sig').rstrip().split(',')
             yield {
-                self.ROW_MATERIAL: row[0],
-                # "materialDescription": row[1],
-                # "un": row[2],
-                self.ROW_OLD_MATERIAL: row[3],
-                # Index four and five are blank
-                # "matlGrp": row[6],
-                # "basicMaterial": row[7],
-                # "type": row[8],
-                self.ROW_PRICE: row[9]
-                # "currency": row[10]
+                self.ROW_MATERIAL: row[materialIndex],
+                self.ROW_OLD_MATERIAL: row[oldMaterialIndex],
+                self.ROW_PRICE: row[priceIndex]
             }
 
 
@@ -160,8 +155,6 @@ def downloadKghTemplate(request):
     response['Content-Disposition'] = 'attachment; filename="KGH Catalog Template.csv"'
 
     with open("kghDataManagement/kghCatalogTemplate.csv") as file:
-        reader = csv.reader(file)
-        writer = csv.writer(response)
-        writer.writerows(reader)
+        response.write(file.read())
 
     return response

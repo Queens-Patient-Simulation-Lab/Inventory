@@ -12,7 +12,7 @@ from simulation_lab.BaseTestCaseView import BaseTestCaseView
 class PostKghSpreadsheet(BaseTestCaseView):
 
     def makeCallWithCSV(self, itemList, addHeader=True, fileName="kghFile.csv"):
-        content = "\ufeff"
+        content = ""
         if addHeader:
             content += "Material,Material Description,Un,Old material no.,,,Matl grp,Basic material,Type,MA price,\r\n"
         for row in itemList:
@@ -54,51 +54,7 @@ class PostKghSpreadsheet(BaseTestCaseView):
         response = self.client.post(reverse(URL_KGH_UPLOAD_PAGE), follow=True)
         self.assertMessageLevel(response, self.MESSAGE_ERROR)
 
-    def test_wrongFileTypeGiven_givesError(self):
-        # This tests follows similar logic to a test that would normally pass, but we specify a different extension
-        itemOne = Item.objects.create(
-            title="Item One",
-            kghID=11
-        )
-        itemTwo = Item.objects.create(
-            title="Item Two",
-            price="77",
-            kghID=22
-        )
-        itemThree = Item.objects.create(
-            title="Item Three",
-            price="12",
-            kghID=33
-        )
 
-        itemList = [
-            self.createCsvRowData(material="11", maPrice="11.50", materialDescription="somethingDifferent"),
-            self.createCsvRowData(material="22", maPrice="3.75")
-        ]
-        response = self.makeCallWithCSV(itemList, fileName="bad.extension")
-
-        self.assertMessageLevel(response, self.MESSAGE_ERROR)
-
-    # This test passes a normally readable row as the header. It should fail if our logic attempts to parse it
-    def test_parsingIgnoresFirstRow(self):
-        itemOne = Item.objects.create(
-            title="Item One",
-            price=3,
-            kghID=11
-        )
-
-        itemList = [
-            self.createCsvRowData(material="11", maPrice="11.50", materialDescription="somethingDifferent"),
-        ]
-        response = self.makeCallWithCSV(itemList, addHeader=False)
-
-        itemOne.refresh_from_db()
-
-        self.assertEqual(itemOne.kghID, "11")
-        self.assertEqual(itemOne.price, Decimal("3"))
-        self.assertEqual(itemOne.title, "Item One")
-
-        self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
 
     def test_kghItemsNotInDatabase_doesNothingAndSucceeds(self):
         itemOne = Item.objects.create(
@@ -180,6 +136,25 @@ class PostKghSpreadsheet(BaseTestCaseView):
 
         self.assertEqual(itemThree.kghID, "33")
         self.assertEqual(itemThree.price, Decimal("12"))
+    def test_columnOrderDifferent_noErrors(self):
+        itemOne = Item.objects.create(
+            title="Item One",
+            kghID=11
+        )
+
+        itemList = [
+            ["MA price","Material","Old material no."],
+            ["11.50","11",""],
+        ]
+        response = self.makeCallWithCSV(itemList, addHeader=False)
+
+        self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
+
+        itemOne.refresh_from_db()
+
+        self.assertEqual(itemOne.kghID, "11")
+        self.assertEqual(itemOne.price, Decimal("11.50"))
+        self.assertEqual(itemOne.title, "Item One")
 
     def test_kghItemsInDatabase_returnsUpdatedElementsInContext(self):
         itemOne = Item.objects.create(

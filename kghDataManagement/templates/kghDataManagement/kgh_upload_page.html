@@ -11,20 +11,17 @@
                 {% csrf_token %}
 
                 <label for="uploadKghFile">Upload the new KGH catalog here to update item prices:</label>
-                {#                TODO, more file types#}
                 <div class="row">
-                    <input type="file" class="form-control-file col-6" accept=".csv" id="uploadKghFile" name="kghFile">
+                    <input type="file" class="form-control-file col-6" accept=".csv,text/csv" id="uploadKghFile" name="kghFile">
 
                     <button type="submit" class="btn btn-primary">Submit</button>
 
                 </div>
             </div>
         </form>
-        <form method="GET" action="{% url 'kgh-download-template' %}">
-            <button type="submit" class="btn btn-primary">Click here to download a template of what the spreadsheet
-            should look like
-        </button>
-        </form>
+        <a class="btn btn-primary" href="{% url 'kgh-download-template' %}" role="button">Click here to download a
+            template of what the spreadsheet
+            should look like</a>
 
     </div>
 
