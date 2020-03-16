@@ -23,7 +23,12 @@
         <tbody>
             {% for item in items %}
             <tr data-access-url="{% url 'item-details' item.itemId %}" data-toggle="modal" data-target="#exampleModal">
-                <td scope="row"><img src="{% static item.images.0 %}" class="img-thumbnail img-responsive img-rounded">
+                <td scope="row">
+                    {% if item.images.count > 0  %}
+                    <img src="{% url 'get-photo' id=item.images.first.id %}" class="img-thumbnail img-responsive img-rounded">
+                    {% else %}
+                    <img src="{% static  'itemManagement/default_image.svg' %}" class="img-thumbnail img-responsive img-rounded">
+                    {% endif %}
                 </td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.locations.0 }}</td>
