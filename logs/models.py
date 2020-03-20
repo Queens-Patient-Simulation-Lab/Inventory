@@ -67,8 +67,16 @@ class UserLogs(models.Model):
     logMsg = models.CharField(max_length=1024)  # a special log massage for an operation (required)
 
     # input the parameters which are applicable
+    '''
+    Log operations related to user account into database
+    input
+        operator_user, logCode and logMsg are required
+        subject_user is optional. It can be applied when operator change subject user's information
+    output
+        
+    '''
     def logging(operator_user, logCode, logMsg, subject_user=None, *args, **kwargs):
-        if operator_user and logCode and logMsg:
+        if operator_user and logCode and logMsg:  # check required parameter
             userLog = UserLogs(operator_user=operator_user, subject_user=subject_user, logCode=logCode, logMsg=logMsg)
             userLog.save()
         else:
@@ -89,8 +97,15 @@ class ItemCountLogs(models.Model):
     logMsg = models.CharField(max_length=1024)  # a special log massage for an operation (required)
 
     # input the parameters which are applicable
+    '''
+    Log operations related to item stock into database
+    input
+        operator_user, item, quantity, location, logCode and logMsg are required
+    output
+
+    '''
     def logging(operator_user, item, quantity, location, logCode, logMsg):
-        if operator_user and quantity and item and location and logCode and logMsg:
+        if operator_user and quantity and item and location and logCode and logMsg:  # check required parameter
             itemCountLogs = ItemCountLogs(operator_user=operator_user, item=item, quantity=quantity,
                                           location=location, logCode=logCode, logMsg=logMsg)
             itemCountLogs.save()
@@ -110,8 +125,17 @@ class ItemInfoLogs(models.Model):
     logMsg = models.CharField(max_length=1024)  # a special log massage for an operation (required)
 
     # input the parameters which are applicable
+    '''
+    Log operations related to item information into database
+    input
+        operator_user, item, logCode and logMsg are required
+        kghID is optional. It is applied when operator change a item's kghID
+        price is optional. It is applied when operator change a item's price
+    output
+
+    '''
     def logging(operator_user, item, logCode, logMsg, kghID=None, price=None, *args, **kwargs):
-        if operator_user and item and logCode and logMsg:
+        if operator_user and item and logCode and logMsg:  # check required parameter
             itemInfoLogs = ItemInfoLogs(operator_user=operator_user, item=item, kghID=kghID, price=price, logCode=logCode, logMsg=logMsg)
             itemInfoLogs.save()
         else:

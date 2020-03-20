@@ -20,13 +20,15 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 def settings(request):
     if request.method == 'POST':
         p_form = PasswordChangeForm(request.user, request.POST)  # change password form
-        n_form = notificationUpdateForm(request.POST, instance=request.user) # change notification status form
+        n_form = notificationUpdateForm(request.POST, instance=request.user)  # change notification status form
 
+        #  check the post request of change password form
         if p_form.is_valid() and 'changePassword' in request.POST:
             user = p_form.save()
             update_session_auth_hash(request, user)  # Important!
             messages.success(request, 'Your password was successfully updated!')
             return redirect('settings-home')
+        #  check the post request of notification status form
         elif n_form.is_valid() and 'notification' in request.POST:
             n_form.save()
             messages.success(request, 'Your notification status was successfully updated!')
@@ -43,25 +45,30 @@ def settings(request):
     return render(request, 'userManagement/settings.html', context)
 
 
+# admin only page
 def userAccount(request):
-    # admin only page
     if request.method == 'GET':
+        # Bar lab assistants from this page and display 403 page to lab assistants
         if not request.user.is_superuser:
             return render(request, "security/403.html", status=403)
 
     if request.method == 'POST':
+        # Email invitation form
         email = request.POST.get('email', "").strip()
         try:
-            validate_email(email)
+            validate_email(email)  # If email is not valid, throw exception and code ends here
 
+            # check existence of the inputed email
             if User.objects.filter(email=email).exists():
                 messages.error(request, f'Email has already existed')
                 redirect('user-account')
             else:
+                # create a temporary account for new user
                 emailed_user = User.objects.create_user(email=email,
                                                         password='haveNotSetPassword',
                                                         name='waiting for invitation acceptance')
                 emailed_user.save()
+                # sent email to new user
                 em.sendAccountSetupEmail(user=emailed_user,
                                          uidb64=urlsafe_base64_encode(smart_bytes(emailed_user.pk)),
                                          token=default_token_generator.make_token(emailed_user))
@@ -78,6 +85,7 @@ def userAccount(request):
     return render(request, 'userManagement/userAccount.html', context)
 
 
+# account creation page for invited new users
 @login_not_required
 def userRegister(request, uidb64 ,token):
     assert uidb64 is not None and token is not None
@@ -88,8 +96,10 @@ def userRegister(request, uidb64 ,token):
     except (TypeError, ValueError, OverflowError):
         user = None
 
+    # check correct user
     if user is not None and default_token_generator.check_token(user, token):
         if request.method == 'POST':
+            # user creation form
             c_form = userCreationForm(request.POST, instance=user)
             if c_form.is_valid():
                 c_form.save()
@@ -112,12 +122,14 @@ def userRegister(request, uidb64 ,token):
 @login_not_required
 def forgetPassword(request):
     if request.method == 'POST':
+        # Email form
         email = request.POST.get('email', "").strip()
         try:
-            validate_email(email)
+            validate_email(email)  # If email is not valid, throw exception and code ends here
 
             emailed_user = User.objects.filter(email=email).first()
             if emailed_user:
+                # send reset email
                 em.sendPasswordResetEmail(user=emailed_user,
                                          uidb64=urlsafe_base64_encode(smart_bytes(emailed_user.pk)),
                                          token=default_token_generator.make_token(emailed_user))
@@ -143,8 +155,10 @@ def forgetPasswordConfirm(request, uidb64, token):
     except (TypeError, ValueError, OverflowError):
         user = None
 
+    # check correct user
     if user is not None and default_token_generator.check_token(user, token):
         if request.method == 'POST':
+            # Set Password Form
             form = SetPasswordForm(user, request.POST)
             if form.is_valid():
                 form.save()
