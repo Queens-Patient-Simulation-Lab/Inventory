@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 from haystack.generic_views import SearchView
 from haystack.query import SearchQuerySet
 
-from itemManagement.models import Item, Location, Photo
+from itemManagement.models import Item, Location, Photo, Tag
 from simulation_lab import settings
 from django.templatetags.static import static
 
@@ -62,40 +62,52 @@ class ItemDetailsView(TemplateView):
 
         item = Item.objects.get(id=itemId)
 
-        # Update lastUsed time
         item.lastUsed = timezone.now()
+        # TODO: item lastUsed updated if decrement clicked
 
         isAdmin = True
 
         # TODO: Admin validation
 
-        # allow updating fields other than quantities if admin
+        # Admin Fields updating fields other than quantities if admin
         if isAdmin:
+            # --------TEXT FIELDS--------
             item.title = request.POST.get('itemName', "").strip()
             item.description = request.POST.get('description', "").strip()
             item.price = request.POST.get('price', "").strip()
             item.unit = request.POST.get('unit', "").strip()
+            item.save(update_fields=['title', 'description', 'price', 'unit'])
+            # ---------------------------
 
-        # locations: list of all locations that house the current item
+            # --------TAGS-------------
+            newTags = request.POST.get('newTags', "").split(',')
+            # newTags = newTags.split(',')
+            # clear all tags
+            item.tag_set.all().delete()
+            # add back all new edited tags
+            for newTag in newTags:
+                if newTag != "" or newTag is None:
+                    newTag = Tag.objects.create(name=newTag.strip(), item=item)
+                    newTag.save()
+            # -------------------------
+
+        # ----Quantities in Locations----
+        # Locations: list of all locations that house the current item
         locations = item.locations.all()
 
-        #
+        # Locations
         for location in locations:
             itemStorage = location.itemstorage_set.get(item=item)
             itemStorage.quantity = request.POST.get('quantity-location-' + str(location.id), "").strip()
             itemStorage.save()
-            item.save(update_fields=['title', 'description', 'price', 'unit'])
-
-        # return render(request, 'itemManagement/homepage.html')
-        return HttpResponse(status=204)
-
-        # TODO: Post locations as group
-
-        # TODO: Post tags
+        # -------------------------------
 
         # TODO: Post Images
 
         # TODO: Input validation
+
+        # TODO: Return to homepage with same previous state after POST
+        return HttpResponse(status=204)
 
 
 class LocationView(TemplateView):
