@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.views.decorators.clickjacking import xframe_options_exempt
 from django.contrib import auth, messages
 
 # Create your views here.
