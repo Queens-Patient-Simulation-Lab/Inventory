@@ -1,0 +1,82 @@
+{% extends "itemManagement/chrome_template.html" %}
+{% load crispy_forms_tags %}
+{% block body %}
+    <h1>Staff</h1>
+    <div class="table-responsive-sm">
+        <table id="staffTable" class="table table-hover ">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Role</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for person in staff %}
+                <tr>
+                    <th>{{ person.name }}</th>
+                    <td>{{ person.email }}</td>
+                <td>
+                    {% if person.email !=  request.user.email %}
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {% if person.is_superuser %}
+                                    Admin
+                                {% else %}
+                                    Lab Assistant
+                                {% endif %}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="{% url 'user-admin' person.email %}">Admin</a>
+                                <a class="dropdown-item" href="{% url 'user-lab-assistant' person.email %}">Lab Assistant</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a class="btn btn-sm btn-outline-secondary text-secondary">Admin</a>
+                    {% endif %}
+                </td>
+                <td class="row">
+                    {% if person.email !=  request.user.email %}
+                        <form method="POST" action="{% url 'user-delete' person.email %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger m-1">delete user</button>
+                        </form>
+                    {% endif %}
+                </td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+
+    <div class="row justify-content-end m-1">
+        <button type="button" class="btn btn-outline-primary col-sm-1" data-toggle="modal" data-target="#userCreation">
+            Invite user
+        </button>
+    </div>
+    <!-- TODO EmailInvitation -->
+    <div class="modal fade" id="userCreation" tabindex="-1" role="dialog" aria-labelledby="userCreationLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form class="p-2 bg-light" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="userCreationLabel">User Invitation</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                            {% csrf_token %}
+                            <label for="email">Enter email:</label>
+                            <input type="email" id="email" name="email">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">send email</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

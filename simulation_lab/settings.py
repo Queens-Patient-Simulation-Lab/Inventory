@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'kghDataManagement.apps.KghDataManagementConfig',
     'reports.apps.ReportsConfig',
     'userManagement.apps.UserManagementConfig',
+    'logs.apps.LogsConfig',
     'crispy_forms',
     "haystack",
     'django.contrib.admin',
@@ -162,3 +163,14 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # attempting to use heroku config on travis fails
 if "DYNO" in os.environ:
     django_heroku.settings(locals())
+
+
+EMAIL_HOST = os.environ.get("SMTP_HOST", None)
+EMAIL_PORT = os.environ.get("SMTP_PORT", None)
+EMAIL_HOST_USER = os.environ.get("SMTP_USERNAME", None)
+EMAIL_HOST_PASSWORD = os.environ.get("SMTP_PASSWORD", None)
+EMAIL_USE_TLS = os.environ.get("SMTP_USE_TLS", None)
+EMAIL_FROM = os.environ.get("FROM_ADDRESS", None)
+EMAIL_CONFIGURED = (EMAIL_HOST and EMAIL_PORT and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD and EMAIL_USE_TLS and EMAIL_FROM) is not None
+if not EMAIL_CONFIGURED:
+    print("WARNING: SMTP Settings are missing, email can't be sent!")
