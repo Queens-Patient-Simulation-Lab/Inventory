@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db import IntegrityError
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
+from django.utils import timezone
 
 # Create your views here.
 from django.views.generic import TemplateView
@@ -57,13 +58,44 @@ class ItemDetailsView(TemplateView):
         else:
             return render(request, 'itemManagement/item_details_assistant.html', context=context)
 
-    def post(request):
-        data = []
-        items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title").filter(deleted=False))
-        for item in items:
-            locations = [{"quantity": x["quantity"]} for x in item["locations"]]
-            data.append({"name": item["name"], "id": item["itemId"], "locations": locations})
-        return render(request, 'web/cycle.html', {"items": data})
+    def post(self, request, itemId, *args, **kwargs):
+
+        item = Item.objects.get(id=itemId)
+
+        # Update lastUsed time
+        item.lastUsed = timezone.now()
+
+        isAdmin = True
+
+        # TODO: Admin validation
+
+        # allow updating fields other than quantities if admin
+        if isAdmin:
+            item.title = request.POST.get('itemName', "").strip()
+            item.description = request.POST.get('description', "").strip()
+            item.price = request.POST.get('price', "").strip()
+            item.unit = request.POST.get('unit', "").strip()
+
+        # locations: list of all locations that house the current item
+        locations = item.locations.all()
+
+        #
+        for location in locations:
+            itemStorage = location.itemstorage_set.get(item=item)
+            itemStorage.quantity = request.POST.get('quantity-location-' + str(location.id), "").strip()
+            itemStorage.save()
+            item.save(update_fields=['title', 'description', 'price', 'unit'])
+
+        # return render(request, 'itemManagement/homepage.html')
+        return HttpResponse(status=204)
+
+        # TODO: Post locations as group
+
+        # TODO: Post tags
+
+        # TODO: Post Images
+
+        # TODO: Input validation
 
 
 class LocationView(TemplateView):
@@ -81,6 +113,8 @@ class LocationView(TemplateView):
         id = request.POST.get('id', "").strip()
         name = request.POST.get('name', "").strip()
         description = request.POST.get('description', "").strip()
+
+        print("Test print")
 
         if id != "":
             return self._updateLocation(request, id, name, description)

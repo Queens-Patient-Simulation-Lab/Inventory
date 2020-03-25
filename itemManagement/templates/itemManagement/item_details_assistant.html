@@ -1,13 +1,16 @@
 {% load render_bundle from webpack_loader %}
 {% load static %}
-<div class="container">
+<div class="container-fluid" id="item-detail-modal-root">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
-    <form>
+    <form method="POST" action="{% url 'item-details' itemId=itemId %}" id="item-details-form">
+        {% csrf_token %}
         <div class="form-group">
             <h3 for="itemName">{{ name }}</h3>
         </div>
+
+
         <table class="table table-striped mb-2 mt-2">
             <thead>
                 <tr>
@@ -16,43 +19,44 @@
                 </tr>
             </thead>
             <tbody>
+                <div class="form-group">
                 {% for location in locations %}
-                <tr>
-                    <th scope="col">{{ location.name }}</th>
-                    <td class="row">
-
-                        <div class="center container">
-                            <div class="input-group row">
-                                <button type="button" class="btn btn-danger decrement rounded-0">
-                                    -
-                                    <span class="glyphicon glyphicon-minus"></span>
-                                </button>
-                                <input type="number" min="0" inputmode="numeric" pattern="[0-9]*" title="Non-negative integer" id="amount"
-                                       class="form-control item_quantity col-4 col-sm-3 text-center"
-                                       value="{{ location.quantity }}">
-                                <button type="button" class="btn btn-success increment rounded-0"> +
-                                    <span class="glyphicon glyphicon-plus"></span>
-                                </button>
+                    <tr>
+                        <th scope="col">{{ location.name }}</th>
+                        <td class="row">
+                            <div class="center container">
+                                <div class="input-group row">
+                                    <button type="button" class="btn btn-danger decrement rounded-0">
+                                        -
+                                    </button>
+                                    <input name="quantity-location-{{ location.id }}" type="number" min="0" inputmode="numeric" pattern="[0-9]*" title="Non-negative integer" id="amount"
+                                           class="form-control item_quantity col-4 col-sm-3 text-center"
+                                           value="{{ location.quantity }}">
+                                    <button type="button" class="btn btn-success increment rounded-0">
+                                        +
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
                 {% endfor %}
+                </div>
             </tbody>
-
         </table>
 
         {#Confirm and reset button for quantity update#}
-        <div class="row">
-            <div class="container col-lg-6 col-lg-offset-8"></div>
-            <div class="container-fluid col-lg-3 col-6">
-                <button type="button" class="btn btn-danger col-12" data-dismiss="modal">Reset</button>
+            <div class="row">
+                <div class="container col-lg-6 col-lg-offset-8"></div>
+                <div class="container-fluid col-lg-3 col-6">
+                    <button type="button" class="btn btn-danger col-12" data-dismiss="modal">Reset</button>
+                </div>
+                <div class="container-fluid col-lg-3 col-6">
+                    <button type="submit" class="btn btn-primary col-12" >Confirm</button>
+                </div>
             </div>
-            <div class="container-fluid col-lg-3 col-6">
-                <button type="submit" class="btn btn-primary col-12 confirm_quantity">Confirm</button>
-            </div>
-        </div>
 
+
+        <div class="row">
         <div id="itemImageCarousel" class="carousel slide mb-4 mt-4" data-ride="carousel">
             <ol class="carousel-indicators">
                 <li data-target="#itemImageCarousel" data-slide-to="0" class="active"></li>
@@ -61,7 +65,7 @@
                 <li data-target="#itemImageCarousel" data-slide-to="1"></li>
                 {% endfor %}
             </ol>
-            <div class="carousel-inner" style="height: 160px; margin: auto;">
+            <div class="carousel-inner" >
                 <div class="carousel-item active">
                     <img src="{% static images.0 %}" class="d-block rounded img-fluid mx-auto">
                 </div>
@@ -80,11 +84,9 @@
                 <span class="sr-only">Next</span>
             </a>
         </div>
-
-
+        </div>
 
         {% if description and description.strip %}
-
             <h5>Description</h5>
             <hr>
             <p class="ml-2">{{ description }}</p>
@@ -97,7 +99,7 @@
 
             <div class="row">
                 {% for tag in tags %}
-                <span class="badge badge-info m-1" style="line-height: 2.5">{{ tag }}</span>
+                <span class="badge badge-info m-1" >{{ tag }}</span>
                 {% endfor %}
                 {#todo use contenteditable to allow editable badges#}
 
@@ -110,50 +112,10 @@
                     <label for="unit">Unit of Measurement: {{ unit }}</label>
                 </div>
             {% endif %}
-
         </div>
-
     </form>
 
+{% render_bundle 'item_details' %}
 </div>
 
-{% render_bundle 'item_details' %}
 
-<script>
-
-    /*
-        Called when the plus button next to a quantity is pressed
-     */
-    $(".increment").click(function () {
-        console.log("CLICKED INCREMENT")
-        addQuantity(1, $(this))
-    });
-    /*
-        Called when the minus button next to a quantity is pressed
-     */
-    $(".decrement").click(function () {
-        console.log("CLICKED decrement")
-        //if quantity is less than zero, do not decrement further
-        if (parseInt($(this).siblings(".item_quantity").val()) <= 0) {
-            console.log("Could not decrement further")
-        }
-        else{
-            addQuantity(-1, $(this))
-        }
-
-    });
-
-    /*
-        Gets the quantity field for the incremented/decrement button and changes its value
-     */
-    function addQuantity(value, caller) {
-        quantityElem = caller.siblings(".item_quantity")
-        newQuantity = parseInt(quantityElem.val()) + value
-        quantityElem.val(newQuantity)
-    }
-
-    $(".submitQuantity").click(function () {
-        console.log("Submitted new quantity of <item> as <value>")
-
-    });
-</script>
