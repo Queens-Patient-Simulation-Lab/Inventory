@@ -1,22 +1,27 @@
 {% load render_bundle from webpack_loader %}
-{% load static %}
 
-<div class="container">
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+<div class="container-fluid" id="item-detail-modal-root">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
-    <form>
-            <div class="form-group">
+    <form method="POST" action="{% url 'item-details' itemId=itemId %}" id="item-details-form">
+        {% csrf_token %}
+
+        <div class="form-group">
                 <label for="itemName">Item Name</label>
-                <input type="name" class="form-control" id="itemName" value="{{ name }}">
-            </div>
+                <input type="name" class="form-control" name="itemName" id="itemName" value="{{ name }}">
+        </div>
 
-            <div class="form-group">
-                <label for="materialNo">KGH ID</label>
-                <input type="item_id" class="form-control" id="materialNo" value="{{ kghId }}">
-            </div>
+        <div class="form-group">
+            <label for="materialNo">KGH ID</label>
+            <input type="item_id" class="form-control" name="kghId" id="materialNo" value="{{ kghId }}">
+        </div>
 
-            <div id="itemImageCarousel" class="carousel slide" data-ride="carousel">
+        <div id="itemImageCarousel" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
                     <li data-target="#itemImageCarousel" data-slide-to="0" class="active"></li>
 
@@ -24,7 +29,7 @@
                         <li data-target="#itemImageCarousel" data-slide-to="1"></li>
                     {% endfor %}
                 </ol>
-                <div class="carousel-inner" style="max-width: 500px; margin: auto">
+                <div class="carousel-inner" > {# style="max-width: 500px; margin: auto"#}
                     <div class="carousel-item active">
                         <img src="{% static images.0 %}" class="d-block w-100 rounded">
                     </div>
@@ -65,16 +70,15 @@
 
         <div class="form-group">
             <label for="description">Description</label>
-            <textarea type="item_description" class="form-control" id="description"
-                      value="{{ description }}"/>
-        </div>
+            <textarea type="item_description" class="form-control" name="description" id="description" value="{{ description }}"></textarea>
+{#        </div>#}
 
         <div class="form-group">
             <label>Tagging</label>
 
             <div>
                 {% for tag in tags %}
-                    <span class="badge badge-info m-1" style="line-height: 2.5">{{ tag }}</span>
+                    <span class="badge badge-info m-1" >{{ tag }}</span> {# style="line-height: 2.5" #}
                 {% endfor %}
                 {#todo use contenteditable to allow editable badges#}
                 <button class="btn btn-outline-secondary m-1" type="button">
@@ -84,38 +88,49 @@
 
             <div class="form-group">
                 <label for="itemPrice">Item price</label>
-                <input type="MA_price" class="form-control" id="itemPrice" value="${{ price }}">
+                <input type="MA_price" class="form-control" name="price" id="itemPrice" value="{{ price }}">
             </div>
             <div class="form-group">
                 <label for="unit">Unit of Measurement</label>
-                <input type="unit_measure" class="form-control" id="unit" value="{{ unit }}">
+                <input type="unit_measure" class="form-control" name="unit" id="unit" value="{{ unit }}">
             </div>
 
-            <table class="table table-striped">
+
+
+            <table class="table table-striped mb-2 mt-2">
                 <thead>
-                <tr>
-                    <th scope="col">Location</th>
-                    <th scope="col">Stock</th>
-                </tr>
+                    <tr>
+                        <th scope="col">Location</th>
+                        <th scope="col">Stock</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% for location in locations %}
-                    <tr>
-                        <th scope="col">{{ location.name }}</th>
-                        <td class="row">
-                            <button class="btn btn-primary position-relative m-1 decrement" type="button">
-                                -
-                            </button>
-                            <div class="form-group m-1">
-                                <input class=" form-control item_quantity" id="amount" value="{{ location.quantity }}"
-                                       style="width: 80px;" type="decimal">
-                            </div>
-                            <button class="btn btn-secondary position-relative m-1 increment" type="button">
-                                +
-                            </button>
-                        </td>
-                    </tr>
-                {% endfor %}
+                    <div class="form-group">
+                    {% for location in locations %}
+                        <tr>
+                            <th scope="col">{{ location.name }}</th>
+                            <td class="row">
+                                <div class="center container">
+                                    <div class="input-group row">
+                                        <button type="button" class="btn btn-danger decrement rounded-0">
+                                            -
+                                        </button>
+{#                                        <div class="form-group m-1">#}
+            {#                                <input class=" form-control item_quantity" name="quantity-location-{{ location.id }}" value="{{ location.quantity }}"#}
+            {#                                       style="width: 80px;" type="decimal">#}
+                                            <input name="quantity-location-{{ location.id }}" type="number" min="0" inputmode="numeric" pattern="[0-9]*" title="Non-negative integer" id="amount"
+                                                       class="form-control item_quantity col-4 col-sm-3 text-center"
+                                                       value="{{ location.quantity }}">
+
+                                        <button type="button" class="btn btn-success increment rounded-0">
+                                            +
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </div>
 
                 <tr>
                     <th scope="row" colspan="2">
@@ -132,11 +147,18 @@
 
             <a href="">view history report</a>
         </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button submit" class="btn btn-primary">Save changes</button>
+        </div>
+        </div>
     </form>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-    </div>
-</div>
 
 {% render_bundle 'item_details' %}
+
+</div>
+
+
+
+
