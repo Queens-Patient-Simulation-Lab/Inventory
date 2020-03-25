@@ -49,7 +49,6 @@
                 </a>
             </div>
 
-{#    <div></div>#}
         <div class="row m-1">
             <button class="btn btn-outline-secondary col" type="button" data-toggle="collapse"
                     data-target="#pictureSetting" aria-expanded="false" aria-controls="pictureSetting">
@@ -70,18 +69,24 @@
 
         <div class="form-group">
             <label for="description">Description</label>
-            <textarea type="item_description" class="form-control" name="description" id="description" value="{{ description }}"></textarea>
-{#        </div>#}
+            <textarea type="item_description" class="form-control" name="description" id="description">{{ description }}</textarea>
+        </div>
 
-        <div class="form-group">
+{#        <div class="form-group">#}
             <label>Tagging</label>
 
-            <div>
-                {% for tag in tags %}
-                    <span class="badge badge-info m-1" >{{ tag }}</span> {# style="line-height: 2.5" #}
-                {% endfor %}
+            <div class="form-group">
+                <div class="tagsShown">
+                    {% for tag in tags %}
+                        <span class="badge badge-info m-1">{{ tag }}</span>
+                    {% endfor %}
+                </div>
                 {#todo use contenteditable to allow editable badges#}
-                <button class="btn btn-outline-secondary m-1" type="button">
+
+                <div class="tagsInputBoxContainer">
+                    <input name="newTags" id="tagsInputBox" data-role="tagsinput">
+                </div>
+                <button class="btn btn-outline-secondary m-1 tagEditBtn" type="button">
                     Edit tags
                 </button>
             </div>
@@ -112,19 +117,12 @@
                             <td class="row">
                                 <div class="center container">
                                     <div class="input-group row">
-                                        <button type="button" class="btn btn-danger decrement rounded-0">
-                                            -
-                                        </button>
-{#                                        <div class="form-group m-1">#}
-            {#                                <input class=" form-control item_quantity" name="quantity-location-{{ location.id }}" value="{{ location.quantity }}"#}
-            {#                                       style="width: 80px;" type="decimal">#}
-                                            <input name="quantity-location-{{ location.id }}" type="number" min="0" inputmode="numeric" pattern="[0-9]*" title="Non-negative integer" id="amount"
-                                                       class="form-control item_quantity col-4 col-sm-3 text-center"
-                                                       value="{{ location.quantity }}">
+                                        <button type="button" class="btn btn-danger decrement rounded-0">-</button>
+                                        <input name="quantity-location-{{ location.id }}" type="number" min="0" inputmode="numeric" pattern="[0-9]*" title="Non-negative integer" id="item_quantity"
+                                                   class="form-control item_quantity col-4 col-sm-3 text-center"
+                                                   value="{{ location.quantity }}">
 
-                                        <button type="button" class="btn btn-success increment rounded-0">
-                                            +
-                                        </button>
+                                        <button type="button" class="btn btn-success increment rounded-0">+</button>
                                     </div>
                                 </div>
                             </td>
@@ -137,6 +135,7 @@
                         <button type="button" class="btn btn-outline-secondary col">assign a new location</button>
                     </th>
                 </tr>
+
                 </tbody>
             </table>
 
@@ -146,7 +145,7 @@
             </div>
 
             <a href="">view history report</a>
-        </div>
+{#        </div>#}
 
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -156,7 +155,6 @@
     </form>
 
 {% render_bundle 'item_details' %}
-
 </div>
 
 
