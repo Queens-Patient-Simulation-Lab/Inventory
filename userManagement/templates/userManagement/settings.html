@@ -34,16 +34,4 @@
             </div>
         {% endif %}
     </ul>
-    <script>
-    $(document).ready(function () {
-        $('.list-group-item').click(function() {
-            localStorage.setItem('collapseItem', $(this));
-        });
-
-        var collapseItem = localStorage.getItem('collapseItem');
-        if (collapseItem) {
-           $(collapseItem).collapse('show')
-        }
-    })
-    </script>
 {% endblock body %}
