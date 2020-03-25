@@ -19,7 +19,7 @@ A page where the admin can see and modify all locations that an item can be plea
                 </thead>
                 <tbody>
                 {% for location in locations %}
-                    <tr id="{{ location.id }}" data-toggle="modal">
+                    <tr data-attr-value="{% url 'location-list' id=location.id %}" data-toggle="modal">
                         <td id="locationName">{{ location.name }}</td>
                         <td id="locationDescription">{{ location.description }}</td>
 

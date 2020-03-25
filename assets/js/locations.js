@@ -1,8 +1,8 @@
 $(".deleteBtn").click(function () {
-    locationId = $(this).closest("tr").attr("id")
+    locationUrl = $(this).closest("tr").attr("data-attr-value")
     $.ajax({
         type: "DELETE",
-        url: "{% url 'location-list' %}" + locationId,
+        url: locationUrl,
         headers: {"X-CSRFToken": "{{ csrf_token }}"},
         complete: function (msg) {
             location.reload()
