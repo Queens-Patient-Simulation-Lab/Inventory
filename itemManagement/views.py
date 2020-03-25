@@ -36,7 +36,7 @@ class HomePage(SearchView):
 
 class ItemDetailsView(TemplateView):
     def get(self, request, itemId, *args, **kwargs):
-        isAdmin = False  # TODO, admin check
+        isAdmin = request.user.is_superuser
 
         print(f"Item ID requested: {itemId}")
 

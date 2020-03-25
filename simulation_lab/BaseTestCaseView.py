@@ -11,6 +11,8 @@ class BaseTestCaseView(TestCase):
         assert messageLevel in [x.tags for x in response.context['messages']],f"{messageLevel} banner was not provided"
 
     def createLoggedInUser(self, isAdmin):
-        # TODO: Implement logic for admin
-
-        self.client.force_login(User.objects.create_user("test@a.com", "test"))
+        if isAdmin:
+            User.objects.create_user(email="test@test.com", password="Test1234", is_superuser=True)
+        else:
+            User.objects.create_user("test@test.com", "Test1234")
+        self.client.login(email="test@test.com", password="Test1234")

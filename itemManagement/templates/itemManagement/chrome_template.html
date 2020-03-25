@@ -1,7 +1,6 @@
 {% extends "itemManagement/base_template.html" %}
 {% load static %}
 {% block content %}
-
 <div class="container-fluid h-100">
     <div class="row h-100">
         <aside class="col-12 col-md-2 p-0 bg-dark fixed-top">
@@ -10,30 +9,38 @@
                 <a class="navbar-toggler" href="#" data-toggle="collapse" data-target=".navbar-collapse"><img src="{% static 'itemManagement/hamburger.svg' %}"></a>
                 <div class="collapse navbar-collapse align-items-start">
                     <ul class="flex-column navbar-nav w-100 justify-content-between">
-                        <li class="nav-item">
-                            <a class="nav-link pl-0" href="{% url 'homepage'%}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pl-0" href="{% url 'reports'%}">Reports</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pl-0" href="#">User Accounts</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pl-0" href="{% url 'location-list'%}">Locations</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pl-0" href="{% url 'settings-home'%}">Settings</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pl-0" href="#">KGH Catalog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pl-0" href="#">Tutorial</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pl-0" href="{% url 'logout' %}">Sign Out</a>
-                        </li>
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link pl-0" href="{% url 'homepage'%}">Home</a>
+                            </li>
+                            {% if request.user.is_superuser %}
+                                <li class="nav-item">
+                                    <a class="nav-link pl-0" href="{% url 'reports'%}">Reports</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link pl-0" href="{% url 'user-account'%}">Staff</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link pl-0" href="{% url 'location-list'%}">Locations</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link pl-0" href="#">KGH Catalog</a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link pl-0" href="{% url 'settings-home'%}">Settings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link pl-0" href="#">Tutorial</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link pl-0" href="{% url 'logout' %}">Sign Out</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link pl-0" href="{% url 'login' %}">Login</a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             </nav>

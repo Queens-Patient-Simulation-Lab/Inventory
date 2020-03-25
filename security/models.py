@@ -1,4 +1,5 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
 
@@ -27,13 +28,15 @@ class UserManager(BaseUserManager):
 
 
 # The fields (password, is_active, username) are included in AbstractBaseUser
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
         unique=True
     )
     objects = UserManager()
+    name = models.CharField(max_length=100, default='fname lname')
     completedTutorial = models.BooleanField(default=False)
     receivesAlerts = models.BooleanField(default=False)  # Todo, would this be better as its own table relation?
+    deleteFlag = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['']
