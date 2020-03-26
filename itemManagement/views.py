@@ -48,7 +48,7 @@ def getImage(request, id):
 class ItemDetailsView(TemplateView):
     def get(self, request, itemId, *args, **kwargs):
         isAdmin = request.user.is_superuser
-        isAdmin = True
+        # isAdmin = True
 
         print(f"Item ID requested: {itemId}")
 
