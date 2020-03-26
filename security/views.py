@@ -39,3 +39,18 @@ class LoginView(TemplateView):
 def logout(request):
     auth.logout(request)
     return redirect('login')
+
+
+@login_not_required
+def handler403(request, *args, **argv):
+    return render(request, 'security/404.html', status=404)
+
+
+@login_not_required
+def handler404(request, *args, **argv):
+    return render(request, 'security/404.html', status=404)
+
+
+@login_not_required
+def handler500(request, *args, **argv):
+    return render(request, 'security/500.html', status=500)

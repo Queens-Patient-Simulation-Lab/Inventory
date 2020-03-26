@@ -21,6 +21,6 @@ urlpatterns = [
     path('', include('security.urls')), # TODO: This path should be security but for now its the index
     path('item/', include('itemManagement.urls')),
     path('reports/', include('reports.urls')),
-    path('userManagement/', include('userManagement.urls'))
-
+    path('userManagement/', include('userManagement.urls')),
+    path('kghUploads/', include('kghDataManagement.urls'))
 ]

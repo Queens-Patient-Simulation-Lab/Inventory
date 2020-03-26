@@ -8,28 +8,30 @@
         <div class="collapse" id="change_password">
             <form class="p-2 bg-light" method="POST">
                 {% csrf_token %}
-                {{ p_form|crispy }}
+                {{ p_form | crispy}}
                 <div class="row justify-content-end border-top border-primary m-1">
                     <div class="col-sm-2 ">
-                        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                        <button type="submit" class="btn btn-outline-primary mt-2" name="changePassword">Submit</button>
                     </div>
                 </div>
             </form>
         </div>
 
-        <button class="list-group-item list-group-item-action btn btn-primary text-center mt-2" type="button" data-toggle="collapse" data-target="#notification" aria-expanded="false" aria-controls="notification">
-            Notification
-        </button>
-        <div class="collapse" id="notification">
-            <form class="p-2 bg-light" method="POST">
-                {% csrf_token %}
-                {{ n_form|crispy }}
-                <div class="row justify-content-end border-top border-primary m-1">
-                    <div class="col-sm-2">
-                        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+        {% if request.user.is_superuser %}
+            <button class="list-group-item list-group-item-action btn btn-primary text-center mt-2" type="button" data-toggle="collapse" data-target="#notification" aria-expanded="false" aria-controls="notification">
+                Notification
+            </button>
+            <div class="collapse" id="notification">
+                <form class="p-2 bg-light" method="POST">
+                    {% csrf_token %}
+                    {{ n_form | crispy}}
+                    <div class="row justify-content-end border-top border-primary m-1">
+                        <div class="col-sm-2">
+                            <button type="submit" class="btn btn-outline-primary mt-2" name="notification">Submit</button>
+                        </div>
                     </div>
-                </div>
-            </form>
-        </div>
+                </form>
+            </div>
+        {% endif %}
     </ul>
 {% endblock body %}

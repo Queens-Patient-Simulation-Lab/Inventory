@@ -19,7 +19,9 @@ class Command(BaseCommand):
         # Create a test user
 
         print("Making new user")
-        user = User.objects.create_user("a@a.com", "abcd")
+        user = User.objects.create_user(email="mocpzz_scott@icloud.com", password="abcd", is_superuser=True)
+        user.receivesAlerts = True
+        user.save()
         assert user.password != "abcd"
 
         mainStorage = Location.objects.create(name="Main Storage Area")
@@ -37,6 +39,12 @@ class Command(BaseCommand):
         itemThree = Item.objects.create(
             title="Puppy 2",
             description="item Three"
+        )
+        itemFour = Item.objects.create(
+            title="ADAPT FEED BOLUS BFA-20-S",
+            kghID=95988,
+            price=4.5
+
         )
 
         ItemStorage.objects.create(item=itemOne, location=mainStorage, quantity=15)

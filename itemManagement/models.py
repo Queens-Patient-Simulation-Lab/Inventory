@@ -20,7 +20,6 @@ class Location(models.Model):
             'quantity' : self.itemstorage_set.get(item=item).quantity
         }
 
-
 class Item(models.Model):
     kghID = models.CharField(max_length=20, null=True)
     title = models.CharField(max_length=40)

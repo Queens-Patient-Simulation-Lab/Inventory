@@ -1,0 +1,10 @@
+<mjml>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text>A Queen's Patient Simulation Lab Inventory System account has been created with your email address. <a href="{{link}}">Please click here to complete setup</a></mj-text>
+
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

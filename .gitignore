@@ -129,5 +129,6 @@ assets/bundles/
 node_modules/
 webpack-stats.json
 staticfiles/
-
+emails/templates/*.html
 simulation_lab/whoosh_index
+
