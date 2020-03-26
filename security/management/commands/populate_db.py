@@ -40,6 +40,12 @@ class Command(BaseCommand):
             title="Puppy 2",
             description="item Three"
         )
+        itemFour = Item.objects.create(
+            title="ADAPT FEED BOLUS BFA-20-S",
+            kghID=95988,
+            price=4.5
+
+        )
 
         ItemStorage.objects.create(item=itemOne, location=mainStorage, quantity=15)
         ItemStorage.objects.create(item=itemTwo, location=kennel, quantity=385)

@@ -6,9 +6,10 @@ from security.models import User
 class BaseTestCaseView(TestCase):
     MESSAGE_SUCCESS = "success"
     MESSAGE_ERROR = "danger"
+    MESSAGE_WARNING = "warning"
 
     def assertMessageLevel(self, response, messageLevel):
-        assert messageLevel in [x.tags for x in response.context['messages']],f"{messageLevel} banner was not provided"
+        assert messageLevel in [x.tags for x in response.context['messages']],f"{messageLevel} banner was not provided."
 
     def createLoggedInUser(self, isAdmin):
         if isAdmin:

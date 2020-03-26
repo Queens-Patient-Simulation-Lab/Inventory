@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class KghdatamanagementConfig(AppConfig):
+class KghDataManagementConfig(AppConfig):
     name = 'kghDataManagement'

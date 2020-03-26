@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'security.apps.SecurityConfig',
     'emails.apps.EmailsConfig',
     'itemManagement.apps.ItemManagementConfig',
-    'kghDataManagement.apps.KghdatamanagementConfig',
+    'kghDataManagement.apps.KghDataManagementConfig',
     'reports.apps.ReportsConfig',
     'userManagement.apps.UserManagementConfig',
     'logs.apps.LogsConfig',
