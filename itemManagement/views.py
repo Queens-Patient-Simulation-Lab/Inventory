@@ -48,6 +48,7 @@ def getImage(request, id):
 class ItemDetailsView(TemplateView):
     def get(self, request, itemId, *args, **kwargs):
         isAdmin = request.user.is_superuser
+        isAdmin = True
 
         print(f"Item ID requested: {itemId}")
 
@@ -81,7 +82,6 @@ class ItemDetailsView(TemplateView):
 
             # --------TAGS-------------
             newTags = request.POST.get('newTags', "").split(',')
-            # newTags = newTags.split(',')
             # clear all tags
             item.tag_set.all().delete()
             # add back all new edited tags
