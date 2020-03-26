@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.db import IntegrityError
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -9,8 +9,10 @@ from django.views.generic import TemplateView
 from haystack.generic_views import SearchView
 from haystack.query import SearchQuerySet
 
-from itemManagement.models import Item, Location
+from itemManagement.models import Item, Location, Photo
 from simulation_lab import settings
+from django.templatetags.static import static
+
 
 
 class HomePage(SearchView):
@@ -32,6 +34,14 @@ class HomePage(SearchView):
         if (len(objectList) == 0 and len(context['query']) != 0):
             messages.warning(self.request, "No results were found. Showing recently used items instead.")
         return context
+
+
+def getImage(request, id):
+    try:
+        photo = Photo.objects.get(pk=id)
+    except Photo.DoesNotExist:
+        raise Http404
+    return HttpResponse(photo.data, content_type=photo.mimeType)
 
 
 class ItemDetailsView(TemplateView):
