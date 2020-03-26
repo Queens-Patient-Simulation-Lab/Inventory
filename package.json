@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "./build-frontend.sh --production"
+    "build": "./build-frontend.sh --production",
+    "dev": "./node_modules/.bin/webpack --config webpack.config.js",
+    "watch": "./node_modules/.bin/webpack --config webpack.config.js --watch"
   },
   "repository": {
     "type": "git",

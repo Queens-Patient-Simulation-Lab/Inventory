@@ -6,8 +6,8 @@ Install python3, git, node, npm and pipenv from your preferred sources
 4. `npm install` to install the frontend dependencies
 
 # Running
-Run `./node_modules/.bin/webpack --config webpack.config.js` to build the frontend.
-You can use `./node_modules/.bin/webpack --config webpack.config.js --watch` to continuous build when the frontend files change.
+Run `npm run dev` to build the frontend.
+You can use `npm run watch` to continuous build when the frontend files change.
 
 You can start the server by running `pipenv shell` to spawn a shell inside the project and then running `python manage.py runsever`.
 
