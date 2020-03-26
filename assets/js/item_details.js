@@ -7,8 +7,14 @@ import 'bootstrap4-tagsinput/tagsinput'
 
 $(".tagsInputBoxContainer").hide();
 
+$("#tagsInputBox").tagsinput({
+  trimValue: true
+});
+
 $.each($(".tagsShown").children().map(function(){return $(this).text();}).get(), function(index, value) {
     $('#tagsInputBox').tagsinput('add', value);
+    console.log(value);
+    console.log($("#tagsInputBox").val());
 });
 
 $("#tagsInputBox").tagsinput({
