@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 from haystack.generic_views import SearchView
 from haystack.query import SearchQuerySet
 
-from itemManagement.models import Item, Location, Photo, Tag
+from itemManagement.models import Item, Location, Photo, Tag, ItemStorage
 from simulation_lab import settings
 from django.templatetags.static import static
 
@@ -48,7 +48,6 @@ def getImage(request, id):
 class ItemDetailsView(TemplateView):
     def get(self, request, itemId, *args, **kwargs):
         isAdmin = request.user.is_superuser
-        # isAdmin = True
 
         print(f"Item ID requested: {itemId}")
 
@@ -66,9 +65,7 @@ class ItemDetailsView(TemplateView):
         item.lastUsed = timezone.now()
         # TODO: item lastUsed updated if decrement clicked
 
-        isAdmin = True
-
-        # TODO: Admin validation
+        isAdmin = request.user.is_superuser
 
         # Admin Fields updating fields other than quantities if admin
         if isAdmin:
@@ -86,19 +83,18 @@ class ItemDetailsView(TemplateView):
             item.tag_set.all().delete()
             # add back all new edited tags
             for newTag in newTags:
-                if newTag != "" or newTag is None:
+                if newTag != "" or newTag is not None:
                     newTag = Tag.objects.create(name=newTag.strip(), item=item)
                     newTag.save()
             # -------------------------
+        # END if isAdmin
 
-        # ----Quantities in Locations----
-        # Locations: list of all locations that house the current item
-        locations = item.locations.all()
+        # ----Item storage quantities at each location----
+        # itemStorages list of ItemStorage objects where the item is the current item form
+        itemStorages = ItemStorage.objects.filter(item=item)
 
-        # Locations
-        for location in locations:
-            itemStorage = location.itemstorage_set.get(item=item)
-            itemStorage.quantity = request.POST.get('quantity-location-' + str(location.id), "").strip()
+        for itemStorage in itemStorages:
+            itemStorage.quantity = request.POST.get('quantity-location-' + str(itemStorage.location.id), "").strip()
             itemStorage.save()
         # -------------------------------
 
@@ -125,8 +121,6 @@ class LocationView(TemplateView):
         id = request.POST.get('id', "").strip()
         name = request.POST.get('name', "").strip()
         description = request.POST.get('description', "").strip()
-
-        print("Test print")
 
         if id != "":
             return self._updateLocation(request, id, name, description)
