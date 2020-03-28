@@ -9,6 +9,7 @@ from itemManagement.models import Item
 class ItemIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     deleted = indexes.BooleanField(model_attr='deleted')
+    lastUsed = indexes.DateTimeField(model_attr="lastUsed")
 
     def get_model(self):
         return Item

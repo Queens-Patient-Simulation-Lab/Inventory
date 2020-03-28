@@ -1,3 +1,7 @@
 $('#itemTable tr').click(function () {
-    $("#modalContainer").load($(this).attr('data-access-url'));
+    $.get($(this).attr('data-access-url'), (data) => { document.getElementById("modalContainer").innerHTML = data; });
+});
+
+$('#itemCreationButton').click(function () {
+    $.get($(this).attr('data-access-url'), (data) => { document.getElementById("itemCreationContainer").innerHTML = data; });
 });

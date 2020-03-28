@@ -18,7 +18,7 @@ class HomePage(SearchView):
 
     def get_queryset(self):
         queryset = super(HomePage, self).get_queryset()
-        return queryset.filter(deleted=False)
+        return queryset.filter(deleted=False).order_by('-lastUsed')
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomePage, self).get_context_data(*args, **kwargs)
@@ -45,6 +45,20 @@ class ItemDetailsView(TemplateView):
             return render(request, 'itemManagement/item_details_admin.html', context=context)
         else:
             return render(request, 'itemManagement/item_details_assistant.html', context=context)
+
+
+class ItemCreationView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'itemManagement/item_creation.html')
+
+    def post(self, request, *args, **kwargs):
+        print("safas")
+        kghID = request.POST.get('item_id', "").strip()
+
+        item = Item.objects.create(kghID=kghID)
+        item.save()
+        messages.success("create a new item")
+        return render(request, 'itemManagement/item_creation.html')
 
 
 class LocationView(TemplateView):

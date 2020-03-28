@@ -1,19 +1,15 @@
-{% load render_bundle from webpack_loader %}
 {% load static %}
 
 <div class="container">
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
     <form>
         <div class="form-group m-2">
             <label for="itemName">Item Name</label>
-            <input type="name" class="form-control" id="itemName" value="{{ name }}">
+            <input type="name" class="form-control" id="itemName">
         </div>
 
         <div class="form-group m-2">
             <label for="materialNo">KGH ID</label>
-            <input type="item_id" class="form-control" id="materialNo" value="{{ kghId }}">
+            <input type="item_id" class="form-control" id="materialNo">
         </div>
 
         <div id="itemImageCarousel" class="carousel slide" data-ride="carousel">
@@ -64,8 +60,7 @@
 
         <div class="form-group m-2">
             <label for="description">Description</label>
-            <textarea type="item_description" class="form-control" id="description"
-                      value="{{ description }}"/>
+            <textarea type="item_description" class="form-control" id="description"/>
         </div>
 
         <div class="form-group m-2">
@@ -81,59 +76,56 @@
                 </button>
 
             </div>
-
-            <div class="form-group m-2">
-                <label for="itemPrice">Item price</label>
-                <input type="MA_price" class="form-control" id="itemPrice" value="${{ price }}">
-            </div>
-            <div class="form-group m-2">
-                <label for="unit">Unit of Measurement</label>
-                <input type="unit_measure" class="form-control" id="unit" value="{{ unit }}">
-            </div>
-
-            <table class="table table-striped m-2">
-                <thead>
-                <tr>
-                    <th scope="col">Location</th>
-                    <th scope="col">Stock</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for location in locations %}
-                    <tr>
-                        <th scope="col">{{ location.name }}</th>
-                        <td class="row">
-                            <button class="btn btn-primary position-relative m-1 decrement" type="button">
-                                -
-                            </button>
-                            <div class="form-group m-1">
-                                <input class=" form-control item_quantity" id="amount" value="{{ location.quantity }}"
-                                       style="width: 80px;" type="decimal">
-                            </div>
-                            <button class="btn btn-secondary position-relative m-1 increment" type="button">
-                                +
-                            </button>
-                        </td>
-                    </tr>
-                {% endfor %}
-
-                <tr>
-                    <th scope="row" colspan="2">
-                        <button type="button" class="btn btn-outline-secondary col">assign a new location</button>
-                    </th>
-                </tr>
-                </tbody>
-            </table>
-
-            <div class="form-group m-2">
-                <label for="stock">Total Stock</label>
-                <input readonly type="total_stock" class="form-control" id="stock" value="{{ totalQuantity }}">
-            </div>
-
-            <a href="" class="m-2">view history report</a>
         </div>
+
+        <div class="form-group m-2">
+            <label for="itemPrice">Item price</label>
+            <input type="MA_price" class="form-control" id="itemPrice">
+        </div>
+        <div class="form-group m-2">
+            <label for="unit">Unit of Measurement</label>
+            <input type="unit_measure" class="form-control" id="unit">
+        </div>
+
+        <table class="table table-striped m-2">
+            <thead>
+            <tr>
+                <th scope="col">Location</th>
+                <th scope="col">Stock</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for location in locations %}
+                <tr>
+                    <th scope="col">{{ location.name }}</th>
+                    <td class="row">
+                        <button class="btn btn-primary position-relative m-1 decrement" type="button">
+                            -
+                        </button>
+                        <div class="form-group m-1">
+                            <input class=" form-control item_quantity" id="amount" style="width: 80px;" type="decimal">
+                        </div>
+                        <button class="btn btn-secondary position-relative m-1 increment" type="button">
+                            +
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <th scope="row" colspan="2">
+                    <button type="button" class="btn btn-outline-secondary col">assign a new location</button>
+                </th>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="form-group m-2">
+            <label for="stock">Total Stock</label>
+            <input readonly type="total_stock" class="form-control" id="stock">
+        </div>
+
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
     </form>
-
 </div>
-
-{% render_bundle 'item_details' %}
