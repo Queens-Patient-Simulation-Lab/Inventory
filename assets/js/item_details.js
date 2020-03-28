@@ -13,8 +13,6 @@ $("#tagsInputBox").tagsinput({
 
 $.each($(".tagsShown").children().map(function(){return $(this).text();}).get(), function(index, value) {
     $('#tagsInputBox').tagsinput('add', value);
-    console.log(value);
-    console.log($("#tagsInputBox").val());
 });
 
 $("#tagsInputBox").tagsinput({
@@ -36,7 +34,6 @@ $(".increment").click(function () {
     Called when the minus button next to a quantity is pressed
  */
 $(".decrement").click(function () {
-        console.log("CLICKED decrement");
         //if quantity is less than zero, do not decrement further
         if (parseInt($(this).siblings(".item_quantity").val()) <= 0) {
             console.log("Could not decrement further")
@@ -65,10 +62,9 @@ $("#item-details-form").submit(function(e) {
            type: "POST",
            url: url,
            data: form.serialize(), // serializes the form's elements.
-           success: function(data)
-           {
+           success: function(data) {
                $(".modal").modal("hide");
            }
-         });
     });
+});
 
