@@ -3,6 +3,8 @@ import traceback
 from decimal import Decimal
 
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db import transaction, IntegrityError
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -12,12 +14,10 @@ from django.urls import reverse
 from django.utils.encoding import smart_str
 from django.views.generic import TemplateView
 
-# TODO, lock down admin only (both get and post request)
 from itemManagement.models import Item
 from simulation_lab import StringUtils
 
-
-class KghUploadPage(TemplateView):
+class KghUploadPage(UserPassesTestMixin, TemplateView):
     # Keys for dictionary from decode_utf8 saved as variables to avoid misspellings
     ROW_MATERIAL = "material"
     ROW_OLD_MATERIAL = "oldMaterialNumbers"
@@ -30,8 +30,10 @@ class KghUploadPage(TemplateView):
     CHANGE_OLD_PRICE = "oldPrice"
     CHANGE_NEW_PRICE = "newPrice"
 
-    # [kghId, title, oldKghId, oldPrice, newPrice]
+    def test_func(self):
+        return self.request.user.is_superuser
 
+    # [kghId, title, oldKghId, oldPrice, newPrice]
     def get(self, request, *args, **kwargs):
         return render(request, 'kghDataManagement/kgh_upload_page.html')
 
@@ -155,8 +157,7 @@ class KghUploadPage(TemplateView):
                 self.ROW_PRICE: row[priceIndex]
             }
 
-
-# TODO Admin Check
+@user_passes_test(lambda u: u.is_superuser)
 def downloadKghTemplate(request):
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(content_type='text/csv')

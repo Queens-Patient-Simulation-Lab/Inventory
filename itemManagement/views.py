@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db import IntegrityError
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
@@ -57,7 +58,11 @@ class ItemDetailsView(TemplateView):
             return render(request, 'itemManagement/item_details_assistant.html', context=context)
 
 
-class LocationView(TemplateView):
+class LocationView(UserPassesTestMixin, TemplateView):
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
     # Displays a page of all item locations.
     def get(self, request, *args, **kwargs):
         locations = Location.objects.filter(deleted=False).all().order_by('name')
@@ -98,6 +103,7 @@ class LocationView(TemplateView):
         return redirect(request.path_info)
 
     # Soft delete a location. We never hard delete locations
+    @user_passes_test(lambda u: u.is_superuser)
     def delete(self, request, id, *args, **kwargs):
         location = Location.objects.get(id=id)
         if location is None:
@@ -109,7 +115,6 @@ class LocationView(TemplateView):
         location.deleted = True
         location.save()
         messages.success(request, "Successfully deleted")
-        # Todo, throw error response on failure,  and status code  400
         return HttpResponse(status=204)  # Return an OK status with no content
 
     """

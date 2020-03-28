@@ -12,7 +12,10 @@ class GetLocationViewTestsAccessible(BaseTestCaseView):
         self.assertEqual(response.status_code, 302)
 
     def test_loggedInAsLabAssistant_cannotAccess(self):
-        pass  # TODO, test that only admin can request these views.
+        self.createLoggedInUser(isAdmin=False)
+
+        response = self.client.get("/item/locations/")
+        self.assertEqual(response.status_code, 403)
 
     def test_loggedInAsAdmin_canGetLocations(self):
         self.createLoggedInUser(isAdmin=True)
