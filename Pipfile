@@ -13,6 +13,9 @@ django-crispy-forms = "*"
 weasyprint = "*"
 django-heroku = "*"
 gunicorn = "*"
+#TODO, change to release once release works (this will likely be after the project is handed off)
+# Note to future developers, at the time of writing, the latest release of django-haystack does not work with Django 3 because it
+# relies on the dependency called six which Django has removed. Therefore we are currently using the newest version from the django-haystack github.
 django-haystack = {git = "https://github.com/django-haystack/django-haystack.git",ref = "master"} #TODO, change to release once release works
 whoosh = "*"
 django-webpack-loader = "*"
