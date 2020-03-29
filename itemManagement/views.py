@@ -83,7 +83,7 @@ class ItemDetailsView(TemplateView):
             item.tag_set.all().delete()
             # add back all new edited tags
             for newTag in newTags:
-                if newTag != "" or newTag is not None:
+                if newTag != "" and newTag is not None:
                     newTag = Tag.objects.create(name=newTag.strip(), item=item)
                     newTag.save()
             # -------------------------
