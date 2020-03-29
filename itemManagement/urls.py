@@ -12,7 +12,8 @@ URL_ITEM_DETAILS = "item-details"
 URL_GET_PHOTO = "get-photo"
 
 urlpatterns = [
-    path('item/<int:itemId>', ItemDetailsView.as_view(), name=URL_ITEM_DETAILS),
+    path('item/<int:itemId>/', ItemDetailsView.as_view(), name=URL_ITEM_DETAILS),
+    path('createItem/', ItemDetailsView.as_view(), name=URL_ITEM_DETAILS),
     path('home/', HomePage.as_view(), name=URL_HOMEPAGE),
     path('locations/', LocationView.as_view(), name=URL_LOCATION_LIST),
     path('locations/<int:id>/', LocationView.as_view(), name=URL_LOCATION_LIST),

@@ -22,7 +22,7 @@ class HomePage(SearchView):
 
     def get_queryset(self):
         queryset = super(HomePage, self).get_queryset()
-        return queryset.filter(deleted=False)
+        return queryset.filter(deleted=False).order_by('-lastUsed')
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomePage, self).get_context_data(*args, **kwargs)
@@ -47,19 +47,22 @@ def getImage(request, id):
 
 
 class ItemDetailsView(TemplateView):
-    def get(self, request, itemId, *args, **kwargs):
+    def get(self, request, itemId=None, *args, **kwargs):
         isAdmin = request.user.is_superuser
 
         print(f"Item ID requested: {itemId}")
 
-        context = Item.objects.get(id=itemId).getItemDetails()
+        if itemId is None:
+            context = {itemId: None}
+        else:
+            context = Item.objects.get(id=itemId).getItemDetails()
 
         if isAdmin:
             return render(request, 'itemManagement/item_details_admin.html', context=context)
         else:
             return render(request, 'itemManagement/item_details_assistant.html', context=context)
 
-    def post(self, request, itemId, *args, **kwargs):
+    def post(self, request, itemId=None, *args, **kwargs):
 
         item = Item.objects.get(id=itemId)
 

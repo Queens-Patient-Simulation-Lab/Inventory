@@ -52,9 +52,18 @@
         </div>
         {% endif %}
     </div>
+    {% endif %}
+
+    {% if request.user.is_superuser %}
+    <div class="row justify-content-end m-1">
+        <button type="button" id="itemCreationButton" data-access-url="{% url 'item-details' %}" data-toggle="modal" data-target="#exampleModal" class="btn btn-outline-primary col-sm-2">
+            Create Item
+        </button>
+    </div>
+    {% endif %}
 </div>
 
-
+<!-- item detail model -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -65,7 +74,6 @@
         </div>
     </div>
 </div>
-
 
 {# Drop down list for editing item quantities per row #}
 {% render_bundle 'homepage' %}
