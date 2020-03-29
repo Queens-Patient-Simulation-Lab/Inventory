@@ -47,13 +47,13 @@ def getImage(request, id):
 
 
 class ItemDetailsView(TemplateView):
-    def get(self, request, itemId=None, *args, **kwargs):
+    def get(self, request, itemId, *args, **kwargs):
         isAdmin = request.user.is_superuser
 
         print(f"Item ID requested: {itemId}")
 
-        if itemId is None:
-            context = {itemId: None}
+        if itemId == '':
+            context = {"itemId": None, "name": None, "kghId": None, "description": None, "price": None, "unit": None, "totalQuantity": None}
         else:
             context = Item.objects.get(id=itemId).getItemDetails()
 
@@ -62,7 +62,7 @@ class ItemDetailsView(TemplateView):
         else:
             return render(request, 'itemManagement/item_details_assistant.html', context=context)
 
-    def post(self, request, itemId=None, *args, **kwargs):
+    def post(self, request, itemId, *args, **kwargs):
 
         item = Item.objects.get(id=itemId)
 
