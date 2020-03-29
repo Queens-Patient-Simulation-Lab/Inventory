@@ -10,6 +10,7 @@ class ItemIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     deleted = indexes.BooleanField(model_attr='deleted')
     lastUsed = indexes.DateTimeField(model_attr="lastUsed")
+    title = indexes.CharField(model_attr="title")
 
     def get_model(self):
         return Item
