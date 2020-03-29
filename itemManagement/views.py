@@ -53,7 +53,7 @@ class ItemDetailsView(TemplateView):
         print(f"Item ID requested: {itemId}")
 
         if itemId == '':
-            context = {"itemId": None, "name": None, "kghId": None, "description": None, "price": None, "unit": None, "totalQuantity": None}
+            context = {"itemId": '', "name": '', "kghId": '', "description": '', "price": '0.00', "unit": '', "totalQuantity": 0}
         else:
             context = Item.objects.get(id=itemId).getItemDetails()
 
@@ -64,7 +64,14 @@ class ItemDetailsView(TemplateView):
 
     def post(self, request, itemId, *args, **kwargs):
 
-        item = Item.objects.get(id=itemId)
+        if message := itemFormInvalid(request):
+            messages.error(request, message)
+            return HttpResponse(status=400)
+
+        if itemId == '':
+            item = Item.objects.create()
+        else:
+            item = Item.objects.get(id=itemId)
 
         item.lastUsed = timezone.now()
         # TODO: item lastUsed updated if decrement clicked
@@ -111,6 +118,31 @@ class ItemDetailsView(TemplateView):
 
         # TODO: Return to homepage with same previous state after POST
         return HttpResponse(status=204)
+
+
+def itemFormInvalid(request):
+    name = request.POST.get('itemName', "").strip()
+    price = request.POST.get('price', "").strip()
+    unit = request.POST.get('unit', "").strip()
+    kghID = request.POST.get('kghID', "").strip()
+
+    if name == '' or name is None:
+        return "Please specify a name"
+    if len(name) < 3 or len(name) > 40:
+        return "Name must be between 3-40 characters"
+
+    if len(kghID) > 20:
+        return "kghID must be maximum 20 characters"
+
+    try:
+        "{:.2f}".format(float(price))
+    except ValueError:
+        return "Price is formatted incorrectly"
+
+    if len(unit) > 20:
+        return "Unit must be maximum 20 characters"
+
+    return False
 
 
 class LocationView(UserPassesTestMixin, TemplateView):
