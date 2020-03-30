@@ -121,7 +121,7 @@ class LocationView(UserPassesTestMixin, TemplateView):
     """
 
     def _updateLocation(self, request, id, name, description):
-        location = Location.objects.get(id=id)
+        location = Location.objects.filter(id=id).first()
         if location is None or location.deleted:
             messages.error(request, "This location does not exist")
             return redirect(request.path_info)
