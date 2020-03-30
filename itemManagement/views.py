@@ -48,20 +48,6 @@ class ItemDetailsView(TemplateView):
             return render(request, 'itemManagement/item_details_assistant.html', context=context)
 
 
-class ItemCreationView(TemplateView):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'itemManagement/item_creation.html')
-
-    def post(self, request, *args, **kwargs):
-        print("safas")
-        kghID = request.POST.get('item_id', "").strip()
-
-        item = Item.objects.create(kghID=kghID)
-        item.save()
-        messages.success("created a new item")
-        return render(request, 'itemManagement/item_creation.html')
-
-
 class LocationView(TemplateView):
     # Displays a page of all item locations.
     def get(self, request, *args, **kwargs):
