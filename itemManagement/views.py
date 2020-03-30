@@ -122,13 +122,20 @@ class LocationView(UserPassesTestMixin, TemplateView):
     """
 
     def _updateLocation(self, request, id, name, description):
-        locations = Location.objects.filter(id=id, deleted=False)
-        if not locations.exists():
+        location = Location.objects.get(id=id)
+        if location is None or location.deleted:
             messages.error(request, "This location does not exist")
             return redirect(request.path_info)
-        locations.update(
-            name=name,
-            description=description
-        )
+        if (len(name) < 3):
+            messages.error(request, "Name must be at least 3 characters")
+            return redirect(request.path_info)
+
+        if (name != location.name and Location.objects.filter(deleted=False, name=name).exists()):
+            messages.error(request, "You cannot have two locations with the same name.")
+            return redirect(request.path_info)
+
+        location.name = name
+        location.description = description
+        location.save()
         messages.success(request, "Location modified successfully")
         return redirect(request.path_info)

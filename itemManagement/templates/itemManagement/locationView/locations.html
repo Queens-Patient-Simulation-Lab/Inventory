@@ -19,7 +19,7 @@ A page where the admin can see and modify all locations that an item can be plea
                 </thead>
                 <tbody>
                 {% for location in locations %}
-                    <tr data-attr-value="{% url 'location-list' id=location.id %}" data-toggle="modal">
+                    <tr id="{{ location.id }}" data-attr-value="{% url 'location-list' id=location.id %}" data-toggle="modal">
                         <td id="locationName">{{ location.name }}</td>
                         <td id="locationDescription">{{ location.description }}</td>
 
@@ -32,7 +32,6 @@ A page where the admin can see and modify all locations that an item can be plea
                                 Delete
                             </button>
                         </td>
-                        {#TODO once search is finished, implement button to query for all items at clicked row's location#}
                     </tr>
                 {% empty %}
                     <td>
