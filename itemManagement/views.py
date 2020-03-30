@@ -103,7 +103,6 @@ class LocationView(UserPassesTestMixin, TemplateView):
         return redirect(request.path_info)
 
     # Soft delete a location. We never hard delete locations
-    @user_passes_test(lambda u: u.is_superuser)
     def delete(self, request, id, *args, **kwargs):
         location = Location.objects.get(id=id)
         if location is None:

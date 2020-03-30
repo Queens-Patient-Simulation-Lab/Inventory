@@ -10,6 +10,7 @@ A page where the admin can see and modify all locations that an item can be plea
         <h1>Locations</h1>
 
         <div class="container">
+        {% csrf_token %}
             <table id="itemTable" class="table table-hover">
                 <thead>
                 <tr>

@@ -1,9 +1,13 @@
 $(".deleteBtn").click(function () {
     locationUrl = $(this).closest("tr").attr("data-attr-value")
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
     $.ajax({
         type: "DELETE",
         url: locationUrl,
-        headers: {"X-CSRFToken": "{{ csrf_token }}"},
+        beforeSend: function(xhr) {
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+    },
         complete: function (msg) {
             location.reload()
         }
