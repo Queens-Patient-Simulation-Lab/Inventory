@@ -5,7 +5,6 @@ $('#itemTable tr').click(function () {
         // NOTE: this only working for scripts loaded with an src attribute and ignores all other attributes
         const div = document.createElement("div");
         div.innerHTML = data;
-        // document.getElementById("modalContainer").appendChild(div); // insert the content into the page scripts don't run
         $("#modalContainer").empty()[0].appendChild(div); // insert the content into the page, replacing any existing modal, scripts don't run
         const scripts = div.getElementsByTagName("script");
         let pairs = [];
