@@ -18,4 +18,4 @@ whoosh = "*"
 django-webpack-loader = "*"
 
 [requires]
-python_version = "3"
+python_version = "~= 3.8"

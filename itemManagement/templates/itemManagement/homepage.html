@@ -23,7 +23,12 @@
         <tbody>
             {% for item in items %}
             <tr data-access-url="{% url 'item-details' item.itemId %}" data-toggle="modal" data-target="#exampleModal">
-                <td scope="row"><img src="{% static item.images.0 %}" class="img-thumbnail img-responsive img-rounded">
+                <td scope="row">
+                    {% if item.images.count > 0  %}
+                    <img src="{% url 'get-photo' id=item.images.first.id %}" class="img-thumbnail img-responsive img-rounded">
+                    {% else %}
+                    <img src="{% static  'itemManagement/default_image.svg' %}" class="img-thumbnail img-responsive img-rounded">
+                    {% endif %}
                 </td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.locations.0 }}</td>
@@ -45,52 +50,16 @@
                 {% if page_obj.has_next %}</a>{% endif %}
     </div>
     {% endif %}
-
-    {% if request.user.is_superuser %}
-    <div class="row justify-content-end m-1">
-        <button id="itemCreationButton" data-access-url="{% url 'item-creation' %}" type="button" class="btn btn-outline-primary col-sm-2" data-toggle="modal" data-target="#itemCreation">
-                Create Item
-        </button>
-    </div>
-    {% endif %}
 </div>
 
 <!-- item detail model -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-
-            <div class="modal-body">
-                <div id="modalContainer">
-
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- item creation model -->
-<div class="modal fade" id="itemCreation" tabindex="-1" role="dialog" aria-labelledby="itemCreationLabel">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="itemCreationContainer">
-
-                </div>
-            </div>
-            <!-- div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save changes</button>
-            </div -->
+          <div class="modal-body">
+             <div id="modalContainer">
+             </div>
+          </div>
         </div>
     </div>
 </div>
