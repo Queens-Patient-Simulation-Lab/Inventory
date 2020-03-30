@@ -14,7 +14,6 @@ URL_ITEM_CREATION = 'item-creation'
 
 urlpatterns = [
     path('item/<int:itemId>/', ItemDetailsView.as_view(), name=URL_ITEM_DETAILS),
-    path('itemCreation/', ItemCreationView.as_view(), name=URL_ITEM_CREATION),
     path('home/', HomePage.as_view(), name=URL_HOMEPAGE),
     path('locations/', LocationView.as_view(), name=URL_LOCATION_LIST),
     path('locations/<int:id>/', LocationView.as_view(), name=URL_LOCATION_LIST)
