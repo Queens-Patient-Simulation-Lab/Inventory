@@ -15,11 +15,11 @@ class Location(models.Model):
 
     def getLocationDetailsForItem(self, item):
         return {
+            'id': self.id,
             'name': self.name,
             'description': self.description,
             'quantity' : self.itemstorage_set.get(item=item).quantity
         }
-
 
 class Item(models.Model):
     kghID = models.CharField(max_length=20, null=True)
@@ -44,16 +44,16 @@ class Item(models.Model):
                 'name': self.title,
                 'locations': [x.name for x in self.locations.all()],
                 'totalQuantity': self.totalQuantity,
-                'images': [x.data for x in self.photo_set.all()]
+                'images': self.photo_set
             }
     def getItemDetails(self):
         return {
             'itemId': self.id,
             'name': self.title,
             'kghId': self.kghID,
-            'images': [x.data for x in self.photo_set.all()],
             'description' : self.description,
             'tags': [x.name for x in self.tag_set.all()],
+            'images': self.photo_set,
             'price' : self.price,
             'unit' : self.unit,
             'locations': [x.getLocationDetailsForItem(self) for x in self.locations.all()],
@@ -71,9 +71,11 @@ class ItemStorage(models.Model):
 
 class Photo(models.Model):
     mimeType = models.CharField(max_length=20)
-    data = models.CharField(max_length=200)     #todo: When photos become uploadable, change this field
+    data = models.BinaryField()
     order = models.PositiveSmallIntegerField()
     depicts = models.ForeignKey(Item, on_delete=models.CASCADE) # TODO: On delete we probably need to do more
+    class Meta:
+        ordering = ["order"]
 
 
 class Tag(models.Model):

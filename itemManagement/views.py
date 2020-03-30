@@ -1,16 +1,19 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.db import IntegrityError
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
+from django.utils import timezone
 
 # Create your views here.
 from django.views.generic import TemplateView
 from haystack.generic_views import SearchView
 from haystack.query import SearchQuerySet
 
-from itemManagement.models import Item, Location
+from itemManagement.models import Item, Location, Photo, Tag, ItemStorage
 from simulation_lab import settings
+from django.templatetags.static import static
+
 
 
 class HomePage(SearchView):
@@ -35,6 +38,14 @@ class HomePage(SearchView):
         return context
 
 
+def getImage(request, id):
+    try:
+        photo = Photo.objects.get(pk=id)
+    except Photo.DoesNotExist:
+        raise Http404
+    return HttpResponse(photo.data, content_type=photo.mimeType)
+
+
 class ItemDetailsView(TemplateView):
     def get(self, request, itemId, *args, **kwargs):
         isAdmin = request.user.is_superuser
@@ -42,10 +53,58 @@ class ItemDetailsView(TemplateView):
         print(f"Item ID requested: {itemId}")
 
         context = Item.objects.get(id=itemId).getItemDetails()
+
         if isAdmin:
             return render(request, 'itemManagement/item_details_admin.html', context=context)
         else:
             return render(request, 'itemManagement/item_details_assistant.html', context=context)
+
+    def post(self, request, itemId, *args, **kwargs):
+
+        item = Item.objects.get(id=itemId)
+
+        item.lastUsed = timezone.now()
+        # TODO: item lastUsed updated if decrement clicked
+
+        isAdmin = request.user.is_superuser
+
+        # Admin Fields updating fields other than quantities if admin
+        if isAdmin:
+            # --------TEXT FIELDS--------
+            item.title = request.POST.get('itemName', "").strip()
+            item.description = request.POST.get('description', "").strip()
+            item.price = request.POST.get('price', "").strip()
+            item.unit = request.POST.get('unit', "").strip()
+            item.save(update_fields=['title', 'description', 'price', 'unit'])
+            # ---------------------------
+
+            # --------TAGS-------------
+            newTags = request.POST.get('newTags', "").split(',')
+            # clear all tags
+            item.tag_set.all().delete()
+            # add back all new edited tags
+            for newTag in newTags:
+                if newTag != "" and newTag is not None:
+                    newTag = Tag.objects.create(name=newTag.strip(), item=item)
+                    newTag.save()
+            # -------------------------
+        # END if isAdmin
+
+        # ----Item storage quantities at each location----
+        # itemStorages list of ItemStorage objects where the item is the current item form
+        itemStorages = ItemStorage.objects.filter(item=item)
+
+        for itemStorage in itemStorages:
+            itemStorage.quantity = request.POST.get('quantity-location-' + str(itemStorage.location.id), "").strip()
+            itemStorage.save()
+        # -------------------------------
+
+        # TODO: Post Images
+
+        # TODO: Input validation
+
+        # TODO: Return to homepage with same previous state after POST
+        return HttpResponse(status=204)
 
 
 class LocationView(TemplateView):

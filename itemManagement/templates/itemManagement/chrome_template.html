@@ -1,6 +1,7 @@
 {% extends "itemManagement/base_template.html" %}
 {% load static %}
 {% block content %}
+
 <div class="container-fluid h-100">
     <div class="row h-100">
         <aside class="col-12 col-md-2 p-0 bg-dark fixed-top">
@@ -31,7 +32,7 @@
                                 <a class="nav-link pl-0" href="{% url 'settings-home'%}">Settings</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link pl-0" href="#">Tutorial</a>
+                                <a class="nav-link pl-0" href={% url 'kgh-upload' %}>Tutorial</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link pl-0" href="{% url 'logout' %}">Sign Out</a>
