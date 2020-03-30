@@ -23,19 +23,18 @@
 
         <div id="itemImageCarousel" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
-                    <li data-target="#itemImageCarousel" data-slide-to="0" class="active"></li>
-
-                    {% for i in images|slice:"1:" %}
-                        <li data-target="#itemImageCarousel" data-slide-to="1"></li>
+                    {% for i in images.iterator %}
+                        <li data-target="#itemImageCarousel" data-slide-to="{{ forloop.counter }}" {% if foorloop.first %} class="active" {% endif %}></li>
                     {% endfor %}
                 </ol>
-                <div class="carousel-inner" > {# style="max-width: 500px; margin: auto"#}
-                    <div class="carousel-item active">
-                        <img src="{% static images.0 %}" class="d-block w-100 rounded">
-                    </div>
-                    {% for i in images|slice:"1:" %}
-                        <div class="carousel-item">
-                            <img src="{% static i %}" class="d-block w-100 rounded">
+                <div class="carousel-inner" >
+                    {% for image in images.iterator %}
+                        <div class="carousel-item {% if forloop.first %} active {% endif %}">
+                            <img src="{% url 'get-photo' id=image.id %}" class="d-block w-100 rounded">
+                        </div>
+                    {% empty %}
+                        <div class="carousel-item active">
+                            <img src="{% static  'itemManagement/default_image.svg' %}" class="d-block w-100 rounded">
                         </div>
                     {% endfor %}
                 </div>
@@ -57,8 +56,8 @@
         </div>
         <div id="pictureSetting" class="collapse">
             <div class="list-group list-group-horizontal row card card-body">
-                {% for i in images %}
-                    <img src="{% static i %}"
+                {% for image in images.iterator %}
+                    <img src="{% url 'get-photo' id=image.id %}"
                          class="list-group-item rounded img-thumbnail col-sm-3 col-4">
                 {% endfor %}
                 <button class="btn btn-outline-secondary list-group-item col-sm-3 col-4" type="button">
@@ -150,7 +149,6 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <button type="button submit" class="btn btn-primary">Save changes</button>
-        </div>
         </div>
     </form>
 
