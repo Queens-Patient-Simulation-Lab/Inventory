@@ -58,7 +58,7 @@ class ItemCreationView(TemplateView):
 
         item = Item.objects.create(kghID=kghID)
         item.save()
-        messages.success("create a new item")
+        messages.success("created a new item")
         return render(request, 'itemManagement/item_creation.html')
 
 
