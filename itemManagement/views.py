@@ -82,10 +82,11 @@ class ItemDetailsView(TemplateView):
         if isAdmin:
             # --------TEXT FIELDS--------
             item.title = request.POST.get('itemName', "").strip()
+            item.kghID = request.POST.get('kghId', "").strip()
             item.description = request.POST.get('description', "").strip()
             item.price = request.POST.get('price', "").strip()
             item.unit = request.POST.get('unit', "").strip()
-            item.save(update_fields=['title', 'description', 'price', 'unit'])
+            item.save(update_fields=['title', 'kghID', 'description', 'price', 'unit'])
             # ---------------------------
 
             # --------TAGS-------------
@@ -124,7 +125,7 @@ def itemFormInvalid(request):
     name = request.POST.get('itemName', "").strip()
     price = request.POST.get('price', "").strip()
     unit = request.POST.get('unit', "").strip()
-    kghID = request.POST.get('kghID', "").strip()
+    kghID = request.POST.get('kghId', "").strip()
 
     if name == '' or name is None:
         return "Please specify a name"
