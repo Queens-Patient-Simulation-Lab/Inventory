@@ -49,7 +49,6 @@ def getImage(request, id):
 class ItemDetailsView(TemplateView):
     def get(self, request, itemId, *args, **kwargs):
         isAdmin = request.user.is_superuser
-        isAdmin = False
 
         print(f"Item ID requested: {itemId}")
 
@@ -68,7 +67,6 @@ class ItemDetailsView(TemplateView):
         # TODO: item lastUsed updated if decrement clicked
 
         isAdmin = request.user.is_superuser
-        isAdmin = False
 
         # Admin Fields updating fields other than quantities if admin
         if isAdmin:
