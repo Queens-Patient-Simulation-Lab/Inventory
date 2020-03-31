@@ -18,7 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('security.urls')), # TODO: This path should be security but for now its the index
+    path('', include('security.urls')),
     path('item/', include('itemManagement.urls')),
     path('reports/', include('reports.urls')),
     path('userManagement/', include('userManagement.urls')),
