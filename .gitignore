@@ -132,3 +132,5 @@ staticfiles/
 emails/templates/*.html
 simulation_lab/whoosh_index
 
+
+security/management/commands/prod_data.py

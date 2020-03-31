@@ -118,7 +118,8 @@ import os
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+        # If running on Heroku, place index in tmp
+        'PATH': '/tmp/whoosh' if "DYNO" in os.environ else os.path.join(os.path.dirname(__file__), 'whoosh_index'),
     },
 }
 # Update one index every time an Item (or any indexed model) is saved or deleted
@@ -160,8 +161,10 @@ LOGIN_URL = 'login'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
+
 # attempting to use heroku config on travis fails
-if "DYNO" in os.environ:
+ON_HEROKU = "DYNO" in os.environ
+if ON_HEROKU:
     django_heroku.settings(locals())
 
 

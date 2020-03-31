@@ -15,6 +15,7 @@ class Location(models.Model):
 
     def getLocationDetailsForItem(self, item):
         return {
+            'id': self.id,
             'name': self.name,
             'description': self.description,
             'quantity' : self.itemstorage_set.get(item=item).quantity
