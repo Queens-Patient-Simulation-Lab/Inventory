@@ -30,7 +30,7 @@ class HomePage(SearchView):
         objectList = context['object_list']
         if (len(objectList) == 0):
             context['items'] = [item.getItemSummary() for item in Item.objects.filter(
-                deleted=False).order_by('-lastUsed', 'title')]
+                deleted=False).order_by('-lastUsed', 'title')[:20]]
         else:
             context['items'] = [item.object.getItemSummary() for item in objectList]
 
