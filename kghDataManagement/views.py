@@ -155,7 +155,7 @@ class KghUploadPage(UserPassesTestMixin, TemplateView):
         # Skip the first row of the file which is the header
         iterator = iter(file)
         header = next(iterator).decode('utf-8-sig').rstrip().split(',')
-        header = [x.strip() for x in header]  # Remove any spacing added to cells
+        header = [x.strip('"').strip() for x in header]  # Remove any spacing added to cells and remove qoutes from qoutes fields
         materialIndex = header.index("Material")
         # oldMaterialIndex = header.index("Old material no.")
         priceIndex = header.index("MA price")

@@ -9,7 +9,7 @@
         <p>This page allows you to upload your KGH catalog to update the price and KGH ID of any KGH Items in the
             database. It is important that catalog is a csv with headers matching<a
                     href="{% url 'kgh-download-template' %}"> the template</a>. Columns may be in any order but the
-            three headers must be present and spelled exactly as the template has shown.</p>
+            two headers must be present and spelled exactly as the template has shown. Other columns are ignored</p>
         <form method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 {% csrf_token %}
