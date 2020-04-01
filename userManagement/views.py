@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
@@ -46,12 +47,8 @@ def settings(request):
 
 
 # admin only page
+@user_passes_test(lambda u : u.is_superuser)
 def userAccount(request):
-    if request.method == 'GET':
-        # Bar lab assistants from this page and display 403 page to lab assistants
-        if not request.user.is_superuser:
-            return render(request, "security/403.html", status=403)
-
     if request.method == 'POST':
         # Email invitation form
         email = request.POST.get('email', "").strip()
@@ -177,6 +174,7 @@ def forgetPasswordConfirm(request, uidb64, token):
     return render(request, 'userManagement/forgetPasswordConfirm.html', context)
 
 
+@user_passes_test(lambda u : u.is_superuser)
 def userDelete(request, email):
     u = User.objects.filter(email=email).first()
     u.deleteFlag = True
@@ -187,6 +185,7 @@ def userDelete(request, email):
 
 
 # change user role to admin
+@user_passes_test(lambda u : u.is_superuser)
 def userAdmin(request, email):
     u = User.objects.filter(email=email).first()
     u.is_superuser = True
@@ -197,6 +196,7 @@ def userAdmin(request, email):
 
 
 # change user role to lab assistant
+@user_passes_test(lambda u : u.is_superuser)
 def userLabAssistant(request, email):
     u = User.objects.filter(email=email).first()
     u.is_superuser = False

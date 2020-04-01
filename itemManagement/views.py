@@ -29,7 +29,8 @@ class HomePage(SearchView):
         print(context)
         objectList = context['object_list']
         if (len(objectList) == 0):
-            context['items'] = [item.getItemSummary() for item in Item.objects.filter(deleted=False).all()]  # Todo, return list of most recently used items
+            context['items'] = [item.getItemSummary() for item in Item.objects.filter(
+                deleted=False).order_by('-lastUsed', 'title')[:20]]
         else:
             context['items'] = [item.object.getItemSummary() for item in objectList]
 
