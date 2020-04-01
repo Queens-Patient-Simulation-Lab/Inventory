@@ -166,6 +166,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 ON_HEROKU = "DYNO" in os.environ
 if ON_HEROKU:
     django_heroku.settings(locals())
+    DEBUG = False
 
 
 EMAIL_HOST = os.environ.get("SMTP_HOST", None)
