@@ -23,7 +23,7 @@ class Location(models.Model):
 
 class Item(models.Model):
     kghID = models.CharField(max_length=20, null=True)
-    title = models.CharField(max_length=40)
+    title = models.CharField(max_length=200)
     description = models.TextField()
     unit = models.CharField(max_length=20, null=True)
     # Note I don't call now() - It will be called when the object is created
