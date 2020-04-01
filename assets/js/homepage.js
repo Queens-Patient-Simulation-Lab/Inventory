@@ -1,5 +1,6 @@
-$('#itemTable tr').click(function () {
-    $.get($(this).attr('data-access-url'), (data) => {
+
+function loadModal(url) {
+    $.get(url, (data) => {
         // we can't just load the new content into the page with innerhtml because that won't execute scripts
         // we can't use jquery load because that would inline scripts breaking CSP
         // NOTE: this only working for scripts loaded with an src attribute and ignores all other attributes
@@ -20,7 +21,12 @@ $('#itemTable tr').click(function () {
             parent.removeChild(pair.old);
         }
     });
-});
-if ($("#exampleModal").data("show-default")){
-    $("#exampleModal").modal("show");
 }
+
+$('#itemTable tr').click(function () {
+    loadModal($(this).attr('data-access-url'));
+});
+
+$('#itemCreationButton').click(function () {
+    loadModal($(this).attr('data-access-url'));
+});

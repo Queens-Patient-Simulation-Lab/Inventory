@@ -13,3 +13,12 @@ input[type=number] {
 .disable-tap-zoom {
   touch-action: manipulation;
 }
+
+.carousel-inner {
+  max-width: 500px;
+  margin: auto;
+}
+
+.item_quantity {
+  width: 80px;
+}

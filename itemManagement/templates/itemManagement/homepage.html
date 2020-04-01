@@ -77,6 +77,15 @@
         </div>
     </div>
 
+    {% if user.is_superuser %}
+    <div class="row justify-content-end m-1">
+        <button type="button" id="itemCreationButton" data-access-url="{% url 'item-details' %}" data-toggle="modal" data-target="#exampleModal" class="btn btn-outline-primary col-sm-2">
+            Create Item
+        </button>
+    </div>
+    {% endif %}
+</div>
+
 
     <div {% if initialModal %} data-show-default="true" {% endif %} class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog modal-lg" role="document">
@@ -92,7 +101,6 @@
         </div>
     </div>
 
-
-    {# Drop down list for editing item quantities per row #}
-    {% render_bundle 'homepage' %}
+{# Drop down list for editing item quantities per row #}
+{% render_bundle 'homepage' %}
 {% endblock body %}
