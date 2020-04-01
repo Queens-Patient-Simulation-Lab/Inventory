@@ -102,7 +102,7 @@ def userRegister(request, uidb64 ,token):
                 c_form.save()
                 messages.success(request, f'Account ({user.email}) has successfully been created!')
                 UserLogs.logging(operator_user=user, logCode=Logs.LOGCODE_100001, logMsg=Logs.LOGMSG_100001)
-                return render(request, 'security/login.html')
+                return redirect('login')
         else:
             c_form = userCreationForm()
     else:
