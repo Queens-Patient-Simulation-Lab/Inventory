@@ -21,13 +21,16 @@ LOGMSG_100005 = 'set subject to admin'
 LOGCODE_100006 = '100006'
 LOGMSG_100006 = 'set subject to lab assistant'
 
-LOGCODE_200001 = '200001'
-LOGMSG_200001 = 'change item stock'
+LOGCODE_STOCKCHANGE = '200001'
+LOGMSG_STOCKCHANGE = 'item stock changed'
 
-LOGCODE_300001 = '300001'
-LOGMSG_300001 = 'create item'
-LOGCODE_300002 = '300002'
-LOGMSG_300002 = 'delete item'
+LOGCODE_CHANGEITEM = '300000'
+LOGMSG_CHANGEITEM = 'item details changed'
+
+LOGCODE_CREATEITEM = '300001'
+LOGMSG_CREATEITEM = 'created item'
+LOGCODE_DELETEITEM = '300002'
+LOGMSG_DELETEITEM = 'deleted item'
 LOGCODE_300003 = '300003'
 LOGMSG_300003 = 'change item KGH ID'
 LOGCODE_300004 = '300004'
@@ -134,7 +137,7 @@ class ItemInfoLogs(models.Model):
     output
 
     '''
-    def logging(operator_user, item, logCode, logMsg, kghID=None, price=None, *args, **kwargs):
+    def logging(operator_user, item, logCode, logMsg, kghID=None, price=None):
         if operator_user and item and logCode and logMsg:  # check required parameter
             itemInfoLogs = ItemInfoLogs(operator_user=operator_user, item=item, kghID=kghID, price=price, logCode=logCode, logMsg=logMsg)
             itemInfoLogs.save()
