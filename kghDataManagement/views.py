@@ -41,6 +41,14 @@ class KghUploadPage(UserPassesTestMixin, TemplateView):
         # Note, if this is slow, we can parallelize this
         try:
             kghFile = request.FILES['kghFile'] or None
+        except Exception as e:
+            messages.error(request, f"Error: The KGH catalog was not provided.")
+            traceback.print_exc()
+            return redirect('kgh-upload')
+        try:
+
+            if kghFile is None:
+                raise Exception("No file was provided")
 
             reader = self.decode_utf8(kghFile)
 
