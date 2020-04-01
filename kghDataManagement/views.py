@@ -92,7 +92,7 @@ class KghUploadPage(UserPassesTestMixin, TemplateView):
                     #
                     #     changes.append(change)
 
-                Item.objects.bulk_update(list(kghIdDict.values()), ["kghID", "price"], batch_size=300)
+                Item.objects.bulk_update(list(kghIdDict.values()), ["kghID", "price"], batch_size=100)
         except IntegrityError as e:
             messages.error(request, f"Error: {str(e)}")
             traceback.print_exc()
@@ -135,19 +135,19 @@ class KghUploadPage(UserPassesTestMixin, TemplateView):
             return ({
                 self.CHANGE_TITLE: kghItem.title,
                 self.CHANGE_OLD_PRICE: oldPrice,
-                self.CHANGE_NEW_PRICE: newPrice,
-                self.CHANGE_OLD_KGH_ID: kghItem.kghID
+                self.CHANGE_NEW_PRICE: newPrice
+                # self.CHANGE_OLD_KGH_ID: kghItem.kghID
             })
         return {}
 
     # oldIds: A space separated string of old KGH IDs
     # itemDictionary: itemDictionary[kghID] == Item
-    def getItemMatchingOldIds(self, oldIds, itemDictionary):
-        ids = oldIds.split(" ")
-        for oldId in ids:
-            item = itemDictionary.get(oldId)
-            if item is not None:
-                return item
+    # def getItemMatchingOldIds(self, oldIds, itemDictionary):
+    #     ids = oldIds.split(" ")
+    #     for oldId in ids:
+    #         item = itemDictionary.get(oldId)
+    #         if item is not None:
+    #             return item
 
     # Generator that decodes one row of the csv at a time
     # Returns a value when iterated on, this way we don't need to store the entire decryption in memory
@@ -157,14 +157,14 @@ class KghUploadPage(UserPassesTestMixin, TemplateView):
         header = next(iterator).decode('utf-8-sig').rstrip().split(',')
         header = [x.strip() for x in header]  # Remove any spacing added to cells
         materialIndex = header.index("Material")
-        oldMaterialIndex = header.index("Old material no.")
+        # oldMaterialIndex = header.index("Old material no.")
         priceIndex = header.index("MA price")
 
         for line in iterator:
             row = line.decode('utf-8-sig').rstrip().split(',')
             yield {
                 self.ROW_MATERIAL: row[materialIndex],
-                self.ROW_OLD_MATERIAL: row[oldMaterialIndex],
+                # self.ROW_OLD_MATERIAL: row[oldMaterialIndex],
                 self.ROW_PRICE: row[priceIndex]
             }
 

@@ -215,90 +215,91 @@ class PostKghSpreadsheet(BaseTestCaseView):
         self.assertEqual(len(changes), 0)
         self.assertEqual(response.context['catalogUploaded'], True)
 
+    # Tests being commented out since we no longer migrate old material IDs
     # Old material no. can be presented as one or more numbers separated by a space
-    def test_kghOldMaterialNumberSingleElementMatchesItem_updatesItemIdAndProperties(self):
-        itemOne = Item.objects.create(
-            title="Item One",
-            price="3",
-            kghID=11
-        )
-
-        itemList = [
-            self.createCsvRowData(material="25", oldMaterialNumbers="11", maPrice="78"),
-        ]
-        response = self.makeCallWithCSV(itemList)
-
-        self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
-
-        itemOne.refresh_from_db()
-
-        self.assertEqual(itemOne.kghID, "25")
-        self.assertEqual(itemOne.price, Decimal("78"))
-        self.assertEqual(itemOne.title, "Item One")
-
-    def test_kghOldMaterialNumberFirstElementMatchesItem_updatesItemIdAndProperties(self):
-        itemOne = Item.objects.create(
-            title="Item One",
-            price="3",
-            kghID=11
-        )
-
-        itemList = [
-            self.createCsvRowData(material="25", oldMaterialNumbers="11 57", maPrice="78"),
-        ]
-        response = self.makeCallWithCSV(itemList)
-
-        self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
-
-        itemOne.refresh_from_db()
-
-        self.assertEqual(itemOne.kghID, "25")
-        self.assertEqual(itemOne.price, Decimal("78"))
-        self.assertEqual(itemOne.title, "Item One")
-
-    def test_kghOldMaterialNumberSecondElementMatchesItem_updatesItemIdAndProperties(self):
-        itemOne = Item.objects.create(
-            title="Item One",
-            price="3",
-            kghID=11
-        )
-
-        itemList = [
-            self.createCsvRowData(material="25", oldMaterialNumbers="5447 11", maPrice="78"),
-        ]
-        response = self.makeCallWithCSV(itemList)
-
-        self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
-
-        itemOne.refresh_from_db()
-
-        self.assertEqual(itemOne.kghID, "25")
-        self.assertEqual(itemOne.price, Decimal("78"))
-        self.assertEqual(itemOne.title, "Item One")
-
-    def test_kghMaterialIdUpdated_ShowsChangeInContext(self):
-        itemOne = Item.objects.create(
-            title="Item One",
-            price="3",
-            kghID=11
-        )
-
-        itemList = [
-            self.createCsvRowData(material="25", oldMaterialNumbers="57 11", maPrice="78"),
-        ]
-        response = self.makeCallWithCSV(itemList)
-
-        self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
-
-        changes = response.context['changes']
-        self.assertEqual(len(changes), 1)
-
-        changesOne = changes[0]
-        self.assertEqual(changesOne["kghId"], "25")
-        self.assertEqual(changesOne["oldKghId"], "11")
-        self.assertEqual(changesOne["title"], "Item One")
-        self.assertEqual(changesOne["oldPrice"], 3)
-        self.assertEqual(changesOne["newPrice"], 78)
+    # def test_kghOldMaterialNumberSingleElementMatchesItem_updatesItemIdAndProperties(self):
+    #     itemOne = Item.objects.create(
+    #         title="Item One",
+    #         price="3",
+    #         kghID=11
+    #     )
+    #
+    #     itemList = [
+    #         self.createCsvRowData(material="25", oldMaterialNumbers="11", maPrice="78"),
+    #     ]
+    #     response = self.makeCallWithCSV(itemList)
+    #
+    #     self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
+    #
+    #     itemOne.refresh_from_db()
+    #
+    #     self.assertEqual(itemOne.kghID, "25")
+    #     self.assertEqual(itemOne.price, Decimal("78"))
+    #     self.assertEqual(itemOne.title, "Item One")
+    #
+    # def test_kghOldMaterialNumberFirstElementMatchesItem_updatesItemIdAndProperties(self):
+    #     itemOne = Item.objects.create(
+    #         title="Item One",
+    #         price="3",
+    #         kghID=11
+    #     )
+    #
+    #     itemList = [
+    #         self.createCsvRowData(material="25", oldMaterialNumbers="11 57", maPrice="78"),
+    #     ]
+    #     response = self.makeCallWithCSV(itemList)
+    #
+    #     self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
+    #
+    #     itemOne.refresh_from_db()
+    #
+    #     self.assertEqual(itemOne.kghID, "25")
+    #     self.assertEqual(itemOne.price, Decimal("78"))
+    #     self.assertEqual(itemOne.title, "Item One")
+    #
+    # def test_kghOldMaterialNumberSecondElementMatchesItem_updatesItemIdAndProperties(self):
+    #     itemOne = Item.objects.create(
+    #         title="Item One",
+    #         price="3",
+    #         kghID=11
+    #     )
+    #
+    #     itemList = [
+    #         self.createCsvRowData(material="25", oldMaterialNumbers="5447 11", maPrice="78"),
+    #     ]
+    #     response = self.makeCallWithCSV(itemList)
+    #
+    #     self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
+    #
+    #     itemOne.refresh_from_db()
+    #
+    #     self.assertEqual(itemOne.kghID, "25")
+    #     self.assertEqual(itemOne.price, Decimal("78"))
+    #     self.assertEqual(itemOne.title, "Item One")
+    #
+    # def test_kghMaterialIdUpdated_ShowsChangeInContext(self):
+    #     itemOne = Item.objects.create(
+    #         title="Item One",
+    #         price="3",
+    #         kghID=11
+    #     )
+    #
+    #     itemList = [
+    #         self.createCsvRowData(material="25", oldMaterialNumbers="57 11", maPrice="78"),
+    #     ]
+    #     response = self.makeCallWithCSV(itemList)
+    #
+    #     self.assertMessageLevel(response, self.MESSAGE_SUCCESS)
+    #
+    #     changes = response.context['changes']
+    #     self.assertEqual(len(changes), 1)
+    #
+    #     changesOne = changes[0]
+    #     self.assertEqual(changesOne["kghId"], "25")
+    #     self.assertEqual(changesOne["oldKghId"], "11")
+    #     self.assertEqual(changesOne["title"], "Item One")
+    #     self.assertEqual(changesOne["oldPrice"], 3)
+    #     self.assertEqual(changesOne["newPrice"], 78)
 
     def test_onParsingError_noChangesWereMadeAndErrorShown(self):
         itemOne = Item.objects.create(
