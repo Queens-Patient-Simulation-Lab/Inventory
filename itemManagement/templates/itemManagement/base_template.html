@@ -1,4 +1,5 @@
 {% load render_bundle from webpack_loader %}
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -10,7 +11,10 @@
 
 
     <title>Queen's Patient Simulation Lab</title>
-    {% block head %}{%endblock head%}
+    <link rel="shortcut icon" href="{% static 'itemManagement/crest.png' %}" />
+
+    {% block head %}
+    {%endblock head%}
   </head>
   <body>
     {% block content %}{%endblock content%}
