@@ -22,14 +22,15 @@ class HomePage(SearchView):
 
     def get_queryset(self):
         queryset = super(HomePage, self).get_queryset()
-        return queryset.filter(deleted=False)
+        return queryset.filter(deleted=False).order_by('-lastUsed')
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomePage, self).get_context_data(*args, **kwargs)
         print(context)
         objectList = context['object_list']
         if (len(objectList) == 0):
-            context['items'] = [item.getItemSummary() for item in Item.objects.filter(deleted=False).all()]  # Todo, return list of most recently used items
+            context['items'] = [item.getItemSummary() for item in Item.objects.filter(
+                deleted=False).order_by('-lastUsed', 'title')]
         else:
             context['items'] = [item.object.getItemSummary() for item in objectList]
 
