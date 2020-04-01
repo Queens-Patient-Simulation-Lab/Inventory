@@ -1,8 +1,12 @@
 {% extends "itemManagement/base_template.html" %}
+{% load static %}
 {% block content %}
 <div class="container bg-secondary col-12 vh-100 pt-5">
-    <div class="jumbotron mx-auto col-lg-6">
-        <h1 class="mx-auto">Queen's Simulation Lab</h1>
+    <div class="jumbotron mx-auto col-lg-6 pt-1 pb-0">
+        <div class="text-center align-items-center flex-row d-flex">
+            <img id="login-crest-logo" src="{% static 'itemManagement/crest.png' %}">
+            <h1 >Queen's Patient Simulation Lab Inventory</h1>
+        </div>
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-{{ message.level_tag }} mb-0">
