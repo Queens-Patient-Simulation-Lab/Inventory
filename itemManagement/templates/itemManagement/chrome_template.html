@@ -1,7 +1,8 @@
 {% extends "itemManagement/base_template.html" %}
 {% load static %}
+{% load render_bundle from webpack_loader %}
 {% block content %}
-
+{% render_bundle 'chrome' %}
 <div class="container-fluid h-100">
     <div class="row h-100">
         <aside class="col-12 col-md-2 p-0 bg-dark fixed-top">
