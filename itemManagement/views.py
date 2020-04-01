@@ -22,7 +22,7 @@ class HomePage(SearchView):
 
     def get_queryset(self):
         queryset = super(HomePage, self).get_queryset()
-        return queryset.filter(deleted=False).order_by('-lastUsed')
+        return queryset.filter(deleted=False)
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomePage, self).get_context_data(*args, **kwargs)
