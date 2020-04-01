@@ -6,6 +6,7 @@ from django.db import IntegrityError
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.template.loader import render_to_string
 
 # Create your views here.
 from django.views.generic import TemplateView
@@ -61,16 +62,15 @@ def getImage(request, id):
 
 class ItemDetailsView(TemplateView):
     def get(self, request, itemId, *args, **kwargs):
+        isAjax =  "X-Requested-With" in request.headers and request.headers["X-Requested-With"] == "XMLHttpRequest"
         isAdmin = request.user.is_superuser
-
         print(f"Item ID requested: {itemId}")
-
         context = Item.objects.get(id=itemId).getItemDetails()
-
-        if isAdmin:
-            return render(request, 'itemManagement/item_details_admin.html', context=context)
+        template = 'itemManagement/item_details_admin.html' if isAdmin else 'itemManagement/item_details_assistant.html'
+        if isAjax:
+            return render(request, template, context=context)
         else:
-            return render(request, 'itemManagement/item_details_assistant.html', context=context)
+            return HomePage.as_view(extra_context={'initialModal': render_to_string(template, context=context)})(request, *args, **kwargs)
 
     def post(self, request, itemId, *args, **kwargs):
 

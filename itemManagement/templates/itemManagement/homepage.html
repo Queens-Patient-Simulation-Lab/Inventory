@@ -78,11 +78,14 @@
     </div>
 
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div {% if initialModal %} data-show-default="true" {% endif %} class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-body">
                     <div id="modalContainer">
+                        {% if initialModal %}
+                            {{ initialModal }}
+                        {% endif %}
                     </div>
                 </div>
             </div>
