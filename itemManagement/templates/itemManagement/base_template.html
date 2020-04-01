@@ -9,15 +9,11 @@
 
     {% render_bundle 'main' %}
 
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="{% static 'itemManagement/crest.png' %}">
     <meta name="apple-mobile-web-app-title" content="SimLab">
-
     <title>Queen's Patient Simulation Lab</title>
     <link rel="shortcut icon" href="{% static 'itemManagement/crest.png' %}" />
-
-    {% block head %}
-    {%endblock head%}
+    {% block head %}{%endblock head%}
   </head>
   <body>
     {% block content %}{%endblock content%}
