@@ -8,12 +8,6 @@ class GetUserAccountViewTestsAccessible(BaseTestCaseView):
         response = self.client.get("/userManagement/user_account/")
         self.assertEqual(response.status_code, 302)
 
-    def test_loggedInAsLabAssistant_cannotAccess(self):
-        self.createLoggedInUser(isAdmin=False)
-
-        response = self.client.get("/userManagement/user_account/")
-        self.assertEqual(response.status_code, 403)
-
     def test_loggedInAsAdmin_canGetUserAccount(self):
         self.createLoggedInUser(isAdmin=True)
 
