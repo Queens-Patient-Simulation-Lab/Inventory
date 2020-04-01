@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
@@ -28,9 +29,20 @@ class HomePage(SearchView):
         context = super(HomePage, self).get_context_data(*args, **kwargs)
         print(context)
         objectList = context['object_list']
+        # If no results are found, just show the most recently used items
         if (len(objectList) == 0):
-            context['items'] = [item.getItemSummary() for item in Item.objects.filter(
-                deleted=False).order_by('-lastUsed', 'title')[:20]]
+            items = [item.getItemSummary() for item in Item.objects.filter(
+                deleted=False).order_by('-lastUsed', 'title')]
+
+            # Sadly we can't use the same paginator as Haystack is using for successful queries so we must build our own
+            #  an make sure the variables we use are not the same variables used by haystack (e.g use default_items_page instead of page)
+            # For more information on using paginators, see https://docs.djangoproject.com/en/3.0/topics/pagination/#using-paginator-in-a-view-functions
+            paginator = Paginator(items, 25)
+            page_number = context['view'].request.GET.get("default_items_page")
+            page_obj = paginator.get_page(page_number)
+
+            context['items'] = page_obj
+            context['default_items_page_obj'] = page_obj
         else:
             context['items'] = [item.object.getItemSummary() for item in objectList]
 

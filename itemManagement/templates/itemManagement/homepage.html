@@ -60,6 +60,19 @@
                     &raquo;
                     {% if page_obj.has_next %}</a>{% endif %}
                 </div>
+            {% elif default_items_page_obj.has_previous or default_items_page_obj.has_next  %}
+                <div class="row justify-content-center">
+                    {% if default_items_page_obj.has_previous %}
+                        <a href="?q={{ query }}&amp;default_items_page={{ default_items_page_obj.previous_page_number }}">{% endif %}&laquo;
+                    Previous
+                    {% if default_items_page_obj.has_previous %}</a>{% endif %}
+                    |&nbsp;
+                    {% if default_items_page_obj.has_next %}
+                        <a href="?q={{ query }}&amp;default_items_page={{ default_items_page_obj.next_page_number }}">{% endif %}
+                    Next
+                    &raquo;
+                    {% if default_items_page_obj.has_next %}</a>{% endif %}
+                </div>
             {% endif %}
         </div>
     </div>
