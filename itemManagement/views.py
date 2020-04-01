@@ -45,7 +45,7 @@ class HomePage(SearchView):
             context['items'] = page_obj
             context['default_items_page_obj'] = page_obj
         else:
-            context['items'] = [item.object.getItemSummary() for item in objectList]
+            context['items'] = [item.object.getItemSummary() for item in objectList if item is not None]
 
         if (len(objectList) == 0 and len(context['query']) != 0):
             messages.warning(self.request, "No results were found. Showing recently used items instead.")
@@ -65,7 +65,11 @@ class ItemDetailsView(TemplateView):
         isAjax =  "X-Requested-With" in request.headers and request.headers["X-Requested-With"] == "XMLHttpRequest"
         isAdmin = request.user.is_superuser
         print(f"Item ID requested: {itemId}")
-        context = Item.objects.get(id=itemId).getItemDetails()
+
+        if itemId == '':
+            context = {"itemId": '', "name": '', "kghId": '', "description": '', "price": '0.00', "unit": '', "totalQuantity": 0}
+        else:
+            context = Item.objects.get(id=itemId).getItemDetails()
         template = 'itemManagement/item_details_admin.html' if isAdmin else 'itemManagement/item_details_assistant.html'
         if isAjax:
             return render(request, template, context=context)
@@ -74,7 +78,14 @@ class ItemDetailsView(TemplateView):
 
     def post(self, request, itemId, *args, **kwargs):
 
-        item = Item.objects.get(id=itemId)
+        if message := itemFormInvalid(request):
+            messages.error(request, message)
+            return HttpResponse(status=400)
+
+        if itemId == '':
+            item = Item.objects.create()
+        else:
+            item = Item.objects.get(id=itemId)
 
         item.lastUsed = timezone.now()
         # TODO: item lastUsed updated if decrement clicked
@@ -85,10 +96,11 @@ class ItemDetailsView(TemplateView):
         if isAdmin:
             # --------TEXT FIELDS--------
             item.title = request.POST.get('itemName', "").strip()
+            item.kghID = request.POST.get('kghId', "").strip()
             item.description = request.POST.get('description', "").strip()
             item.price = request.POST.get('price', "").strip()
             item.unit = request.POST.get('unit', "").strip()
-            item.save(update_fields=['title', 'description', 'price', 'unit'])
+            item.save(update_fields=['title', 'kghID', 'description', 'price', 'unit'])
             # ---------------------------
 
             # --------TAGS-------------
@@ -121,6 +133,31 @@ class ItemDetailsView(TemplateView):
 
         # TODO: Return to homepage with same previous state after POST
         return HttpResponse(status=204)
+
+
+def itemFormInvalid(request):
+    name = request.POST.get('itemName', "").strip()
+    price = request.POST.get('price', "").strip()
+    unit = request.POST.get('unit', "").strip()
+    kghID = request.POST.get('kghId', "").strip()
+
+    if name == '' or name is None:
+        return "Please specify a name"
+    if len(name) < 3 or len(name) > 40:
+        return "Name must be between 3-40 characters"
+
+    if len(kghID) > 20:
+        return "kghID must be maximum 20 characters"
+
+    try:
+        "{:.2f}".format(float(price))
+    except ValueError:
+        return "Price is formatted incorrectly"
+
+    if len(unit) > 20:
+        return "Unit must be maximum 20 characters"
+
+    return False
 
 
 class LocationView(UserPassesTestMixin, TemplateView):
