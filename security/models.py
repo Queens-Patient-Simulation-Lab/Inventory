@@ -36,7 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=100, default='fname lname')
     completedTutorial = models.BooleanField(default=False)
     receivesAlerts = models.BooleanField(default=False)  # Todo, would this be better as its own table relation?
-    deleteFlag = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['']

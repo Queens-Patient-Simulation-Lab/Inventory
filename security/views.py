@@ -27,7 +27,7 @@ class LoginView(TemplateView):
             return redirect('login')
 
         user = auth.authenticate(request, username=email, password=password)
-        if user is not None:
+        if user is not None and not user.deleted:
             auth.login(request, user)
             return redirect('homepage')
         else:
