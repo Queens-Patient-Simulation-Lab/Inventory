@@ -14,6 +14,8 @@ from haystack.generic_views import SearchView
 from haystack.query import SearchQuerySet
 
 from itemManagement.models import Item, Location, Photo, Tag, ItemStorage
+from logs.models import  ItemCountLogs, ItemInfoLogs, LOGCODE_CHANGEITEM, LOGMSG_CHANGEITEM, LOGCODE_STOCKCHANGE, \
+    LOGMSG_STOCKCHANGE, LOGCODE_CREATEITEM, LOGMSG_CREATEITEM, LOGCODE_DELETEITEM, LOGMSG_DELETEITEM
 from simulation_lab import settings
 from django.templatetags.static import static
 
@@ -82,8 +84,13 @@ class ItemDetailsView(TemplateView):
             messages.error(request, message)
             return HttpResponse(status=400)
 
+        itemIsNew = False
+
         if itemId == '':
+            itemIsNew = True
             item = Item.objects.create()
+            ItemInfoLogs.logging(request.user, item, LOGCODE_CREATEITEM, LOGMSG_CREATEITEM, kghID=item.kghID,
+                                 price=item.price, *args, **kwargs)
         else:
             item = Item.objects.get(id=itemId)
 
@@ -113,6 +120,11 @@ class ItemDetailsView(TemplateView):
                     newTag = Tag.objects.create(name=newTag.strip(), item=item)
                     newTag.save()
             # -------------------------
+            if not itemIsNew:
+                ItemInfoLogs.logging(request.user, item, LOGCODE_CHANGEITEM, LOGMSG_CHANGEITEM, item.kghID,
+                                 item.price)
+
+
         # END if isAdmin
 
         # ----Item storage quantities at each location----
@@ -123,8 +135,14 @@ class ItemDetailsView(TemplateView):
             original_quantity = int(request.POST.get('original-quantity-location-' + str(itemStorage.location.id), "").strip())
             new_quantity = int(request.POST.get('quantity-location-' + str(itemStorage.location.id), "").strip())
             diff = new_quantity - original_quantity
-            itemStorage.quantity += diff
-            itemStorage.save()
+            if diff == 0:
+                pass
+            else:
+                itemStorage.quantity += diff
+                itemStorage.save()
+                ItemCountLogs.logging(request.user, item, itemStorage.quantity, itemStorage.location,
+                                      LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
+
         # -------------------------------
 
         # TODO: Post Images
