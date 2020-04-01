@@ -34,8 +34,8 @@
                 <thead class="thead-dark">
                 <tr>
                     <th scope="col">Item Name</th>
-                    <th scope="col">Old ID</th>
-                    <th scope="col">New ID</th>
+{#                    <th scope="col">Old ID</th>#}
+                    <th scope="col">KGH ID</th>
                     <th scope="col">Old Price</th>
                     <th scope="col">New Price</th>
                 </tr>
@@ -46,7 +46,7 @@
             {% for change in changes %}
                 <tr>
                     <td>{{ change.title }}</td>
-                    <td>{{ change.oldKghId }}</td>
+{#                    <td>{{ change.oldKghId }}</td>#}
                     <td>{{ change.kghId }}</td>
                     <td>{{ change.oldPrice }}</td>
                     <td>{{ change.newPrice }}</td>

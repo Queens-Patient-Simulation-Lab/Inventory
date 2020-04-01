@@ -74,22 +74,25 @@ class KghUploadPage(UserPassesTestMixin, TemplateView):
                         if (len(change) != 0):
                             change[self.CHANGE_KGH_ID] = kghItem.kghID
                             changes.append(change)
+                    # NOTE: Original functionality was to convert all KGH Id's from old KGH number to new KGH numbers but we
+                    #  found out that not only can different items share old KGH numbers but KGH numbers are not always retired
+                    # after being listed in old material no.
                     # If an item matches an old KGH item ID
-                    elif (kghItem := self.getItemMatchingOldIds(row.get(self.ROW_OLD_MATERIAL), kghIdDict)) is not None:
-                        unmatchedItems.pop(kghItem.kghID)
-                        change = self.handleItemPriceChange(row, kghItem)
+                    # elif (kghItem := self.getItemMatchingOldIds(row.get(self.ROW_OLD_MATERIAL), kghIdDict)) is not None:
+                    #     unmatchedItems.pop(kghItem.kghID)
+                    #     change = self.handleItemPriceChange(row, kghItem)
+                    #
+                    #     title = kghItem.title
+                    #     newKghId = row.get(self.ROW_MATERIAL)
+                    #
+                    #     change[self.CHANGE_TITLE] = title
+                    #     change[self.CHANGE_KGH_ID] = newKghId
+                    #
+                    #     kghItem.kghID = newKghId
+                    #
+                    #     changes.append(change)
 
-                        title = kghItem.title
-                        newKghId = row.get(self.ROW_MATERIAL)
-
-                        change[self.CHANGE_TITLE] = title
-                        change[self.CHANGE_KGH_ID] = newKghId
-
-                        kghItem.kghID = newKghId
-
-                        changes.append(change)
-
-                Item.objects.bulk_update(list(kghIdDict.values()), ["kghID", "price"])
+                Item.objects.bulk_update(list(kghIdDict.values()), ["kghID", "price"], batch_size=300)
         except IntegrityError as e:
             messages.error(request, f"Error: {str(e)}")
             traceback.print_exc()
