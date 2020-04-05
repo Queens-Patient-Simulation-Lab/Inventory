@@ -12,8 +12,8 @@
         {% csrf_token %}
 
         <div class="form-group">
-                <label for="itemName">Item Name</label>
-                <input type="name" class="form-control" name="itemName" id="itemName" value="{{ name }}">
+            <label for="itemName">Item Name</label>
+            <input type="name" class="form-control" name="itemName" id="itemName" value="{{ name }}">
         </div>
 
         <div class="form-group">
@@ -22,31 +22,32 @@
         </div>
 
         <div id="itemImageCarousel" class="carousel slide" data-ride="carousel">
-                <ol class="carousel-indicators">
-                    {% for i in images.iterator %}
-                        <li data-target="#itemImageCarousel" data-slide-to="{{ forloop.counter }}" {% if foorloop.first %} class="active" {% endif %}></li>
-                    {% endfor %}
-                </ol>
-                <div class="carousel-inner" >
-                    {% for image in images.iterator %}
-                        <div class="carousel-item {% if forloop.first %} active {% endif %}">
-                            <img src="{% url 'get-photo' id=image.id %}" class="d-block w-100 rounded">
-                        </div>
-                    {% empty %}
-                        <div class="carousel-item active">
-                            <img src="{% static  'itemManagement/default_image.svg' %}" class="d-block w-100 rounded">
-                        </div>
-                    {% endfor %}
-                </div>
-                <a class="carousel-control-prev" href="#itemImageCarousel" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#itemImageCarousel" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
+            <ol class="carousel-indicators">
+                {% for i in images.iterator %}
+                    <li data-target="#itemImageCarousel" data-slide-to="{{ forloop.counter }}" {% if foorloop.first %}
+                        class="active" {% endif %}></li>
+                {% endfor %}
+            </ol>
+            <div class="carousel-inner">
+                {% for image in images.iterator %}
+                    <div class="carousel-item {% if forloop.first %} active {% endif %}">
+                        <img src="{% url 'get-photo' id=image.id %}" class="d-block w-100 rounded">
+                    </div>
+                {% empty %}
+                    <div class="carousel-item active">
+                        <img src="{% static  'itemManagement/default_image.svg' %}" class="d-block w-100 rounded">
+                    </div>
+                {% endfor %}
             </div>
+            <a class="carousel-control-prev" href="#itemImageCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#itemImageCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
 
         <div class="row m-1">
             <button class="btn btn-outline-secondary col" type="button" data-toggle="collapse"
@@ -55,96 +56,107 @@
             </button>
         </div>
         <div id="pictureSetting" class="collapse">
-            <div class="list-group list-group-horizontal row card card-body">
+
+            <div class="list-group list-group-horizontal row m-1 mt-0 border">
                 {% for image in images.iterator %}
-                    <img src="{% url 'get-photo' id=image.id %}"
-                         class="list-group-item rounded img-thumbnail col-sm-3 col-4">
+                    <div class="card col-3 p-0 m-1">
+                        <div class="card-body p-0">
+                            <img src="{% url 'get-photo' id=image.id %}"
+                                 class="itemImages list-group-item rounded p-0 m-0 border-0 img-fluid">
+                        </div>
+
+                    </div>
+
                 {% endfor %}
-                <button class="btn btn-outline-secondary list-group-item col-sm-3 col-4" type="button">
-                    <img src="{% static 'itemManagement/setting.png' %}" class="rounded img-thumbnail">
+                <button class="btn btn-primary col-sm-1 col-2" type="button">
+                    +
                 </button>
             </div>
         </div>
 
         <div class="form-group">
             <label for="description">Description</label>
-            <textarea type="item_description" class="form-control" name="description" id="description">{{ description }}</textarea>
+            <textarea type="item_description" class="form-control" name="description"
+                      id="description">{{ description }}</textarea>
         </div>
 
-{#        <div class="form-group">#}
-            <label>Tagging</label>
+        {#        <div class="form-group">#}
+        <label>Tagging</label>
 
-            <div class="form-group">
-                <div class="tagsShown">
-                    {% for tag in tags %}
-                        <span class="badge badge-info m-1">{{ tag }}</span>
-                    {% endfor %}
-                </div>
-                {#todo use contenteditable to allow editable badges#}
-
-                <div class="tagsInputBoxContainer">
-                    <input name="newTags" id="tagsInputBox" data-role="tagsinput">
-                </div>
-                <button class="btn btn-outline-secondary m-1 tagEditBtn" type="button">
-                    Edit tags
-                </button>
+        <div class="form-group">
+            <div class="tagsShown">
+                {% for tag in tags %}
+                    <span class="badge badge-info m-1">{{ tag }}</span>
+                {% endfor %}
             </div>
+            {#todo use contenteditable to allow editable badges#}
 
-            <div class="form-group">
-                <label for="itemPrice">Item price</label>
-                <input type="MA_price" class="form-control" name="price" id="itemPrice" value="{{ price }}">
+            <div class="tagsInputBoxContainer">
+                <input name="newTags" id="tagsInputBox" data-role="tagsinput">
             </div>
+            <button class="btn btn-outline-secondary m-1 tagEditBtn" type="button">
+                Edit tags
+            </button>
+        </div>
+
+        <div class="form-group">
+            <label for="itemPrice">Item price</label>
+            <input type="MA_price" class="form-control" name="price" id="itemPrice" value="{{ price }}">
+        </div>
+        <div class="form-group">
+            <label for="unit">Unit of Measurement</label>
+            <input type="unit_measure" class="form-control" name="unit" id="unit" value="{{ unit }}">
+        </div>
+
+
+        <table class="table table-striped mb-2 mt-2">
+            <thead>
+            <tr>
+                <th scope="col">Location</th>
+                <th scope="col">Stock</th>
+            </tr>
+            </thead>
+            <tbody>
             <div class="form-group">
-                <label for="unit">Unit of Measurement</label>
-                <input type="unit_measure" class="form-control" name="unit" id="unit" value="{{ unit }}">
-            </div>
-
-
-
-            <table class="table table-striped mb-2 mt-2">
-                <thead>
+                {% for location in locations %}
                     <tr>
-                        <th scope="col">Location</th>
-                        <th scope="col">Stock</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <div class="form-group">
-                    {% for location in locations %}
-                        <tr>
-                            <th scope="col">{{ location.name }}</th>
-                            <td class="row">
-                                <div class="center container">
-                                    <div class="input-group row">
-                                        <button type="button" class="btn btn-danger decrement rounded-0">-</button>
-                                        <input readonly hidden name="original-quantity-location-{{ location.id }}" class="form-control" id="item_quantity_original" value="{{ location.quantity }}">
-                                        <input name="quantity-location-{{ location.id }}" type="number" min="0" inputmode="numeric" pattern="[0-9]*" title="Non-negative integer" id="item_quantity"
-                                                   class="form-control item_quantity col-4 col-sm-3 text-center"
-                                                   value="{{ location.quantity }}">
+                        <th scope="col">{{ location.name }}</th>
+                        <td class="row">
+                            <div class="center container">
+                                <div class="input-group row">
+                                    <button type="button" class="btn btn-danger decrement rounded-0">-</button>
+                                    <input readonly hidden name="original-quantity-location-{{ location.id }}"
+                                           class="form-control" id="item_quantity_original"
+                                           value="{{ location.quantity }}">
+                                    <input name="quantity-location-{{ location.id }}" type="number" min="0"
+                                           inputmode="numeric" pattern="[0-9]*" title="Non-negative integer"
+                                           id="item_quantity"
+                                           class="form-control item_quantity col-4 col-sm-3 text-center"
+                                           value="{{ location.quantity }}">
 
-                                        <button type="button" class="btn btn-success increment rounded-0">+</button>
-                                    </div>
+                                    <button type="button" class="btn btn-success increment rounded-0">+</button>
                                 </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </div>
-
-                <tr>
-                    <th scope="row" colspan="2">
-                        <button type="button" class="btn btn-outline-secondary col">assign a new location</button>
-                    </th>
-                </tr>
-
-                </tbody>
-            </table>
-
-            <div class="form-group">
-                <label for="stock">Total Stock</label>
-                <input readonly type="total_stock" class="form-control" id="stock" value="{{ totalQuantity }}">
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
             </div>
 
-{#        </div>#}
+            <tr>
+                <th scope="row" colspan="2">
+                    <button type="button" class="btn btn-outline-secondary col">assign a new location</button>
+                </th>
+            </tr>
+
+            </tbody>
+        </table>
+
+        <div class="form-group">
+            <label for="stock">Total Stock</label>
+            <input readonly type="total_stock" class="form-control" id="stock" value="{{ totalQuantity }}">
+        </div>
+
+        {#        </div>#}
 
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -152,7 +164,7 @@
         </div>
     </form>
 
-{% render_bundle 'item_details' %}
+    {% render_bundle 'item_details' %}
 </div>
 
 
