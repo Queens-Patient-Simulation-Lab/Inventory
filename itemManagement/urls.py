@@ -1,6 +1,6 @@
 from django.urls import path
 
-from itemManagement.views import LocationView, ItemDetailsView, HomePage, ItemCreationView
+from itemManagement.views import LocationView, ItemDetailsView, HomePage
 from . import views
 
 URL_LOCATION_LIST = "location-list"
