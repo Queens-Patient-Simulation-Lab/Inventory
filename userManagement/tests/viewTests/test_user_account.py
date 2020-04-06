@@ -32,13 +32,13 @@ class GetUserAccountViewTestsLoggedIn(BaseTestCaseView):
         self.assertEqual(staffQuery.filter(email="test@test.com").count(), 1)
 
     def test_userDeleted_contextHasNoDeletedUsers(self):
-        User.objects.create_user("test1@test.com", "test1234", deleteFlag=True)
+        User.objects.create_user("test1@test.com", "test1234", deleted=True)
 
         response = self.client.get("/userManagement/user_account/")
         staffQuery = response.context['staff']
         self.assertEqual(staffQuery.count(), 1)
-        self.assertEqual(staffQuery.filter(deleteFlag=False).count(), 1)
-        self.assertEqual(staffQuery.filter(deleteFlag=True).count(), 0)
+        self.assertEqual(staffQuery.filter(deleted=False).count(), 1)
+        self.assertEqual(staffQuery.filter(deleted=True).count(), 0)
 
 
 class PostUserAccountViewTests(BaseTestCaseView):

@@ -11,6 +11,8 @@ module.exports = {
 
   entry: {
     "main": './assets/js/index',
+    "chrome": './assets/scss/chrome',
+    "login": './assets/scss/login',
     "item_details": ['./assets/scss/item_details', './assets/js/item_details'],
     "homepage": "./assets/js/homepage",
     "locations": "./assets/js/locations"

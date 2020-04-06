@@ -22,3 +22,7 @@ $('#itemTable tr').click(function () {
     });
 });
 
+if ($("#exampleModal").data("show-default")){
+    $("#exampleModal").modal("show");
+}
+

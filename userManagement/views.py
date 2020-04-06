@@ -46,6 +46,7 @@ def settings(request):
     return render(request, 'userManagement/settings.html', context)
 
 
+
 # admin only page
 @user_passes_test(lambda u : u.is_superuser)
 def userAccount(request):
@@ -56,27 +57,37 @@ def userAccount(request):
             validate_email(email)  # If email is not valid, throw exception and code ends here
 
             # check existence of the inputed email
-            if User.objects.filter(email=email).exists():
-                messages.error(request, f'Email has already existed')
-                redirect('user-account')
+            if (userMatchingEmail := User.objects.filter(email=email)).exists():
+                emailed_user = userMatchingEmail.get()
+                if emailed_user.deleted == True:
+                    emailed_user.deleted = False
+                    emailed_user.name = 'waiting for invitation acceptance'
+                    emailed_user.password = ''
+                    emailed_user.is_superuser = False
+                    emailed_user.save()
+
+                else:
+                    messages.error(request, f'Email has already existed')
+                    redirect('user-account')
             else:
                 # create a temporary account for new user
                 emailed_user = User.objects.create_user(email=email,
-                                                        password='haveNotSetPassword',
+                                                        password='',
                                                         name='waiting for invitation acceptance')
                 emailed_user.save()
-                # sent email to new user
-                em.sendAccountSetupEmail(user=emailed_user,
-                                         uidb64=urlsafe_base64_encode(smart_bytes(emailed_user.pk)),
-                                         token=default_token_generator.make_token(emailed_user))
-                messages.success(request, f'Invitation email has been sent.')
-                redirect('user-account')
+
+            # sent email to new user
+            em.sendAccountSetupEmail(user=emailed_user,
+                                     uidb64=urlsafe_base64_encode(smart_bytes(emailed_user.pk)),
+                                     token=default_token_generator.make_token(emailed_user))
+            messages.success(request, f'Invitation email has been sent.')
+            redirect('user-account')
         except ValidationError:
             messages.error(request, f'Incorrect email format, please enter correct email again.')
             redirect('user-account')
 
     context = {
-        'staff': User.objects.filter(deleteFlag=False),
+        'staff': User.objects.filter(deleted=False),
     }
 
     return render(request, 'userManagement/userAccount.html', context)
@@ -102,7 +113,7 @@ def userRegister(request, uidb64 ,token):
                 c_form.save()
                 messages.success(request, f'Account ({user.email}) has successfully been created!')
                 UserLogs.logging(operator_user=user, logCode=Logs.LOGCODE_100001, logMsg=Logs.LOGMSG_100001)
-                return render(request, 'security/login.html')
+                return redirect('login')
         else:
             c_form = userCreationForm()
     else:
@@ -125,7 +136,7 @@ def forgetPassword(request):
             validate_email(email)  # If email is not valid, throw exception and code ends here
 
             emailed_user = User.objects.filter(email=email).first()
-            if emailed_user:
+            if emailed_user and not emailed_user.deleted:
                 # send reset email
                 em.sendPasswordResetEmail(user=emailed_user,
                                          uidb64=urlsafe_base64_encode(smart_bytes(emailed_user.pk)),
@@ -159,7 +170,7 @@ def forgetPasswordConfirm(request, uidb64, token):
             form = SetPasswordForm(user, request.POST)
             if form.is_valid():
                 form.save()
-                messages.success(request, f'Password has successfully been reseted!')
+                messages.success(request, f'Password has successfully been reset!')
                 return render(request, 'security/login.html')
         else:
             form = SetPasswordForm(user)
@@ -173,11 +184,11 @@ def forgetPasswordConfirm(request, uidb64, token):
 
     return render(request, 'userManagement/forgetPasswordConfirm.html', context)
 
-
-@user_passes_test(lambda u : u.is_superuser)
+# admin only page
+@user_passes_test(lambda u: u.is_superuser)
 def userDelete(request, email):
     u = User.objects.filter(email=email).first()
-    u.deleteFlag = True
+    u.deleted = True
     u.save()
     messages.success(request, f'Account {email} was successfully deleted!')
     UserLogs.logging(operator_user=request.user, target_user=u, logCode=Logs.LOGCODE_100002, logMsg=Logs.LOGMSG_100002)

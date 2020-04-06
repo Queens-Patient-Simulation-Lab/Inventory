@@ -9,7 +9,7 @@
         <p>This page allows you to upload your KGH catalog to update the price and KGH ID of any KGH Items in the
             database. It is important that catalog is a csv with headers matching<a
                     href="{% url 'kgh-download-template' %}"> the template</a>. Columns may be in any order but the
-            three headers must be present and spelled exactly as the template has shown.</p>
+            two headers must be present and spelled exactly as the template has shown. Other columns are ignored</p>
         <form method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 {% csrf_token %}
@@ -34,8 +34,8 @@
                 <thead class="thead-dark">
                 <tr>
                     <th scope="col">Item Name</th>
-                    <th scope="col">Old ID</th>
-                    <th scope="col">New ID</th>
+{#                    <th scope="col">Old ID</th>#}
+                    <th scope="col">KGH ID</th>
                     <th scope="col">Old Price</th>
                     <th scope="col">New Price</th>
                 </tr>
@@ -46,7 +46,7 @@
             {% for change in changes %}
                 <tr>
                     <td>{{ change.title }}</td>
-                    <td>{{ change.oldKghId }}</td>
+{#                    <td>{{ change.oldKghId }}</td>#}
                     <td>{{ change.kghId }}</td>
                     <td>{{ change.oldPrice }}</td>
                     <td>{{ change.newPrice }}</td>

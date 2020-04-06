@@ -41,6 +41,14 @@ class KghUploadPage(UserPassesTestMixin, TemplateView):
         # Note, if this is slow, we can parallelize this
         try:
             kghFile = request.FILES['kghFile'] or None
+        except Exception as e:
+            messages.error(request, f"Error: The KGH catalog was not provided.")
+            traceback.print_exc()
+            return redirect('kgh-upload')
+        try:
+
+            if kghFile is None:
+                raise Exception("No file was provided")
 
             reader = self.decode_utf8(kghFile)
 
@@ -66,22 +74,25 @@ class KghUploadPage(UserPassesTestMixin, TemplateView):
                         if (len(change) != 0):
                             change[self.CHANGE_KGH_ID] = kghItem.kghID
                             changes.append(change)
+                    # NOTE: Original functionality was to convert all KGH Id's from old KGH number to new KGH numbers but we
+                    #  found out that not only can different items share old KGH numbers but KGH numbers are not always retired
+                    # after being listed in old material no.
                     # If an item matches an old KGH item ID
-                    elif (kghItem := self.getItemMatchingOldIds(row.get(self.ROW_OLD_MATERIAL), kghIdDict)) is not None:
-                        unmatchedItems.pop(kghItem.kghID)
-                        change = self.handleItemPriceChange(row, kghItem)
+                    # elif (kghItem := self.getItemMatchingOldIds(row.get(self.ROW_OLD_MATERIAL), kghIdDict)) is not None:
+                    #     unmatchedItems.pop(kghItem.kghID)
+                    #     change = self.handleItemPriceChange(row, kghItem)
+                    #
+                    #     title = kghItem.title
+                    #     newKghId = row.get(self.ROW_MATERIAL)
+                    #
+                    #     change[self.CHANGE_TITLE] = title
+                    #     change[self.CHANGE_KGH_ID] = newKghId
+                    #
+                    #     kghItem.kghID = newKghId
+                    #
+                    #     changes.append(change)
 
-                        title = kghItem.title
-                        newKghId = row.get(self.ROW_MATERIAL)
-
-                        change[self.CHANGE_TITLE] = title
-                        change[self.CHANGE_KGH_ID] = newKghId
-
-                        kghItem.kghID = newKghId
-
-                        changes.append(change)
-
-                Item.objects.bulk_update(list(kghIdDict.values()), ["kghID", "price"])
+                Item.objects.bulk_update(list(kghIdDict.values()), ["kghID", "price"], batch_size=100)
         except IntegrityError as e:
             messages.error(request, f"Error: {str(e)}")
             traceback.print_exc()
@@ -124,19 +135,19 @@ class KghUploadPage(UserPassesTestMixin, TemplateView):
             return ({
                 self.CHANGE_TITLE: kghItem.title,
                 self.CHANGE_OLD_PRICE: oldPrice,
-                self.CHANGE_NEW_PRICE: newPrice,
-                self.CHANGE_OLD_KGH_ID: kghItem.kghID
+                self.CHANGE_NEW_PRICE: newPrice
+                # self.CHANGE_OLD_KGH_ID: kghItem.kghID
             })
         return {}
 
     # oldIds: A space separated string of old KGH IDs
     # itemDictionary: itemDictionary[kghID] == Item
-    def getItemMatchingOldIds(self, oldIds, itemDictionary):
-        ids = oldIds.split(" ")
-        for oldId in ids:
-            item = itemDictionary.get(oldId)
-            if item is not None:
-                return item
+    # def getItemMatchingOldIds(self, oldIds, itemDictionary):
+    #     ids = oldIds.split(" ")
+    #     for oldId in ids:
+    #         item = itemDictionary.get(oldId)
+    #         if item is not None:
+    #             return item
 
     # Generator that decodes one row of the csv at a time
     # Returns a value when iterated on, this way we don't need to store the entire decryption in memory
@@ -144,16 +155,16 @@ class KghUploadPage(UserPassesTestMixin, TemplateView):
         # Skip the first row of the file which is the header
         iterator = iter(file)
         header = next(iterator).decode('utf-8-sig').rstrip().split(',')
-        header = [x.strip() for x in header]  # Remove any spacing added to cells
+        header = [x.strip('"').strip() for x in header]  # Remove any spacing added to cells and remove qoutes from qoutes fields
         materialIndex = header.index("Material")
-        oldMaterialIndex = header.index("Old material no.")
+        # oldMaterialIndex = header.index("Old material no.")
         priceIndex = header.index("MA price")
 
         for line in iterator:
             row = line.decode('utf-8-sig').rstrip().split(',')
             yield {
                 self.ROW_MATERIAL: row[materialIndex],
-                self.ROW_OLD_MATERIAL: row[oldMaterialIndex],
+                # self.ROW_OLD_MATERIAL: row[oldMaterialIndex],
                 self.ROW_PRICE: row[priceIndex]
             }
 

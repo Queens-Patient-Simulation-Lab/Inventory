@@ -23,7 +23,7 @@ class Location(models.Model):
 
 class Item(models.Model):
     kghID = models.CharField(max_length=20, null=True)
-    title = models.CharField(max_length=40)
+    title = models.CharField(max_length=200)
     description = models.TextField()
     unit = models.CharField(max_length=20, null=True)
     # Note I don't call now() - It will be called when the object is created
@@ -73,7 +73,7 @@ class Photo(models.Model):
     mimeType = models.CharField(max_length=20)
     data = models.BinaryField()
     order = models.PositiveSmallIntegerField()
-    depicts = models.ForeignKey(Item, on_delete=models.CASCADE) # TODO: On delete we probably need to do more
+    depicts = models.ForeignKey(Item, on_delete=models.CASCADE)
     class Meta:
         ordering = ["order"]
 
