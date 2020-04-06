@@ -20,6 +20,9 @@
                     <th scope="col">Name</th>
                     <th scope="col">Location(s)</th>
                     <th scope="col">Units on Hand</th>
+                    {% if request.user.is_superuser %}
+                        <th scope="col"></th>
+                    {% endif %}
                 </tr>
                 </thead>
                 <tbody>
@@ -42,6 +45,14 @@
                             {% endfor %}
                         </td>
                         <td>{{ item.totalQuantity }}</td>
+                        {% if request.user.is_superuser %}
+                            <td>
+                                <form method="POST" action="{% url 'item-delete' item.itemId %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger m-1">delete item</button>
+                                </form>
+                            </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>

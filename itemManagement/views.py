@@ -38,6 +38,13 @@ class HomePage(SearchView):
             messages.warning(self.request, "No results were found. Showing recently used items instead.")
         return context
 
+class ItemDeleteView(TemplateView):
+    def post(self, request, itemId, *args, **kwargs):
+        item = Item.objects.filter(id=itemId).first()
+        item.deleted = True
+        item.save()
+        return redirect('homepage')
+
 
 def getImage(request, id):
     try:
