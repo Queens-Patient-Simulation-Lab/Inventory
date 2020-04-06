@@ -25,6 +25,15 @@ class Command(BaseCommand):
         user.save()
         assert user.password != "abcd"
 
+        user = User.objects.create_user(email="a@a.com", password="abcd", is_superuser=True)
+        user.receivesAlerts = True
+        user.save()
+        assert user.password != "abcd"
+
+        user = User.objects.create_user(email="b@b.com", password="abcd", is_superuser=False)
+        user.save()
+        assert user.password != "abcd"
+
         mainStorage = Location.objects.create(name="Main Storage Area")
         kennel = Location.objects.create(name="Kennel")
 

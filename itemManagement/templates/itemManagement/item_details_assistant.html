@@ -1,5 +1,6 @@
 {% load render_bundle from webpack_loader %}
 {% load static %}
+
 <div class="container-fluid" id="item-detail-modal-root">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
@@ -26,13 +27,14 @@
                         <td class="row">
                             <div class="center container">
                                 <div class="input-group row xs-12">
-                                    <button type="button" class="btn btn-danger decrement rounded-0">
+                                    <button type="button" class="btn btn-danger decrement rounded-0 disable-tap-zoom">
                                         -
                                     </button>
+                                    <input name="original-quantity-location-{{ location.id }}" readonly hidden class="form-control" id="item_quantity_original" value="{{ location.quantity }}">
                                     <input name="quantity-location-{{ location.id }}" type="number" min="0" inputmode="numeric" pattern="[0-9]*" title="Non-negative integer" id="item_quantity"
                                            class="form-control item_quantity col-4 col-sm-3 text-center"
                                            value="{{ location.quantity }}">
-                                    <button type="button" class="btn btn-success increment rounded-0">
+                                    <button type="button" class="btn btn-success increment rounded-0 disable-tap-zoom">
                                         +
                                     </button>
                                 </div>

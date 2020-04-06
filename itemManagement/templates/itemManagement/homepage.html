@@ -3,68 +3,79 @@
 {% load static %}
 {% block body %}
 
-<div class="container">
-    <form method="get" action=".">
-        <div class="form-group">
-            <input class="form-control form-control-lg" id="input" type="text" placeholder="Search" aria-label="Search"
-                name="q">
+    <div class="container">
+        <form method="get" action=".">
+            <div class="form-group">
+                <input class="form-control form-control-lg" id="input" type="text" placeholder="Search"
+                       aria-label="Search"
+                       name="q">
+            </div>
+        </form>
+
+        <div class="row">
+            <table id="itemTable" class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Image</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Location(s)</th>
+                    <th scope="col">Units on Hand</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr data-access-url="{% url 'item-details' item.itemId %}" data-toggle="modal"
+                        data-target="#exampleModal">
+                        <td scope="row">
+                            {% if item.images.count > 0 %}
+                                <img src="{% url 'get-photo' id=item.images.first.id %}"
+                                     class="img-thumbnail img-responsive img-rounded">
+                            {% else %}
+                                <img src="{% static  'itemManagement/default_image.svg' %}"
+                                     class="img-thumbnail img-responsive img-rounded">
+                            {% endif %}
+                        </td>
+                        <td>{{ item.name }}</td>
+                        <td>
+                            {% for location in item.locations %}
+                                {{ location }} <br>
+                            {% endfor %}
+                        </td>
+                        <td>{{ item.totalQuantity }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {#    Allow users to see the previous/next results #}
+            {% if page_obj.has_previous or page_obj.has_next %}
+                <div class="row justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <a href="?q={{ query }}&amp;page={{ page_obj.previous_page_number }}">{% endif %}&laquo;
+                    Previous
+                    {% if page_obj.has_previous %}</a>{% endif %}
+                    |&nbsp;
+                    {% if page_obj.has_next %}
+                        <a href="?q={{ query }}&amp;page={{ page_obj.next_page_number }}">{% endif %}
+                    Next
+                    &raquo;
+                    {% if page_obj.has_next %}</a>{% endif %}
+                </div>
+            {% endif %}
         </div>
-    </form>
-
-    <table id="itemTable" class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">Image</th>
-                <th scope="col">Name</th>
-                <th scope="col">Location(s)</th>
-                <th scope="col">Units on Hand</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-            <tr data-access-url="{% url 'item-details' item.itemId %}" data-toggle="modal" data-target="#exampleModal">
-                <td scope="row">
-                    {% if item.images.count > 0  %}
-                    <img src="{% url 'get-photo' id=item.images.first.id %}" class="img-thumbnail img-responsive img-rounded">
-                    {% else %}
-                    <img src="{% static  'itemManagement/default_image.svg' %}" class="img-thumbnail img-responsive img-rounded">
-                    {% endif %}
-                </td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.locations.0 }}</td>
-                <td>{{ item.totalQuantity }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {#    Allow users to see the previous/next results #}
-    {% if page_obj.has_previous or page_obj.has_next %}
-    <div class="row justify-content-center">
-        {% if page_obj.has_previous %}
-        <a href="?q={{ query }}&amp;page={{ page_obj.previous_page_number }}">{% endif %}&laquo; Previous
-                {% if page_obj.has_previous %}</a>{% endif %}
-        |&nbsp;
-        {% if page_obj.has_next %}<a href="?q={{ query }}&amp;page={{ page_obj.next_page_number }}">{% endif %}
-                Next
-                &raquo;
-                {% if page_obj.has_next %}</a>{% endif %}
     </div>
-    {% endif %}
-</div>
 
-<!-- item detail model -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-body">
-             <div id="modalContainer">
-             </div>
-          </div>
+    <!-- item detail model -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id="modalContainer">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-
-
-{# Drop down list for editing item quantities per row #}
-{% render_bundle 'homepage' %}
+    {# Drop down list for editing item quantities per row #}
+    {% render_bundle 'homepage' %}
 {% endblock body %}
+

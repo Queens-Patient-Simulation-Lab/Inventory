@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db import IntegrityError
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
@@ -29,7 +30,7 @@ class HomePage(SearchView):
         objectList = context['object_list']
         if (len(objectList) == 0):
             context['items'] = [item.getItemSummary() for item in Item.objects.filter(
-                deleted=False).order_by('-lastUsed', 'title')]
+                deleted=False).order_by('-lastUsed', 'title')[:20]]
         else:
             context['items'] = [item.object.getItemSummary() for item in objectList]
 
@@ -95,7 +96,10 @@ class ItemDetailsView(TemplateView):
         itemStorages = ItemStorage.objects.filter(item=item)
 
         for itemStorage in itemStorages:
-            itemStorage.quantity = request.POST.get('quantity-location-' + str(itemStorage.location.id), "").strip()
+            original_quantity = int(request.POST.get('original-quantity-location-' + str(itemStorage.location.id), "").strip())
+            new_quantity = int(request.POST.get('quantity-location-' + str(itemStorage.location.id), "").strip())
+            diff = new_quantity - original_quantity
+            itemStorage.quantity += diff
             itemStorage.save()
         # -------------------------------
 
@@ -107,7 +111,11 @@ class ItemDetailsView(TemplateView):
         return HttpResponse(status=204)
 
 
-class LocationView(TemplateView):
+class LocationView(UserPassesTestMixin, TemplateView):
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
     # Displays a page of all item locations.
     def get(self, request, *args, **kwargs):
         locations = Location.objects.filter(deleted=False).all().order_by('name')
@@ -159,7 +167,6 @@ class LocationView(TemplateView):
         location.deleted = True
         location.save()
         messages.success(request, "Successfully deleted")
-        # Todo, throw error response on failure,  and status code  400
         return HttpResponse(status=204)  # Return an OK status with no content
 
     """
@@ -167,13 +174,20 @@ class LocationView(TemplateView):
     """
 
     def _updateLocation(self, request, id, name, description):
-        locations = Location.objects.filter(id=id, deleted=False)
-        if not locations.exists():
+        location = Location.objects.filter(id=id).first()
+        if location is None or location.deleted:
             messages.error(request, "This location does not exist")
             return redirect(request.path_info)
-        locations.update(
-            name=name,
-            description=description
-        )
+        if (len(name) < 3):
+            messages.error(request, "Name must be at least 3 characters")
+            return redirect(request.path_info)
+
+        if (name != location.name and Location.objects.filter(deleted=False, name=name).exists()):
+            messages.error(request, "You cannot have two locations with the same name.")
+            return redirect(request.path_info)
+
+        location.name = name
+        location.description = description
+        location.save()
         messages.success(request, "Location modified successfully")
         return redirect(request.path_info)
