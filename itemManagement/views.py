@@ -61,7 +61,10 @@ def getImage(request, id):
         raise Http404
     return HttpResponse(photo.data, content_type=photo.mimeType)
 
-class ItemDeleteView(TemplateView):
+class ItemDeleteView(UserPassesTestMixin, TemplateView):
+    def test_func(self):
+        return self.request.user.is_superuser
+
     def post(self, request, itemId, *args, **kwargs):
         item = Item.objects.filter(id=itemId).first()
         item.deleted = True
