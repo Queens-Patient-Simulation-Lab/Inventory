@@ -69,9 +69,9 @@ class ItemDeleteView(UserPassesTestMixin, TemplateView):
         item = Item.objects.filter(id=itemId).first()
         itemLocations = ItemStorage.objects.filter(item=item)  # get all locations of the item
         zeroCheck = True
-        # the stock of item must be 0 in every location
+        # the stock of item must be 0 in every location, and cannot be negative
         for location in itemLocations:
-            if location.quantity != 0:
+            if location.quantity > 0:
                 zeroCheck = False
         if zeroCheck:
             item.deleted = True
