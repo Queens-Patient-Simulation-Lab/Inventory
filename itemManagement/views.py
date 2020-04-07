@@ -67,9 +67,18 @@ class ItemDeleteView(UserPassesTestMixin, TemplateView):
 
     def post(self, request, itemId, *args, **kwargs):
         item = Item.objects.filter(id=itemId).first()
-        item.deleted = True
-        item.save(update_fields=['deleted'])
-        messages.success(request, f'The item was successfully deleted!')
+        itemLocations = ItemStorage.objects.filter(item=item)  # get all locations of the item
+        zeroCheck = True
+        # the stock of item must be 0 in every location
+        for location in itemLocations:
+            if location.quantity != 0:
+                zeroCheck = False
+        if zeroCheck:
+            item.deleted = True
+            item.save(update_fields=['deleted'])
+            messages.success(request, f'The item was successfully deleted!')
+        else:
+            messages.error(request, f'The item stock is not 0. It cannot be  deleted')
         return redirect('homepage')
 
 
