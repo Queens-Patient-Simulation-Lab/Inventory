@@ -61,6 +61,14 @@ def getImage(request, id):
         raise Http404
     return HttpResponse(photo.data, content_type=photo.mimeType)
 
+class ItemDeleteView(TemplateView):
+    def post(self, request, itemId, *args, **kwargs):
+        item = Item.objects.filter(id=itemId).first()
+        item.deleted = True
+        item.save(update_fields=['deleted'])
+        messages.success(request, f'The item was successfully deleted!')
+        return redirect('homepage')
+
 
 class ItemDetailsView(TemplateView):
     def get(self, request, itemId, *args, **kwargs):
