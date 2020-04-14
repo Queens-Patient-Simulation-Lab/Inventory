@@ -93,6 +93,16 @@ class ItemDetailsView(TemplateView):
         else:
             context = Item.objects.get(id=itemId).getItemDetails()
         template = 'itemManagement/item_details_admin.html' if isAdmin else 'itemManagement/item_details_assistant.html'
+
+        # all undeleted locations
+
+        # get all currently unused locations
+        locations = Location.objects.exclude(id__in=[x['id'] for x in context['locations']]).all().order_by('name')
+        context['remainingLocations'] = locations
+        print(locations)
+        # all undeleted locations minus the already used locations
+        # context['remainingLocations'] = list(set(locations) - set(context['locations']))
+
         if isAjax:
             return render(request, template, context=context)
         else:
@@ -100,9 +110,14 @@ class ItemDetailsView(TemplateView):
 
     def post(self, request, itemId, *args, **kwargs):
 
-        if message := itemFormInvalid(request):
-            messages.error(request, message)
-            return HttpResponse(status=400)
+        isAdmin = request.user.is_superuser
+
+        print(request.POST.get)
+
+        if isAdmin:
+            if message := itemFormInvalid(request):
+                messages.error(request, message)
+                return HttpResponse(status=400)
 
         itemIsNew = False
 
@@ -116,8 +131,6 @@ class ItemDetailsView(TemplateView):
 
         item.lastUsed = timezone.now()
         # TODO: item lastUsed updated if decrement clicked
-
-        isAdmin = request.user.is_superuser
 
         # Admin Fields updating fields other than quantities if admin
         if isAdmin:
@@ -151,6 +164,10 @@ class ItemDetailsView(TemplateView):
         # itemStorages list of ItemStorage objects where the item is the current item form
         itemStorages = ItemStorage.objects.filter(item=item)
 
+
+        # for newItemStorage in newItemStorages:
+        #     pass
+
         for itemStorage in itemStorages:
             original_quantity = int(request.POST.get('original-quantity-location-' + str(itemStorage.location.id), "").strip())
             new_quantity = int(request.POST.get('quantity-location-' + str(itemStorage.location.id), "").strip())
@@ -161,6 +178,17 @@ class ItemDetailsView(TemplateView):
                 itemStorage.quantity += diff
                 itemStorage.save()
                 ItemCountLogs.logging(request.user, item, itemStorage.quantity, itemStorage.location,
+                                      LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
+
+        newItemStorages = request.POST.getlist('newItemStorage')
+
+        if newItemStorages:
+            for itemStorage in newItemStorages:
+                # quantity of new item
+                quan = request.POST.get('quantity-location-' + str(itemStorage), "").strip()
+                loc = Location.objects.get(id=itemStorage)
+                ItemStorage.objects.create(location=loc, quantity=quan, item=item).save()
+                ItemCountLogs.logging(request.user, item, quan, loc,
                                       LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
 
         # -------------------------------

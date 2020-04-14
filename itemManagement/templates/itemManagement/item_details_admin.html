@@ -109,50 +109,56 @@
         </div>
 
 
-        <table class="table table-striped mb-2 mt-2">
+        <table class="table table-striped mb-2 mt-2 locationsTable">
             <thead>
-            <tr>
-                <th scope="col">Location</th>
-                <th scope="col">Stock</th>
-            </tr>
+                <tr>
+                    <th scope="col">Location</th>
+                    <th scope="col">Stock</th>
+                </tr>
             </thead>
-            <tbody>
             <div class="form-group">
+            <tbody class="container">
                 {% for location in locations %}
                     <tr>
-                        <th scope="col">{{ location.name }}</th>
-                        <td class="row">
-                            <div class="center container">
+                        <th scope="row">{{ location.name }}</th>
+                        <td class="row th-lg">
+{#                            <div class="center container">#}
                                 <div class="input-group row">
                                     <button type="button" class="btn btn-danger decrement rounded-0 disable-tap-zoom">
                                         -
                                     </button>
-                                    <input readonly hidden name="original-quantity-location-{{ location.id }}"
-                                           class="form-control" id="item_quantity_original"
+                                    <input name="original-quantity-location-{{ location.id }}" readonly hidden class="form-control" id="item_quantity_original" value="{{ location.quantity }}">
+                                    <input name="quantity-location-{{ location.id }}" type="number" min="0" inputmode="numeric" pattern="[0-9]*" title="Non-negative integer" id="item_quantity"
+                                           class="form-control item_quantity col-sm-6 col-8 text-center"
                                            value="{{ location.quantity }}">
-                                    <input name="quantity-location-{{ location.id }}" type="number" min="0"
-                                           inputmode="numeric" pattern="[0-9]*" title="Non-negative integer"
-                                           id="item_quantity"
-                                           class="form-control item_quantity col-4 col-sm-3 text-center"
-                                           value="{{ location.quantity }}">
-
                                     <button type="button" class="btn btn-success increment rounded-0 disable-tap-zoom">
                                         +
                                     </button>
                                 </div>
-                            </div>
+{#                            </div>#}
                         </td>
                     </tr>
                 {% endfor %}
-            </div>
-
-            <tr>
-                <th scope="row" colspan="2">
-                    <button type="button" class="btn btn-outline-secondary col">assign a new location</button>
-                </th>
-            </tr>
-
             </tbody>
+            </div>
+            <thead class="thead-light">
+
+                <tr class="locationAdder">
+                    <th scope="row">
+                        <div class="form-group">
+                            <select class="form-control" id="locationSelect">
+                                {% for location in remainingLocations %}
+                                    <option data-id="{{ location.id }}">{{ location.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </th>
+                    <th>
+                        <button type="button" class="btn btn-primary addRow align-content-center">Add</button>
+                    </th>
+                </tr>
+            </thead>
+
         </table>
 
         <div class="form-group">

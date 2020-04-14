@@ -7,6 +7,10 @@ import 'bootstrap4-tagsinput/tagsinput'
 
 $(".tagsInputBoxContainer").hide();
 
+if (!$("#locationSelect option:selected").length) {
+    $(".locationAdder").hide()
+}
+
 $("#tagsInputBox").tagsinput({
   trimValue: true
 });
@@ -48,6 +52,65 @@ function addQuantity(value, caller) {
         parseInt(caller.siblings(".item_quantity").val()) + value
     );
 }
+
+
+
+
+$(".addRow").click(function () {
+    // $(".locationAdder").hide()
+    let locationSelector = $("#locationSelect option:selected");
+
+    // var locationId=locationSelector.find('option:selected').attr('data-id');
+    let locationId = locationSelector.attr('data-id');
+    let locationName = locationSelector.val()
+    // var locationName = locationSelector.val()
+
+    let newRow = $($.parseHTML(
+        "                    <tr>\n" +
+        "                        <th scope=\"row\">"+ locationName +"</th>\n" +
+        "                        <td class=\"row th-lg\">\n" +
+        "                                <div class=\"input-group row\">\n" +
+        "                                    <button type=\"button\" class=\"btn btn-danger decrement rounded-0 disable-tap-zoom\">\n" +
+        "                                        -\n" +
+        "                                    </button>\n" +
+        "                                    <input hidden name=\"newItemStorage\" value=\""+locationId+"\">" +
+        "                                    <input name=\"original-quantity-location-"+ locationId +"\" readonly hidden class=\"form-control\" id=\"item_quantity_original\" value=\"0\">\n" +
+        "                                    <input name=\"quantity-location-"+ locationId +"\" type=\"number\" min=\"0\" inputmode=\"numeric\" pattern=\"[0-9]*\" title=\"Non-negative integer\" id=\"item_quantity\"\n" +
+        "                                           class=\"form-control item_quantity col-sm-6 col-8 text-center\"\n" +
+        "                                           value=\"0\">\n" +
+        "                                    <button type=\"button\" class=\"btn btn-success increment rounded-0 disable-tap-zoom\">\n" +
+        "                                        +\n" +
+        "                                    </button>\n" +
+        "                                </div>\n" +
+        "                        </td>\n" +
+        "                    </tr>\n"
+    )[1]);
+
+    newRow.find(".increment").click(function () {
+        addQuantity(1, $(this))
+    });
+    newRow.find(".decrement").click(function () {
+        //if quantity is less than zero, do not decrement further
+        if (parseInt($(this).siblings(".item_quantity").val()) <= 0) {
+            console.log("Could not decrement further")
+        }
+        else{
+            addQuantity(-1, $(this))
+        }
+    });
+
+    $(".locationsTable > tbody").append(newRow);
+
+    locationSelector.remove()
+    locationSelector = $("#locationSelect option:selected");
+
+    if (!locationSelector.length) {
+        $(".locationAdder").hide()
+    }
+
+
+});
+
 
 
 /* Async submit request */
