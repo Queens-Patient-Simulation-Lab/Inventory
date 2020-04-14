@@ -89,7 +89,8 @@ class ItemDetailsView(TemplateView):
         print(f"Item ID requested: {itemId}")
 
         if itemId == '':
-            context = {"itemId": '', "name": '', "kghId": '', "description": '', "price": '0.00', "unit": '', "totalQuantity": 0}
+            context = {"itemId": '', "name": '', "kghId": '', "description": '', "price": '0.00', "unit": '',
+                       "totalQuantity": 0, 'remainingLocations': Location.objects.all()}
         else:
             context = Item.objects.get(id=itemId).getItemDetails()
             # get all currently unused locations (for purposes of adding new itemStorages)
