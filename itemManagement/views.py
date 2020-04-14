@@ -92,16 +92,10 @@ class ItemDetailsView(TemplateView):
             context = {"itemId": '', "name": '', "kghId": '', "description": '', "price": '0.00', "unit": '', "totalQuantity": 0}
         else:
             context = Item.objects.get(id=itemId).getItemDetails()
+            # get all currently unused locations (for purposes of adding new itemStorages)
+            locations = Location.objects.exclude(id__in=[x['id'] for x in context['locations']]).all().order_by('name')
+            context['remainingLocations'] = locations
         template = 'itemManagement/item_details_admin.html' if isAdmin else 'itemManagement/item_details_assistant.html'
-
-        # all undeleted locations
-
-        # get all currently unused locations
-        locations = Location.objects.exclude(id__in=[x['id'] for x in context['locations']]).all().order_by('name')
-        context['remainingLocations'] = locations
-        print(locations)
-        # all undeleted locations minus the already used locations
-        # context['remainingLocations'] = list(set(locations) - set(context['locations']))
 
         if isAjax:
             return render(request, template, context=context)
