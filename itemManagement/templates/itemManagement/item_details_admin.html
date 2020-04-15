@@ -122,20 +122,18 @@
                     <tr>
                         <th scope="row">{{ location.name }}</th>
                         <td class="row th-lg">
-{#                            <div class="center container">#}
-                                <div class="input-group row">
-                                    <button type="button" class="btn btn-danger decrement rounded-0 disable-tap-zoom">
-                                        -
-                                    </button>
-                                    <input name="original-quantity-location-{{ location.id }}" readonly hidden class="form-control" id="item_quantity_original" value="{{ location.quantity }}">
-                                    <input name="quantity-location-{{ location.id }}" type="number" min="0" inputmode="numeric" pattern="[0-9]*" title="Non-negative integer" id="item_quantity"
-                                           class="form-control item_quantity col-sm-6 col-8 text-center"
-                                           value="{{ location.quantity }}">
-                                    <button type="button" class="btn btn-success increment rounded-0 disable-tap-zoom">
-                                        +
-                                    </button>
-                                </div>
-{#                            </div>#}
+                            <div class="input-group row">
+                                <button type="button" class="btn btn-danger decrement rounded-0 disable-tap-zoom">
+                                    -
+                                </button>
+                                <input name="original-quantity-location-{{ location.id }}" readonly hidden class="form-control" id="item_quantity_original" value="{{ location.quantity }}">
+                                <input name="quantity-location-{{ location.id }}" type="number" min="0" inputmode="numeric" pattern="[0-9]*" title="Non-negative integer" id="item_quantity"
+                                       class="form-control item_quantity col-sm-6 col-8 text-center"
+                                       value="{{ location.quantity }}">
+                                <button type="button" class="btn btn-success increment rounded-0 disable-tap-zoom">
+                                    +
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 {% endfor %}

@@ -107,8 +107,6 @@ class ItemDetailsView(TemplateView):
 
         isAdmin = request.user.is_superuser
 
-        print(request.POST.get)
-
         if isAdmin:
             if message := itemFormInvalid(request):
                 messages.error(request, message)
@@ -160,9 +158,6 @@ class ItemDetailsView(TemplateView):
         itemStorages = ItemStorage.objects.filter(item=item)
 
 
-        # for newItemStorage in newItemStorages:
-        #     pass
-
         for itemStorage in itemStorages:
             original_quantity = int(request.POST.get('original-quantity-location-' + str(itemStorage.location.id), "").strip())
             new_quantity = int(request.POST.get('quantity-location-' + str(itemStorage.location.id), "").strip())
@@ -172,6 +167,7 @@ class ItemDetailsView(TemplateView):
             else:
                 itemStorage.quantity += diff
                 itemStorage.save()
+                print(request.user, item, itemStorage.quantity, itemStorage.location, LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
                 ItemCountLogs.logging(request.user, item, itemStorage.quantity, itemStorage.location,
                                       LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
 
@@ -183,6 +179,7 @@ class ItemDetailsView(TemplateView):
                 quan = request.POST.get('quantity-location-' + str(itemStorage), "").strip()
                 loc = Location.objects.get(id=itemStorage)
                 ItemStorage.objects.create(location=loc, quantity=quan, item=item).save()
+                print(request.user, item, quan, loc, LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
                 ItemCountLogs.logging(request.user, item, quan, loc,
                                       LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
 
