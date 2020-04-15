@@ -108,7 +108,7 @@ class ItemCountLogs(models.Model):
 
     '''
     def logging(operator_user, item, quantity, location, logCode, logMsg):
-        if operator_user and quantity and item and location and logCode and logMsg:  # check required parameter
+        if operator_user and quantity is not None and item and location and logCode and logMsg:  # check required parameter
             itemCountLogs = ItemCountLogs(operator_user=operator_user, item=item, quantity=quantity,
                                           location=location, logCode=logCode, logMsg=logMsg)
             itemCountLogs.save()
