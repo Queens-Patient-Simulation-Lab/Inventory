@@ -33,6 +33,7 @@ if "DOMAIN" in os.environ:
 # Application definition
 
 INSTALLED_APPS = [
+    'background_task',
     'security.apps.SecurityConfig',
     'emails.apps.EmailsConfig',
     'itemManagement.apps.ItemManagementConfig',
