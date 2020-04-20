@@ -31,7 +31,9 @@ class Item(models.Model):
     price = models.DecimalField(max_digits=7,decimal_places=2, null=True, default=0)
     deleted = models.BooleanField(default=False)
     alertThreshold = models.PositiveSmallIntegerField(null=True)
+    needToNotifyAdmin = models.BooleanField(default=False)
     locations = models.ManyToManyField(Location, through='ItemStorage')
+
 
     @property
     def totalQuantity(self):
@@ -67,6 +69,15 @@ class ItemStorage(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField()
     # TODO:    No idea what displayed field is
+
+    def save(self, *args, **kwargs):
+        super(ItemStorage, self).save(*args, **kwargs)
+        totalStock = self.item.totalQuantity
+        if totalStock <= self.item.alertThreshold:
+            self.item.needToNotifyAdmin = True
+        else:
+            self.item.needToNotifyAdmin = False
+        self.item.save()
 
 
 class Photo(models.Model):

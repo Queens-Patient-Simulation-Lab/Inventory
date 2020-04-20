@@ -31,7 +31,7 @@ class EmailManager:
     @staticmethod
     def sendAlertEmails(item):
         EmailManager.__throwIfEmailIsntConfigured()
-        emails = list(map(lambda x: x.email, User.objects.filter(receivesAlerts=True)))
+        emails = list(map(lambda x: x.email, User.objects.filter(receivesAlerts=True, is_superuser=True)))
         if len(emails) == 0:
             return
         args = {'name': item.title,
