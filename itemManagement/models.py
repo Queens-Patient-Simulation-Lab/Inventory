@@ -41,9 +41,7 @@ class Item(models.Model):
 
     @property
     def needToNotifyAdmin(self):
-        if self.totalQuantity > self.alertThreshold:
-            return False
-        return True
+        return self.alertThreshold is not None and self.totalQuantity <= self.alertThreshold
 
     def getItemSummary(self):
         return {
