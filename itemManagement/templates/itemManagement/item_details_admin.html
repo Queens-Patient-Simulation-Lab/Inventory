@@ -119,7 +119,7 @@
             <div class="form-group">
             <tbody class="container">
                 {% for location in locations %}
-                    <tr>
+                    <tr id="{{ location.id }}">
                         <th scope="row">{{ location.name }}</th>
                         <td class="row th-lg">
                             <div class="input-group row">
@@ -133,6 +133,7 @@
                                 <button type="button" class="btn btn-success increment rounded-0 disable-tap-zoom">
                                     +
                                 </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger m-1 deleteRow">Delete</button>
                             </div>
                         </td>
                     </tr>

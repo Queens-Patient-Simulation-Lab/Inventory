@@ -54,16 +54,26 @@ function addQuantity(value, caller) {
 }
 
 
+$(".deleteRow").click((e) => {
+    let quantity = $(e.target).siblings(".item_quantity")
+    console.log(quantity)
+    console.log(quantity.val())
+    if ($(e.target).siblings(".item_quantity").val() > 0) {
+        return
+    }
+    let deletedLocation = $(e.target).parent().parent().parent()
+    let deletedId = deletedLocation.attr("id")
+    deletedLocation.replaceWith("<input hidden name=\"deletedRows\" value=\""+ deletedId +"\">\n")
+})
 
 
 $(".addRow").click(function () {
-    // $(".locationAdder").hide()
     let locationSelector = $("#locationSelect option:selected");
 
-    // var locationId=locationSelector.find('option:selected').attr('data-id');
     let locationId = locationSelector.attr('data-id');
     let locationName = locationSelector.val()
-    // var locationName = locationSelector.val()
+    // This value is 
+    let itemStorageTag = "newItemStorage"
 
     let newRow = $($.parseHTML(
         "                    <tr>\n" +
@@ -73,7 +83,7 @@ $(".addRow").click(function () {
         "                                    <button type=\"button\" class=\"btn btn-danger decrement rounded-0 disable-tap-zoom\">\n" +
         "                                        -\n" +
         "                                    </button>\n" +
-        "                                    <input hidden name=\"newItemStorage\" value=\""+locationId+"\">" +
+        "                                    <input hidden name=\""+ itemStorageTag +"\" value=\""+locationId+"\">" +
         "                                    <input name=\"original-quantity-location-"+ locationId +"\" readonly hidden class=\"form-control\" id=\"item_quantity_original\" value=\"0\">\n" +
         "                                    <input name=\"quantity-location-"+ locationId +"\" type=\"number\" min=\"0\" inputmode=\"numeric\" pattern=\"[0-9]*\" title=\"Non-negative integer\" id=\"item_quantity\"\n" +
         "                                           class=\"form-control item_quantity col-sm-6 col-8 text-center\"\n" +
@@ -81,6 +91,7 @@ $(".addRow").click(function () {
         "                                    <button type=\"button\" class=\"btn btn-success increment rounded-0 disable-tap-zoom\">\n" +
         "                                        +\n" +
         "                                    </button>\n" +
+        "                                    <button type=\"button\" class=\"btn btn-sm btn-outline-danger m-1 deleteRow\">Delete</button>" +
         "                                </div>\n" +
         "                        </td>\n" +
         "                    </tr>\n"

@@ -151,19 +151,22 @@ class ItemDetailsView(TemplateView):
                                  item.price)
 
 
-        # END if isAdmin
-
         # ----Item storage quantities at each location----
         # itemStorages list of ItemStorage objects where the item is the current item form
         itemStorages = ItemStorage.objects.filter(item=item)
+        # deletedStorages = list of storages ready to be deleted once POST request happens
+        deletedStorages = [int(i) for i in request.POST.getlist('deletedRows')]
 
 
         for itemStorage in itemStorages:
+            if itemStorage.location.id in deletedStorages:
+                itemStorage.delete()
+                continue
             original_quantity = int(request.POST.get('original-quantity-location-' + str(itemStorage.location.id), "").strip())
             new_quantity = int(request.POST.get('quantity-location-' + str(itemStorage.location.id), "").strip())
             diff = new_quantity - original_quantity
             if diff == 0:
-                pass
+                continue
             else:
                 itemStorage.quantity += diff
                 itemStorage.save()
