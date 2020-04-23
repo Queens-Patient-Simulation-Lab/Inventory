@@ -9,6 +9,8 @@ from weasyprint import HTML
 from django.utils import timezone
 from emails.email import EmailManager
 from itemManagement.models import Item
+from logs.models import UserLogs
+from security.models import User
 def MainPage(request):
     return render(request, 'web/main.html')
 
@@ -104,3 +106,24 @@ def InventoryValuation(request, format=None):
         return __PDFResponseGenerator("valuation", "Inventory Valuation", 'pdf/valuation.html', {"items": data, "total": total})
     else:
         return render(request, 'web/valuation.html', {"items": data, "total": total})
+
+
+def UserHistory(request, format=None):
+    selectedUserEmail = request.GET.get('selectedUser', "").strip()
+    if selectedUserEmail != "all users":
+        selectedUser = User.objects.filter(email=selectedUserEmail).first()
+        data = [
+            {"id": x.id, "time": x.time, "operator": x.operator_user, "operation": x.logMsg,
+             "subject_account": x.subject_user}
+            for x in UserLogs.objects.all().filter(operator_user=selectedUser).order_by("-time")]
+    else:
+        data = [
+            {"id": x.id, "time": x.time, "operator": x.operator_user, "operation": x.logMsg, "subject_account": x.subject_user}
+            for x in UserLogs.objects.all().order_by("-time")]
+    users = User.objects.all().filter(deleted=False)
+    if format == "csv":
+        return __CSVResponseGenerator("user-history", ["Time", "Operator", "Operation", "Subject Account"], [[x["time"], x["operator"], x["operation"], x["subject_account"]] for x in data])
+    elif format == "pdf":
+        return __PDFResponseGenerator("user-history", "User History", 'pdf/userHistory.html', {"histories": data})
+    else:
+        return render(request, 'web/userHistory.html', {"histories": data, "users": users})
