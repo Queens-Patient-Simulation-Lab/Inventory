@@ -31,6 +31,7 @@
             <div class="carousel-inner">
                 {% for image in images.iterator %}
                     <div class="carousel-item {% if forloop.first %} active {% endif %}">
+                        <p class="delete-img-btn" data-access-url="{% url 'delete-image' id=image.id %}">X</p>
                         <img src="{% url 'get-photo' id=image.id %}" class="d-block w-100 rounded">
                     </div>
                 {% empty %}
@@ -50,28 +51,9 @@
         </div>
 
         <div class="row m-1">
-            <button class="btn btn-outline-secondary col" type="button" data-toggle="collapse"
-                    data-target="#pictureSetting" aria-expanded="false" aria-controls="pictureSetting">
-                Edit pictures
+            <button class="btn btn-outline-secondary col" type="button" >
+                Add photo
             </button>
-        </div>
-        <div id="pictureSetting" class="collapse">
-
-            <div class="list-group list-group-horizontal row m-1 mt-0 border">
-                {% for image in images.iterator %}
-                    <div class="card col-3 p-0 m-1">
-                        <div class="card-body p-0">
-                            <img src="{% url 'get-photo' id=image.id %}"
-                                 class="itemImages list-group-item rounded p-0 m-0 border-0 img-fluid">
-                        </div>
-
-                    </div>
-
-                {% endfor %}
-                <button class="btn btn-primary col-sm-1 col-2" type="button">
-                    +
-                </button>
-            </div>
         </div>
 
         <div class="form-group">

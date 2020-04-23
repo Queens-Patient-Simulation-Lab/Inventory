@@ -49,6 +49,22 @@ function addQuantity(value, caller) {
     );
 }
 
+$(".delete-img-btn").click(function(){
+    var deleteUrl = $(this).attr('data-access-url')
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+    $.ajax({
+        type: "DELETE",
+        url: deleteUrl,
+        beforeSend: function(xhr) {
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+    },
+        complete: function (msg) {
+            location.reload()
+        }
+    });
+});
+
 
 /* Async submit request */
 $("#item-details-form").submit(function(e) {
