@@ -110,6 +110,18 @@ $(".addRow").click(function () {
         }
     });
 
+    newRow.find(".deleteRow").click(e => {
+        let quantity = $(e.target).siblings(".item_quantity")
+        console.log(quantity)
+        console.log(quantity.val())
+        if ($(e.target).siblings(".item_quantity").val() > 0) {
+            return
+        }
+        let deletedLocation = $(e.target).parent().parent().parent()
+        let deletedId = deletedLocation.attr("id")
+        deletedLocation.replaceWith("<input hidden name=\"deletedRows\" value=\""+ deletedId +"\">\n")
+    })
+
     $(".locationsTable > tbody").append(newRow);
 
     locationSelector.remove()
