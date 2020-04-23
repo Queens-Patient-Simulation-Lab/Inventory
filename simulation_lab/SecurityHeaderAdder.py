@@ -12,7 +12,7 @@ def SecurityHeaderAdder(get_response):
             "default-src 'none'; " +
             "form-action 'self'; " +
             "frame-ancestors 'none'; " +
-            "img-src 'self'; " +
+            "img-src 'self' data: https: http:;"
             "connect-src 'self'; " +
             "script-src 'self'; " +
             "style-src 'self'")

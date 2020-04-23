@@ -24,19 +24,23 @@
         <div id="itemImageCarousel" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
                 {% for i in images.iterator %}
-                    <li data-target="#itemImageCarousel" data-slide-to="{{ forloop.counter }}" {% if foorloop.first %}
+                    <li data-target="#itemImageCarousel" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}
                         class="active" {% endif %}></li>
+                {% empty %}
+                    <li data-target="#itemImageCarousel" data-slide-to="0"
+                        class="active"></li>
                 {% endfor %}
             </ol>
             <div class="carousel-inner">
                 {% for image in images.iterator %}
                     <div class="carousel-item {% if forloop.first %} active {% endif %}">
-                        <p class="delete-img-btn" data-access-url="{% url 'delete-image' id=image.id %}">X</p>
-                        <img src="{% url 'get-photo' id=image.id %}" class="d-block w-100 rounded">
+                        <p class="delete-img-btn" data-item-id="{{ image.id }}">X</p>
+                        <img src="{% url 'get-photo' id=image.id %}" class="carousel-image d-block w-100 rounded">
                     </div>
                 {% empty %}
-                    <div class="carousel-item active">
-                        <img src="{% static  'itemManagement/default_image.svg' %}" class="d-block w-100 rounded">
+                    <div class="carousel-item active empty-item">
+                        <img src="{% static  'itemManagement/default_image.svg' %}"
+                             class="carousel-image d-block w-100 rounded">
                     </div>
                 {% endfor %}
             </div>
@@ -51,9 +55,13 @@
         </div>
 
         <div class="row m-1">
-            <button class="btn btn-outline-secondary col" type="button" >
+            <div class="btn btn-outline-secondary col" type="button">
                 Add photo
-            </button>
+                <input id="add-image-input" type="file" name="itemImage" accept="image/*" multiple>
+
+            </div>
+
+
         </div>
 
         <div class="form-group">

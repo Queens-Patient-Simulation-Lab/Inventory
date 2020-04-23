@@ -60,14 +60,6 @@ def getImage(request, id):
     except Photo.DoesNotExist:
         raise Http404
     return HttpResponse(photo.data, content_type=photo.mimeType)
-class ItemImageView(UserPassesTestMixin, TemplateView):
-    def test_func(self):
-        return self.request.user.is_superuser
-
-    def delete(self, request, id):
-        print("HI")
-        Photo.objects.filter(pk=id).delete()
-        return HttpResponse(status=204)  # Return an OK status with no content
 
 
 class ItemDeleteView(UserPassesTestMixin, TemplateView):
