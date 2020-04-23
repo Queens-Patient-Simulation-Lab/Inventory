@@ -33,10 +33,15 @@ class Item(models.Model):
     alertThreshold = models.PositiveSmallIntegerField(null=True)
     locations = models.ManyToManyField(Location, through='ItemStorage')
 
+
     @property
     def totalQuantity(self):
         # return sum(location.count for location in self.locations.all())
         return self.locations.aggregate(Sum('itemstorage__quantity'))['itemstorage__quantity__sum'] or 0
+
+    @property
+    def needToNotifyAdmin(self):
+        return self.alertThreshold is not None and self.totalQuantity <= self.alertThreshold
 
     def getItemSummary(self):
         return {

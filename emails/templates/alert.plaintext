@@ -1,1 +1,4 @@
-{{name}} is now at {{level}} {{unit|default_if_none:"units"}}. The par level is set at {{par}} {{unit|default_if_none:"units"}}.
+The following item(s) are below their par Level
+{% for item in items %}
+ {{item.name}} is now at {{item.level}} {{item.unit|default_if_none:"units"}}. The par level is set at {{item.par}} {{item.unit|default_if_none:"units"}}.
+{% endfor %}
