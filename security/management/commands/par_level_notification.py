@@ -9,8 +9,5 @@ class Command(BaseCommand):
     help = 'send weekly notification email'
 
     def handle(self, *args, **options):
-        items = Item.objects.filter(deleted=False)
-        for item in items:
-            if item.needToNotifyAdmin:
-                em.sendAlertEmails(item)
-
+        items = list(filter(lambda x: x.needToNotifyAdmin, Item.objects.filter(deleted=False)))
+        em.sendAlertEmails(items)

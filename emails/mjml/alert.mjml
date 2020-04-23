@@ -2,7 +2,21 @@
   <mj-body>
     <mj-section>
       <mj-column>
-        <mj-text><a href="{{link}}">{{name}}</a> is now at {{level}} {{unit|default_if_none:"units"}}. The par level is set at {{par}} {{unit|default_if_none:"units"}}.</mj-text>
+        <mj-text>The following item(s) are below their par level</mj-text>
+        <mj-table>
+          <tr style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;">
+            <th style="padding: 0 15px 0 0;">Item</th>
+            <th style="padding: 0 15px;">Par</th>
+            <th style="padding: 0 0 0 15px;">Current Level</th>
+          </tr>
+          {% for item in items %}
+          <tr>
+            <td style="padding: 0 15px 0 0;"><a href="{{item.link}}">{{item.name}}</a></td>
+            <td style="padding: 0 15px;">{{item.par}} {{item.unit|default_if_none:"units"}}</td>
+            <td style="padding: 0 0 0 15px;">{{item.level}} {{item.unit|default_if_none:"units"}}</td>
+          </tr>
+          {% endfor %}
+        </mj-table>
       </mj-column>
     </mj-section>
   </mj-body>

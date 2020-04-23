@@ -29,20 +29,21 @@ class EmailManager:
         )
 
     @staticmethod
-    def sendAlertEmails(item):
+    def sendAlertEmails(items):
         EmailManager.__throwIfEmailIsntConfigured()
         emails = list(map(lambda x: x.email, User.objects.filter(receivesAlerts=True, is_superuser=True)))
-        if len(emails) == 0:
+        if len(emails) == 0 or len(items) == 0:
             return
-        args = {'name': item.title,
-                "unit": item.unit,
-                "level": item.totalQuantity,
-                "par": item.alertThreshold,
-                "link": f"https://{os.environ['DOMAIN']}{reverse('item-details', args=(item.id,))}"
-                }
+        items = list(map(lambda item: {'name': item.title,
+                                       "unit": item.unit,
+                                       "level": item.totalQuantity,
+                                       "par": item.alertThreshold,
+                                       "link": f"https://{os.environ['DOMAIN']}{reverse('item-details', args=(item.id,))}"
+                                       }, items))
+        args = {"items": items}
         html = render_to_string('alert.html', args)
         plain = render_to_string('alert.plaintext', args)
-        EmailManager.__sendEmail(to=emails, subject=f"Inventory Level Alert: {item.title}", plaintext=plain, html=html)
+        EmailManager.__sendEmail(to=emails, subject=f"Inventory Level Alert: {len(items)} are below par", plaintext=plain, html=html)
 
     @staticmethod
     def sendPasswordResetEmail(user, token, uidb64):
@@ -51,7 +52,6 @@ class EmailManager:
         html = render_to_string('reset.html', args)
         plain = render_to_string('reset.plaintext', args)
         EmailManager.__sendEmail(to=user.email, subject=f"Patient Simulation Lab Inventory Password Reset Request", plaintext=plain, html=html)
-
 
     @staticmethod
     def sendAccountSetupEmail(user, token, uidb64):
