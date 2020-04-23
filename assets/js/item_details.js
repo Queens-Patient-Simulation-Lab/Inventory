@@ -51,17 +51,27 @@ function addQuantity(value, caller) {
 }
 
 $(".delete-img-btn").click(function(){
-    var deleteUrl = $(this).attr('data-access-url')
-    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    let carousel = document.getElementById("itemImageCarousel")
+    let carouselIndicators = carousel.getElementsByClassName('carousel-indicators')[0]
+    let carouselInner = carousel.getElementsByClassName("carousel-inner")[0]
 
-    $.ajax({
-        type: "DELETE",
-        url: deleteUrl,
-        beforeSend: function(xhr) {
-        xhr.setRequestHeader("X-CSRFToken", csrftoken);
-    },
-        complete: function (msg) {
-            location.reload()
+    let deleteDiv = $(this).parent()
+
+    if (carouselInner.childElementCount > 1){
+            deleteDiv.remove()
+    }
+
+
+
+
+    // let firstImgDiv = carouselInner.firstElementChild
+
+
+    // firstImgDiv.remove()
+    // carouselInner.firstElementChild.classList.add("active")
+    // carouselIndicators.lastElementChild.remove()
+
+});
 
 $("#add-image-input").change(function (e) {
     // todo, add items to a list of files to submit
