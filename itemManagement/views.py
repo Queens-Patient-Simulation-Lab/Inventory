@@ -1,16 +1,19 @@
 import json
+from encodings.base64_codec import base64_decode
 
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.paginator import Paginator
 from django.db import IntegrityError
+from django.db.models import Max
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.template.loader import render_to_string
 
 # Create your views here.
+from django.utils.http import urlsafe_base64_decode
 from django.views.generic import TemplateView
 from haystack.generic_views import SearchView
 from haystack.query import SearchQuerySet
@@ -134,6 +137,25 @@ class ItemDetailsView(TemplateView):
             # ---------------------------
             deletedImageIds = json.loads(request.POST.get("deletedImageIds"))
             uploadedImages = json.loads(request.POST.get("uploadedImages"))
+
+            for i in deletedImageIds:
+                Photo.objects.filter(id=i).delete()
+
+            # Find the highest order element right now so the new image can go after it
+            highestOrderNum = Photo.objects.filter(depicts=item).aggregate(Max("order"))['order__max'] or 0
+            nextOrderNum = highestOrderNum
+            for imageData in uploadedImages:
+                nextOrderNum += 1
+                separated = imageData.split(";", 1)
+                print(separated[1])
+                data = urlsafe_base64_decode(separated[1].replace("base64,","", 1))
+                print(nextOrderNum)
+                Photo.objects.create(
+                    depicts=item,
+                    mimeType=separated[0],
+                    data=data,
+                    order=nextOrderNum
+                )
 
             # --------TAGS-------------
             newTags = request.POST.get('newTags', "").split(',')

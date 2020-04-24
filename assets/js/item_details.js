@@ -71,7 +71,7 @@ $("#itemImageCarousel").on("click", ".delete-img-btn", function () {
     } else {
         let itemIndex = uploadedImages.indexOf(img.src)
         if (itemIndex != -1) {
-            uploadedImages.splice( itemIndex, 1 )
+            uploadedImages.splice(itemIndex, 1)
         }
     }
 
@@ -171,7 +171,7 @@ $("#item-details-form").submit(function (e) {
         contentType: false,
         data: data,
         success: function (data) {
-            $(".modal").modal("hide");
+            location.reload()
         }
     });
 });
