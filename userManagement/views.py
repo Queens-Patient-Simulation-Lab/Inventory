@@ -188,7 +188,7 @@ def userDelete(request, email):
     u.deleted = True
     u.save()
     messages.success(request, f'Account {email} was successfully deleted!')
-    UserLogs.logging(operator_user=request.user, target_user=u, logCode=Logs.LOGCODE_100002, logMsg=Logs.LOGMSG_100002)
+    UserLogs.logging(operator_user=request.user, subject_user=u, logCode=Logs.LOGCODE_100002, logMsg=Logs.LOGMSG_100002)
     return redirect('user-account')
 
 
@@ -196,10 +196,11 @@ def userDelete(request, email):
 @user_passes_test(lambda u : u.is_superuser)
 def userAdmin(request, email):
     u = User.objects.filter(email=email).first()
+    print(u)
     u.is_superuser = True
     u.save()
     messages.success(request, f'{email}\'s account role was successfully changed!')
-    UserLogs.logging(operator_user=request.user, target_user=u, logCode=Logs.LOGCODE_100005, logMsg=Logs.LOGMSG_100005)
+    UserLogs.logging(operator_user=request.user, subject_user=u, logCode=Logs.LOGCODE_100005, logMsg=Logs.LOGMSG_100005)
     return redirect('user-account')
 
 
@@ -207,8 +208,9 @@ def userAdmin(request, email):
 @user_passes_test(lambda u : u.is_superuser)
 def userLabAssistant(request, email):
     u = User.objects.filter(email=email).first()
+    print(u)
     u.is_superuser = False
     u.save()
     messages.success(request, f'{email}\'s account role was successfully changed!')
-    UserLogs.logging(operator_user=request.user, target_user=u, logCode=Logs.LOGCODE_100006, logMsg=Logs.LOGMSG_100006)
+    UserLogs.logging(operator_user=request.user, subject_user=u, logCode=Logs.LOGCODE_100006, logMsg=Logs.LOGMSG_100006)
     return redirect('user-account')
