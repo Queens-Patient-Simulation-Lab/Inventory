@@ -12,7 +12,7 @@ def SecurityHeaderAdder(get_response):
             "default-src 'none'; " +
             "form-action 'self'; " +
             "frame-ancestors 'none'; " +
-            "img-src 'self'; " +
+            "img-src 'self' data: ; " + # data is used for client side preview of new photos being uploaded
             "connect-src 'self'; " +
             "script-src 'self'; " +
             "style-src 'self'")
