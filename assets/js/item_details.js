@@ -74,6 +74,11 @@ $("#itemImageCarousel").on("click", ".delete-img-btn", function () {
         })
 
         $('.carousel').carousel(newActiveIndex);
+    }else{
+        let defaultSrc = carouselInner.getAttribute("data-default-url")
+        let img =  deleteDiv.find("img")[0]
+        deleteDiv.addClass("empty-item")
+        img.src = defaultSrc;
     }
 
 

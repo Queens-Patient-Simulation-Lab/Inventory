@@ -31,7 +31,7 @@
                         class="active"></li>
                 {% endfor %}
             </ol>
-            <div class="carousel-inner">
+            <div class="carousel-inner" data-default-url="{% static  'itemManagement/default_image.svg' %}">
                 {% for image in images.iterator %}
                     <div class="carousel-item {% if forloop.first %} active {% endif %}">
                         <p class="delete-img-btn" data-item-id="{{ image.id }}">X</p>
