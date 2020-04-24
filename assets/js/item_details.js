@@ -1,7 +1,8 @@
 import 'bootstrap4-tagsinput/tagsinput'
-/*
-    Called when the plus button next to a quantity is pressed
- */
+
+
+const deletedImageIdsSet = new Set()
+const uploadedImages = []
 
 //--------------TAGS-----------------
 
@@ -28,7 +29,9 @@ $(".tagEditBtn").click(function () {
 });
 
 //--------------------------------
-
+/*
+    Called when the plus button next to a quantity is pressed
+ */
 $(".increment").click(function () {
     addQuantity(1, $(this))
 });
@@ -58,10 +61,22 @@ $("#itemImageCarousel").on("click", ".delete-img-btn", function () {
     let carouselInner = carousel.getElementsByClassName("carousel-inner")[0]
 
     let deleteDiv = $(this).parent()
+    let img = deleteDiv.find("img")[0]
+
+
+    let imageId = $(this).attr("data-item-id")
+    if (imageId != null && imageId != -1) {
+        // This image came from the server
+        deletedImageIdsSet.add(imageId)
+    } else {
+        let itemIndex = uploadedImages.indexOf(img.src)
+        if (itemIndex != -1) {
+            uploadedImages.splice( itemIndex, 1 )
+        }
+    }
 
     let childCount = carouselInner.childElementCount
     if (childCount > 1) {
-        console.log("GOT HERE")
         // The new active card should be the next card (first if there is no next card)
         let newActiveIndex = (deleteDiv.index() + 1) % (childCount);
 
@@ -74,9 +89,9 @@ $("#itemImageCarousel").on("click", ".delete-img-btn", function () {
         })
 
         $('.carousel').carousel(newActiveIndex);
-    }else{
+    } else {
         let defaultSrc = carouselInner.getAttribute("data-default-url")
-        let img =  deleteDiv.find("img")[0]
+        let img = deleteDiv.find("img")[0]
         deleteDiv.addClass("empty-item")
         img.src = defaultSrc;
     }
@@ -86,8 +101,6 @@ $("#itemImageCarousel").on("click", ".delete-img-btn", function () {
 
 
 $("#add-image-input").change(function (e) {
-    // todo, add items to a list of files to submit
-    // todo, when you delete items, keep track of their ids if they exist, or remove from upload list otherwise
     let carousel = document.getElementById("itemImageCarousel")
     let carouselIndicators = carousel.getElementsByClassName('carousel-indicators')[0]
     let carouselInner = carousel.getElementsByClassName("carousel-inner")[0]
@@ -105,7 +118,6 @@ $("#add-image-input").change(function (e) {
 
         console.log("File was uploaded")
 
-        // ADD NEW INDICATOR
         let newIndicator = carouselIndicators.firstElementChild.cloneNode(true)
         newIndicator.classList.remove("active")
 
@@ -116,11 +128,12 @@ $("#add-image-input").change(function (e) {
         // Add new image
         let newImageDiv = firstImgDiv.cloneNode(true)
         newImageDiv.classList.remove("active")
-        newImageDiv.setAttribute("data-item-id", -1)
+        newImageDiv.getElementsByClassName("delete-img-btn")[0].setAttribute("data-item-id", -1)
 
         let image = newImageDiv.getElementsByClassName("carousel-image")[0]
         let reader = new FileReader();
         reader.onloadend = function () {
+            uploadedImages.push(reader.result)
             image.src = reader.result;
         }
         reader.readAsDataURL(file);
@@ -141,13 +154,22 @@ $("#item-details-form").submit(function (e) {
 
     e.preventDefault(); // avoid to execute the actual submit of the form.
 
-    var form = $(this);
-    var url = form.attr('action');
+    let form = $(this);
+    let url = form.attr('action');
+    let data = new FormData(form[0]);
+
+    // Sets can't be turned to JSON well to convert to Array first
+    data.append("deletedImageIds", JSON.stringify(Array.from(deletedImageIdsSet)))
+    data.append("uploadedImages", JSON.stringify(uploadedImages))
+
 
     $.ajax({
         type: "POST",
         url: url,
-        data: form.serialize(), // serializes the form's elements.
+        enctype: 'multipart/form-data',
+        processData: false,
+        contentType: false,
+        data: data,
         success: function (data) {
             $(".modal").modal("hide");
         }

@@ -1,3 +1,5 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -130,6 +132,8 @@ class ItemDetailsView(TemplateView):
             item.unit = request.POST.get('unit', "").strip()
             item.save(update_fields=['title', 'kghID', 'description', 'price', 'unit'])
             # ---------------------------
+            deletedImageIds = json.loads(request.POST.get("deletedImageIds"))
+            uploadedImages = json.loads(request.POST.get("uploadedImages"))
 
             # --------TAGS-------------
             newTags = request.POST.get('newTags', "").split(',')
