@@ -50,28 +50,35 @@ function addQuantity(value, caller) {
     );
 }
 
-$(".delete-img-btn").click(function(){
+// https://stackoverflow.com/a/6658774/5619385
+// since .delete-img-btn is dynamically generated, $(".delete-img-btn").click will not bind to new elements
+$("#itemImageCarousel").on("click", ".delete-img-btn", function () {
     let carousel = document.getElementById("itemImageCarousel")
     let carouselIndicators = carousel.getElementsByClassName('carousel-indicators')[0]
     let carouselInner = carousel.getElementsByClassName("carousel-inner")[0]
 
     let deleteDiv = $(this).parent()
 
-    if (carouselInner.childElementCount > 1){
+    let childCount = carouselInner.childElementCount
+    if (childCount > 1) {
+        console.log("GOT HERE")
+        // The new active card should be the next card (first if there is no next card)
+        let newActiveIndex = (deleteDiv.index() + 1) % (childCount);
+
+
+        $('.carousel').one('slid.bs.carousel', function () {
+            // Fires when the carousel has completed sliding the first time
+            // Note that the event listener is one(), not on()
             deleteDiv.remove()
+            carouselIndicators.lastElementChild.remove()
+        })
+
+        $('.carousel').carousel(newActiveIndex);
     }
 
 
-
-
-    // let firstImgDiv = carouselInner.firstElementChild
-
-
-    // firstImgDiv.remove()
-    // carouselInner.firstElementChild.classList.add("active")
-    // carouselIndicators.lastElementChild.remove()
-
 });
+
 
 $("#add-image-input").change(function (e) {
     // todo, add items to a list of files to submit
@@ -82,7 +89,7 @@ $("#add-image-input").change(function (e) {
 
     let firstImgDiv = carouselInner.firstElementChild
     let firstIsEmpty = false
-    if (firstImgDiv.classList.contains("empty-item")){
+    if (firstImgDiv.classList.contains("empty-item")) {
         firstIsEmpty = true
         firstImgDiv.classList.remove("empty-item")
     }
@@ -108,14 +115,14 @@ $("#add-image-input").change(function (e) {
 
         let image = newImageDiv.getElementsByClassName("carousel-image")[0]
         let reader = new FileReader();
-        reader.onloadend = function() {
-             image.src = reader.result;
+        reader.onloadend = function () {
+            image.src = reader.result;
         }
         reader.readAsDataURL(file);
         carouselInner.appendChild(newImageDiv)
 
     }
-    if (firstIsEmpty){
+    if (firstIsEmpty) {
         firstImgDiv.remove()
         carouselInner.firstElementChild.classList.add("active")
         carouselIndicators.lastElementChild.remove()

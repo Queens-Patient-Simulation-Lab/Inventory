@@ -23,8 +23,12 @@ input[type=number] {
   width: 80px;
 }
 
+
 .carousel-item {
   position: relative;
+  &.empty-item .delete-img-btn{
+      display: none;
+  }
   .delete-img-btn {
     transform: scale(0.75);
     position:absolute;
