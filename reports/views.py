@@ -1,9 +1,9 @@
 import csv
 import io
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from itemManagement.models import Item
-from django.http import HttpResponse, FileResponse
+from django.http import FileResponse, HttpResponse
 from datetime import date
 from weasyprint import HTML
 from django.utils import timezone
@@ -11,6 +11,8 @@ from emails.email import EmailManager
 from itemManagement.models import Item
 from logs.models import UserLogs
 from security.models import User
+from django.contrib import messages
+
 def MainPage(request):
     return render(request, 'web/main.html')
 
@@ -107,23 +109,36 @@ def InventoryValuation(request, format=None):
     else:
         return render(request, 'web/valuation.html', {"items": data, "total": total})
 
+def UserHistory(request):
+    isAjax =  "X-Requested-With" in request.headers and request.headers["X-Requested-With"] == "XMLHttpRequest"
+    format = request.GET.get('format', None)
+    user = request.GET.get('user', None)
+    if format not in {"csv", "pdf", None}:
+        messages.error(request, "Invalid report format '" + format + "'")
+        return redirect("user-history")
+    if format != None and user == None:
+        messages.error(request, "Custom formats require a target user")
+        return redirect("user-history")
+    if isAjax and user == None:
+        messages.error(request, "Ajax requests require a target user")
+        return redirect("user-history")
 
-def UserHistory(request, format=None):
-    selectedUserEmail = request.GET.get('selectedUser', "").strip()
-    if selectedUserEmail != "all users":
-        selectedUser = User.objects.filter(email=selectedUserEmail).first()
-        data = [
+    if not isAjax:
+        if format == None:
+            return render(request, 'web/userHistory.html', {"users": User.objects.all(), "initalSelectedUser": user})
+
+    if user == "all":
+        targetUsers = User.objects.all()
+    else:
+        targetUsers = User.objects.filter(id=user)
+    data = []
+    for target in targetUsers:
+        data.extend([
             {"id": x.id, "time": x.time, "operator": x.operator_user, "operation": x.logMsg,
              "subject_account": x.subject_user}
-            for x in UserLogs.objects.all().filter(operator_user=selectedUser).order_by("-time")]
-    else:
-        data = [
-            {"id": x.id, "time": x.time, "operator": x.operator_user, "operation": x.logMsg, "subject_account": x.subject_user}
-            for x in UserLogs.objects.all().order_by("-time")]
-    users = User.objects.all().filter(deleted=False)
-    if format == "csv":
-        return __CSVResponseGenerator("user-history", ["Time", "Operator", "Operation", "Subject Account"], [[x["time"], x["operator"], x["operation"], x["subject_account"]] for x in data])
-    elif format == "pdf":
+            for x in UserLogs.objects.all().filter(operator_user=target).order_by("-time")])
+    if not isAjax:
+        if format == "csv":
+             return __CSVResponseGenerator("user-history", ["Time", "Operator", "Operation", "Subject Account"], [[x["time"], x["operator"], x["operation"], x["subject_account"]] for x in data])
         return __PDFResponseGenerator("user-history", "User History", 'pdf/userHistory.html', {"histories": data})
-    else:
-        return render(request, 'web/userHistory.html', {"histories": data, "users": users})
+    return render(request, 'web/userHistoryData.html', {"histories": data})

@@ -1,0 +1,8 @@
+{% for h in histories %}
+<tr>
+  <td class="text-center">{{h.time}}</td>
+  <td class="text-center">{{h.operator}}</td>
+  <td class="text-center">{{h.operation}}</td>
+  <td class="text-center">{{h.subject_account}}</td>
+</tr>
+{% endfor %}

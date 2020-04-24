@@ -15,7 +15,8 @@ module.exports = {
     "login": './assets/scss/login',
     "item_details": ['./assets/scss/item_details', './assets/js/item_details'],
     "homepage": "./assets/js/homepage",
-    "locations": "./assets/js/locations"
+    "locations": "./assets/js/locations",
+    "user_history_report": ['./assets/scss/user_history_report', './assets/js/user_history_report']
   },
 
   output: {

@@ -1,29 +1,27 @@
 {% extends "itemManagement/chrome_template.html" %}
+{% load render_bundle from webpack_loader %}
 {% block body %}
 <div class="container">
   <div class="d-flex flex-row align-items-center flex-wrap justify-content-between">
     <div>
       <h3>User History</h3>
-      <h5>Generated on {% now "Y-n-j" %}</h5>
+      <h5 class="initially-hidden">Generated on <span id="generatedDate"></span></h5>
     </div>
-    <div class="text-center">
-      <a class="btn btn-primary" href="{% url 'user-history' format='csv' %}">Download CSV</a>
-      <a class="btn btn-primary" href="{% url 'user-history' format='pdf' %}">Download PDF</a>
+    <div class="text-center initially-hidden">
+      <a class="btn btn-primary" id="csvBtn">Download CSV</a>
+      <a class="btn btn-primary" id="pdfBtn">Download PDF</a>
     </div>
   </div>
-  <form class="m-2">
-    <div class="form-group row text-center">
-      <label for="userSelection" class="col-2">select a user:</label>
-      <select class="form-control col m-1" id="userSelection" name="selectedUser">
-        <option>all users</option>
-        {% for user in users %}
-          <option>{{ user.email }}</option>
-        {% endfor %}
-      </select>
-      <input type="submit" class="col-1">
-    </div>
-  </form>
-  <table class="table">
+  <select class="form-control col m-1" id="userSelection">
+    {% if not initalSelectedUser %}
+    <option value="" disabled selected hidden>Select a User</option>
+    {% endif %}
+    <option value="all" {% if initalSelectedUser == "all" %}selected{% endif %}>All Users</option>
+    {% for user in users %}
+      <option value="{{ user.id }}"  {% if initalSelectedUser == user.id|stringformat:"i"  %}selected{% endif %}>{{user.name}} ({{ user.email }}) </option>
+    {% endfor %}
+  </select>
+  <table class="table initially-hidden">
     <thead>
       <tr>
         <th scope="col" class="text-center">Time</th>
@@ -32,17 +30,9 @@
         <th scope="col" class="text-center">Subject account</th>
       </tr>
     </thead>
-    <tbody>
-
-      {% for h in histories %}
-      <tr>
-        <td class="text-center">{{h.time}}</td>
-        <td class="text-center">{{h.operator}}</td>
-        <td class="text-center">{{h.operation}}</td>
-        <td class="text-center">{{h.subject_account}}</td>
-      </tr>
-      {% endfor %}
+    <tbody id="historyTableBody">
     </tbody>
   </table>
 </div>
+{% render_bundle 'user_history_report' %}
 {% endblock body %}
