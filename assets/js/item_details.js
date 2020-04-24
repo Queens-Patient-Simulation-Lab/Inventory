@@ -178,6 +178,8 @@ $("#item-details-form").submit(function (e) {
             let errMsg = e.responseJSON.errorMessage
             $("#item-details-error").text(errMsg)
             $("#admin-submit").prop("disabled", false);
+
+            $("#item-details-modal").scrollTop(0)
         }
     });
 });

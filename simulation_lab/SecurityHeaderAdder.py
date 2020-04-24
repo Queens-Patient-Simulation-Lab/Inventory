@@ -51,7 +51,7 @@ def SecurityHeaderAdder(get_response):
             "magnetometer 'none'; " +
             "microphone 'none'; " +
             "midi 'none'; " +
-            "navigation-override 'none'; " +
+            "navigation-override 'self'; " +
             "payment 'none'; " +
             "picture-in-picture 'none'; " +
             "publickey-credentials 'none'; " +
