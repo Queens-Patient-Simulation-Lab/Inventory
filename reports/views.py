@@ -12,7 +12,10 @@ from itemManagement.models import Item
 from logs.models import UserLogs
 from security.models import User
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
 
+
+@user_passes_test(lambda u: u.is_superuser)
 def MainPage(request):
     return render(request, 'web/main.html')
 
@@ -38,7 +41,7 @@ def __PDFResponseGenerator(filenamePrefix, title, template, args):
 def __GetFormattedDate():
     return date.today().strftime("%Y-%m-%d")
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def CycleCountHTML(request):
     data = []
     items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title").filter(deleted=False))
@@ -47,7 +50,7 @@ def CycleCountHTML(request):
         data.append({"name": item["name"], "id": item["itemId"], "locations": locations})
     return render(request, 'web/cycle.html', {"items": data})
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def CycleCountCSV(request):
     data = []
     items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title").filter(deleted=False))
@@ -56,7 +59,7 @@ def CycleCountCSV(request):
             data.append([item["name"], location["name"], location["quantity"]])
     return __CSVResponseGenerator("CycleCount", ["Name", "Location", "Quantity"], data)
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def CycleCountPDF(request):
     data = []
     items = map(lambda x: x.getItemDetails(), Item.objects.all().order_by("title").filter(deleted=False))
@@ -65,7 +68,7 @@ def CycleCountPDF(request):
         data.append({"name": item["name"], "locations": locations})
     return __PDFResponseGenerator("CycleCount", "Cycle Count", 'pdf/cycle.html', {"items": data})
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def InventoryOnHand(request, format=None):
     data = [{"id": x.id, "name": x.title, "total": x.totalQuantity} for x in Item.objects.all().order_by("title").filter(deleted=False)]
     if format == "csv":
@@ -75,7 +78,7 @@ def InventoryOnHand(request, format=None):
     else:
         return render(request, 'web/onHand.html', {"items": data})
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def InventoryObsolescence(request, format=None):
     data = [{"id": x.id, "name": x.title, "lastUsed": x.lastUsed} for x in Item.objects.filter(deleted=False).filter(lastUsed__lte=timezone.now() - timezone.timedelta(days=365)).order_by("title")]
     if format == "csv":
@@ -85,7 +88,7 @@ def InventoryObsolescence(request, format=None):
     else:
         return render(request, 'web/obsolescence.html', {"items": data})
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def ReorderList(request, format=None):
     items = Item.objects.all().order_by("title").filter(deleted=False)
     belowThreshold = filter(lambda x: x.alertThreshold is not None and x.totalQuantity < x.alertThreshold, items)
@@ -97,7 +100,7 @@ def ReorderList(request, format=None):
     else:
         return render(request, 'web/reorder.html', {"items": data})
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def InventoryValuation(request, format=None):
     data = [{"id": x.id, "name": x.title, "quantity": x.totalQuantity, "price": x.price, "value": x.totalQuantity * x.price} for x in Item.objects.all().filter(deleted=False)]
     data.sort(key=lambda x: x["value"], reverse=True)
@@ -109,6 +112,7 @@ def InventoryValuation(request, format=None):
     else:
         return render(request, 'web/valuation.html', {"items": data, "total": total})
 
+@user_passes_test(lambda u: u.is_superuser)
 def UserHistory(request):
     isAjax =  "X-Requested-With" in request.headers and request.headers["X-Requested-With"] == "XMLHttpRequest"
     format = request.GET.get('format', None)
