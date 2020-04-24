@@ -33,15 +33,16 @@ input[type=number] {
       display: none;
   }
   .delete-img-btn {
-    transform: scale(0.75);
     position:absolute;
+    box-sizing: border-box;
     width: 20px;
     height: 20px;
     line-height: 20px;
     color: white;
     right: 5px;
-    top: 3px;
+    top: 5px;
     padding: 0px;
+    margin: 0px;
     z-index: 2;
     font-size: 0.5em;
     border-radius: 50%;
