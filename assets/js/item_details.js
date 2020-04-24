@@ -154,6 +154,7 @@ $("#item-details-form").submit(function (e) {
 
     e.preventDefault(); // avoid to execute the actual submit of the form.
 
+    $("#admin-submit").prop("disabled", true);
     let form = $(this);
     let url = form.attr('action');
     let data = new FormData(form[0]);
@@ -172,6 +173,9 @@ $("#item-details-form").submit(function (e) {
         data: data,
         success: function (data) {
             location.reload()
+        },
+        error: function () {
+            $("#admin-submit").prop("disabled", false);
         }
     });
 });
