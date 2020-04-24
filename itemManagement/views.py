@@ -207,7 +207,8 @@ class ItemDetailsView(TemplateView):
                 return HttpResponse(status=204)
         except Exception as e:
             print(e)
-            return HttpResponse(status=400)
+            context = {"errorMessage": str(e)}
+            return HttpResponse(status=400, content=json.dumps(context), content_type='application/json')
 
 
 

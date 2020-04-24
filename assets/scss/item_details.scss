@@ -10,6 +10,9 @@ input[type=number] {
   -moz-appearance: textfield; /* Firefox */
 }
 
+#item-details-error:empty{
+  display: none;
+}
 .disable-tap-zoom {
   touch-action: manipulation;
 }
