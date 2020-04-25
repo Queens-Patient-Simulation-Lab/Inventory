@@ -155,7 +155,7 @@ class ItemDetailsView(TemplateView):
         # itemStorages list of ItemStorage objects where the item is the current item form
         itemStorages = ItemStorage.objects.filter(item=item)
         # deletedStorages = list of storages ready to be deleted once POST request happens
-        deletedStorages = [int(i) for i in request.POST.getlist('deletedRows')]
+        deletedStorages = [int(i) for i in request.POST.getlist('deletedRows') if i != 'undefined']
 
 
         for itemStorage in itemStorages:
