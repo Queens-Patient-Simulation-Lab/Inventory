@@ -12,7 +12,7 @@ def SecurityHeaderAdder(get_response):
             "default-src 'none'; " +
             "form-action 'self'; " +
             "frame-ancestors 'none'; " +
-            "img-src 'self'; " +
+            "img-src 'self' data: ; " + # data is used for client side preview of new photos being uploaded
             "connect-src 'self'; " +
             "script-src 'self'; " +
             "style-src 'self'")
@@ -51,7 +51,7 @@ def SecurityHeaderAdder(get_response):
             "magnetometer 'none'; " +
             "microphone 'none'; " +
             "midi 'none'; " +
-            "navigation-override 'none'; " +
+            "navigation-override 'self'; " +
             "payment 'none'; " +
             "picture-in-picture 'none'; " +
             "publickey-credentials 'none'; " +

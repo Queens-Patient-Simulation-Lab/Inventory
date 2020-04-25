@@ -2,14 +2,17 @@
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 input[type=number] {
-    -moz-appearance:textfield; /* Firefox */
+  -moz-appearance: textfield; /* Firefox */
 }
 
+#item-details-error:empty{
+  display: none;
+}
 .disable-tap-zoom {
   touch-action: manipulation;
 }
@@ -21,4 +24,48 @@ input[type=number] {
 
 .item_quantity {
   width: 80px;
+}
+
+
+.carousel-item {
+  position: relative;
+  &.empty-item .delete-img-btn{
+      display: none;
+  }
+  .delete-img-btn {
+    position:absolute;
+    box-sizing: border-box;
+    width: 2.5em;
+    height: 2.5em;
+    line-height: 2.5em;
+    color: white;
+    right: 5px;
+    top: 5px;
+    padding: 0px;
+    margin: 0px;
+    z-index: 2;
+    font-size: 1em;
+    border-radius: 50%;
+    border: 1px solid white;
+    background-color: darkgray;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+  }
+
+}
+#add-image-input{
+  position: absolute;
+  left:0px;
+  top:0px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0px;
+  margin: 0px;
+  opacity: 0;
+}
+.carousel-item{
+  max-height: 600px;
+
 }
