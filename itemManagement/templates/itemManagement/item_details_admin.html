@@ -35,12 +35,12 @@
             <div class="carousel-inner" data-default-url="{% static  'itemManagement/default_image.svg' %}">
                 {% for image in images.iterator %}
                     <div class="carousel-item {% if forloop.first %} active {% endif %}">
-                        <p class="delete-img-btn" data-item-id="{{ image.id }}">X</p>
+                        <div class="delete-img-btn"><i class="fas fa-trash-alt"></i></div>
                         <img src="{% url 'get-photo' id=image.id %}" class="carousel-image d-block w-100 rounded">
                     </div>
                 {% empty %}
                     <div class="carousel-item active empty-item">
-                        <p class="delete-img-btn" data-item-id="">X</p>
+                        <div class="delete-img-btn"><i class="fas fa-trash-alt"></i></div>
                         <img src="{% static  'itemManagement/default_image.svg' %}"
                              class="carousel-image d-block w-100 rounded">
                     </div>
