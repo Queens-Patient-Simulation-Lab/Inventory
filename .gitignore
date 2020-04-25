@@ -124,7 +124,6 @@ env
 
 #SCSS build files
 *.css.map
-*.css # REMOVE THIS IF YOU PLAN TO CREATE ANY CSS FILES WITHOUT THE USE OF SCSS
 
 .vscode/
 .venv/
