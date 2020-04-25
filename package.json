@@ -20,6 +20,8 @@
   "homepage": "https://github.com/Queens-Patient-Simulation-Lab/Inventory#readme",
   "dependencies": {},
   "devDependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.28",
+    "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "autoprefixer": "^9.7.6",
     "bootstrap": "^4.4.1",
     "bootstrap4-tagsinput": "^4.1.3",
