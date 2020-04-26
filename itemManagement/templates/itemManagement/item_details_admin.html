@@ -4,7 +4,8 @@
 {% load crispy_forms_tags %}
 
 
-<div class="container-fluid" id="item-detail-modal-root">
+<div id="item-detail-modal-body" class="container-fluid" id="item-detail-modal-root">
+    <div id="item-details-error" class="alert alert-danger"></div>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -24,18 +25,24 @@
         <div id="itemImageCarousel" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
                 {% for i in images.iterator %}
-                    <li data-target="#itemImageCarousel" data-slide-to="{{ forloop.counter }}" {% if foorloop.first %}
+                    <li data-target="#itemImageCarousel" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}
                         class="active" {% endif %}></li>
+                {% empty %}
+                    <li data-target="#itemImageCarousel" data-slide-to="0"
+                        class="active"></li>
                 {% endfor %}
             </ol>
-            <div class="carousel-inner">
+            <div class="carousel-inner" data-default-url="{% static  'itemManagement/default_image.svg' %}">
                 {% for image in images.iterator %}
                     <div class="carousel-item {% if forloop.first %} active {% endif %}">
-                        <img src="{% url 'get-photo' id=image.id %}" class="d-block w-100 rounded">
+                        <div class="delete-img-btn" data-item-id="{{ image.id }}"><i class="fas fa-trash-alt"></i></div>
+                        <img src="{% url 'get-photo' id=image.id %}" class="carousel-image d-block w-100 rounded">
                     </div>
                 {% empty %}
-                    <div class="carousel-item active">
-                        <img src="{% static  'itemManagement/default_image.svg' %}" class="d-block w-100 rounded">
+                    <div class="carousel-item active empty-item">
+                        <div class="delete-img-btn" data-item-id=""><i class="fas fa-trash-alt"></i></div>
+                        <img src="{% static  'itemManagement/default_image.svg' %}"
+                             class="carousel-image d-block w-100 rounded">
                     </div>
                 {% endfor %}
             </div>
@@ -50,28 +57,13 @@
         </div>
 
         <div class="row m-1">
-            <button class="btn btn-outline-secondary col" type="button" data-toggle="collapse"
-                    data-target="#pictureSetting" aria-expanded="false" aria-controls="pictureSetting">
-                Edit pictures
-            </button>
-        </div>
-        <div id="pictureSetting" class="collapse">
+            <div class="btn btn-outline-secondary col" type="button">
+                Add photo
+                <input id="add-image-input" type="file" name="itemImage" accept="image/*" multiple>
 
-            <div class="list-group list-group-horizontal row m-1 mt-0 border">
-                {% for image in images.iterator %}
-                    <div class="card col-3 p-0 m-1">
-                        <div class="card-body p-0">
-                            <img src="{% url 'get-photo' id=image.id %}"
-                                 class="itemImages list-group-item rounded p-0 m-0 border-0 img-fluid">
-                        </div>
-
-                    </div>
-
-                {% endfor %}
-                <button class="btn btn-primary col-sm-1 col-2" type="button">
-                    +
-                </button>
             </div>
+
+
         </div>
 
         <div class="form-group">
@@ -168,7 +160,7 @@
 
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button id="admin-submit" type="submit" class="btn btn-primary">Save changes</button>
         </div>
     </form>
 

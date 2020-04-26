@@ -37,3 +37,6 @@ WARNING: This command will clear your development database (it will ask for conf
 There are two types of tests: ModelTests and ViewTests
 ModelTests checks the logic and functions of the models (e.g LocationModel)
 ViewTests checks the Logic of views (e.g functions in views.py). These tests are validated by looking at the context returned from the response as well as seeing how the call affected the database. Note that you must simulate logging in to test secured views
+
+# Font Awesome
+Additional font aweseome glyphs can be imported from assets/js/font_awesome.js 

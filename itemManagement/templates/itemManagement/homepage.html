@@ -28,7 +28,7 @@
                 <tbody>
                 {% for item in items %}
                     <tr data-access-url="{% url 'item-details' item.itemId %}" data-toggle="modal"
-                        data-target="#exampleModal">
+                        data-target="#item-details-modal">
                         <td scope="row">
                             {% if item.images.count > 0 %}
                                 <img src="{% url 'get-photo' id=item.images.first.id %}"
@@ -99,10 +99,10 @@
 </div>
 
 
-    <div {% if initialModal %} data-show-default="true" {% endif %} class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-        <div class="modal-dialog modal-lg" role="document">
+    <div {% if initialModal %} data-show-default="true" {% endif %} class="modal fade" id="item-details-modal"  tabindex="-1" role="dialog" aria-labelledby="item-details-modalLabel">
+        <div  class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <div class="modal-body">
+                <div  class="modal-body">
                     <div id="modalContainer">
                         {% if initialModal %}
                             {{ initialModal }}

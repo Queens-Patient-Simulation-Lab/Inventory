@@ -1,14 +1,19 @@
+import json
+from encodings.base64_codec import base64_decode
+
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.paginator import Paginator
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
+from django.db.models import Max
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.template.loader import render_to_string
 
 # Create your views here.
+from django.utils.http import urlsafe_base64_decode
 from django.views.generic import TemplateView
 from haystack.generic_views import SearchView
 from haystack.query import SearchQuerySet
@@ -18,7 +23,6 @@ from logs.models import  ItemCountLogs, ItemInfoLogs, LOGCODE_CHANGEITEM, LOGMSG
     LOGMSG_STOCKCHANGE, LOGCODE_CREATEITEM, LOGMSG_CREATEITEM, LOGCODE_DELETEITEM, LOGMSG_DELETEITEM
 from simulation_lab import settings
 from django.templatetags.static import static
-
 
 
 class HomePage(SearchView):
@@ -60,6 +64,7 @@ def getImage(request, id):
     except Photo.DoesNotExist:
         raise Http404
     return HttpResponse(photo.data, content_type=photo.mimeType)
+
 
 class ItemDeleteView(UserPassesTestMixin, TemplateView):
     def test_func(self):
@@ -106,94 +111,125 @@ class ItemDetailsView(TemplateView):
     def post(self, request, itemId, *args, **kwargs):
 
         isAdmin = request.user.is_superuser
-
-        if isAdmin:
-            if message := itemFormInvalid(request):
-                messages.error(request, message)
-                return HttpResponse(status=400)
-
         itemIsNew = False
 
-        if itemId == '':
-            itemIsNew = True
-            item = Item.objects.create()
-            ItemInfoLogs.logging(request.user, item, LOGCODE_CREATEITEM, LOGMSG_CREATEITEM, kghID=item.kghID,
-                                 price=item.price, *args, **kwargs)
-        else:
-            item = Item.objects.get(id=itemId)
+        try:
+            # Any exceptions that occur or are thrown undo all changes
+            with transaction.atomic():
 
-        item.lastUsed = timezone.now()
-        # TODO: item lastUsed updated if decrement clicked
+                if isAdmin:
+                    if message := itemFormInvalid(request):
+                        raise ValueError(message)
 
-        # Admin Fields updating fields other than quantities if admin
-        if isAdmin:
-            # --------TEXT FIELDS--------
-            item.title = request.POST.get('itemName', "").strip()
-            item.kghID = request.POST.get('kghId', "").strip()
-            item.description = request.POST.get('description', "").strip()
-            item.price = request.POST.get('price', "").strip()
-            item.unit = request.POST.get('unit', "").strip()
-            item.save(update_fields=['title', 'kghID', 'description', 'price', 'unit'])
-            # ---------------------------
+                if itemId == '':
+                    itemIsNew = True
+                    item = Item.objects.create()
+                    ItemInfoLogs.logging(request.user, item, LOGCODE_CREATEITEM, LOGMSG_CREATEITEM, kghID=item.kghID,
+                                         price=item.price, *args, **kwargs)
+                else:
+                    item = Item.objects.get(id=itemId)
 
-            # --------TAGS-------------
-            newTags = request.POST.get('newTags', "").split(',')
-            # clear all tags
-            item.tag_set.all().delete()
-            # add back all new edited tags
-            for newTag in newTags:
-                if newTag != "" and newTag is not None:
-                    newTag = Tag.objects.create(name=newTag.strip(), item=item)
-                    newTag.save()
-            # -------------------------
-            if not itemIsNew:
-                ItemInfoLogs.logging(request.user, item, LOGCODE_CHANGEITEM, LOGMSG_CHANGEITEM, item.kghID,
-                                 item.price)
+                item.lastUsed = timezone.now()
+                # TODO: item lastUsed updated if decrement clicked
+
+                # Admin Fields updating fields other than quantities if admin
+                if isAdmin:
+                    # --------TEXT FIELDS--------
+                    item.title = request.POST.get('itemName', "").strip()
+                    item.kghID = request.POST.get('kghId', "").strip()
+                    item.description = request.POST.get('description', "").strip()
+                    item.price = request.POST.get('price', "").strip()
+                    item.unit = request.POST.get('unit', "").strip()
+                    item.save(update_fields=['title', 'kghID', 'description', 'price', 'unit'])
+                    # ---------------------------
+                    deletedImageIds = json.loads(request.POST.get("deletedImageIds"))
+                    uploadedImages = json.loads(request.POST.get("uploadedImages"))
+
+                    for i in deletedImageIds:
+                        Photo.objects.filter(id=i).delete()
+
+                    # Find the highest order element right now so the new image can go after it
+                    highestOrderNum = Photo.objects.filter(depicts=item).aggregate(Max("order"))['order__max'] or 0
+                    nextOrderNum = highestOrderNum
+                    for imageRawData in uploadedImages:
+                        nextOrderNum += 1
+                        separated = imageRawData.split(";", 1)
+                        mimeType = separated[0].replace("data:","")
+                        if (not mimeType.startswith("image/")):
+                            raise ValueError("File must be an image")
+                        if "base64" not in separated[1]:
+                            raise ValueError("File must be base64 encoded")
+                        data = urlsafe_base64_decode(separated[1].replace("base64,","", 1))
+                        Photo.objects.create(
+                            depicts=item,
+                            mimeType=mimeType,
+                            data=data,
+                            order=nextOrderNum
+                        )
+
+                    # --------TAGS-------------
+                    newTags = request.POST.get('newTags', "").split(',')
+                    # clear all tags
+                    item.tag_set.all().delete()
+                    # add back all new edited tags
+                    for newTag in newTags:
+                        if newTag != "" and newTag is not None:
+                            newTag = Tag.objects.create(name=newTag.strip(), item=item)
+                            newTag.save()
+                    # -------------------------
+                    if not itemIsNew:
+                        ItemInfoLogs.logging(request.user, item, LOGCODE_CHANGEITEM, LOGMSG_CHANGEITEM, item.kghID,
+                                         item.price)
 
 
-        # ----Item storage quantities at each location----
-        # itemStorages list of ItemStorage objects where the item is the current item form
-        itemStorages = ItemStorage.objects.filter(item=item)
-        # deletedStorages = list of storages ready to be deleted once POST request happens
-        deletedStorages = [int(i) for i in request.POST.getlist('deletedRows') if i != 'undefined']
+                # END if isAdmin
 
+                # ----Item storage quantities at each location----
+                # itemStorages list of ItemStorage objects where the item is the current item form
+                itemStorages = ItemStorage.objects.filter(item=item)
+                # deletedStorages = list of storages ready to be deleted once POST request happens
+                deletedStorages = [int(i) for i in request.POST.getlist('deletedRows') if i != 'undefined']
 
-        for itemStorage in itemStorages:
-            if itemStorage.location.id in deletedStorages:
-                itemStorage.delete()
-                continue
-            original_quantity = int(request.POST.get('original-quantity-location-' + str(itemStorage.location.id), "").strip())
-            new_quantity = int(request.POST.get('quantity-location-' + str(itemStorage.location.id), "").strip())
-            diff = new_quantity - original_quantity
-            if diff == 0:
-                continue
-            else:
-                itemStorage.quantity += diff
-                itemStorage.save()
-                print(request.user, item, itemStorage.quantity, itemStorage.location, LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
-                ItemCountLogs.logging(request.user, item, itemStorage.quantity, itemStorage.location,
-                                      LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
+                for itemStorage in itemStorages:
+                    if itemStorage.location.id in deletedStorages:
+                        print(request.user, item, 0, itemStorage.location, LOGCODE_STOCKCHANGE,
+                              LOGMSG_STOCKCHANGE)
+                        itemStorage.delete()
+                        continue
+                    original_quantity = int(
+                        request.POST.get('original-quantity-location-' + str(itemStorage.location.id), "").strip())
+                    new_quantity = int(
+                        request.POST.get('quantity-location-' + str(itemStorage.location.id), "").strip())
+                    diff = new_quantity - original_quantity
+                    if diff == 0:
+                        continue
+                    else:
+                        itemStorage.quantity += diff
+                        itemStorage.save()
+                        print(request.user, item, itemStorage.quantity, itemStorage.location, LOGCODE_STOCKCHANGE,
+                              LOGMSG_STOCKCHANGE)
+                        ItemCountLogs.logging(request.user, item, itemStorage.quantity, itemStorage.location,
+                                              LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
 
-        newItemStorages = request.POST.getlist('newItemStorage')
+                newItemStorages = request.POST.getlist('newItemStorage')
 
-        if newItemStorages:
-            for itemStorage in newItemStorages:
-                # quantity of new item
-                quan = request.POST.get('quantity-location-' + str(itemStorage), "").strip()
-                loc = Location.objects.get(id=itemStorage)
-                ItemStorage.objects.create(location=loc, quantity=quan, item=item).save()
-                print(request.user, item, quan, loc, LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
-                ItemCountLogs.logging(request.user, item, quan, loc,
-                                      LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
+                if newItemStorages:
+                    for itemStorage in newItemStorages:
+                        # quantity of new item
+                        quan = request.POST.get('quantity-location-' + str(itemStorage), "").strip()
+                        loc = Location.objects.get(id=itemStorage)
+                        ItemStorage.objects.create(location=loc, quantity=quan, item=item).save()
+                        print(request.user, item, quan, loc, LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
+                        ItemCountLogs.logging(request.user, item, quan, loc,
+                                              LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
 
-        # -------------------------------
+                # -------------------------------
 
-        # TODO: Post Images
-
-        # TODO: Input validation
-
-        # TODO: Return to homepage with same previous state after POST
-        return HttpResponse(status=204)
+                return HttpResponse(status=204)
+        except Exception as e:
+            print(e)
+            context = {"errorMessage": str(e)}
+            return HttpResponse(status=400, content=json.dumps(context), content_type='application/json')
 
 
 def itemFormInvalid(request):
