@@ -25,7 +25,6 @@ from simulation_lab import settings
 from django.templatetags.static import static
 
 
-
 class HomePage(SearchView):
     template_name = "itemManagement/homepage.html"
 
@@ -95,10 +94,15 @@ class ItemDetailsView(TemplateView):
         print(f"Item ID requested: {itemId}")
 
         if itemId == '':
-            context = {"itemId": '', "name": '', "kghId": '', "description": '', "price": '0.00', "unit": '', "totalQuantity": 0}
+            context = {"itemId": '', "name": '', "kghId": '', "description": '', "price": '0.00', "unit": '',
+                       "totalQuantity": 0, 'remainingLocations': Location.objects.all()}
         else:
             context = Item.objects.get(id=itemId).getItemDetails()
+            # get all currently unused locations (for purposes of adding new itemStorages)
+            locations = Location.objects.exclude(id__in=[x['id'] for x in context['locations']]).all().order_by('name')
+            context['remainingLocations'] = locations
         template = 'itemManagement/item_details_admin.html' if isAdmin else 'itemManagement/item_details_assistant.html'
+
         if isAjax:
             return render(request, template, context=context)
         else:
@@ -106,15 +110,16 @@ class ItemDetailsView(TemplateView):
 
     def post(self, request, itemId, *args, **kwargs):
 
-        if message := itemFormInvalid(request):
-            messages.error(request, message)
-            return HttpResponse(status=400)
-
+        isAdmin = request.user.is_superuser
         itemIsNew = False
 
         try:
             # Any exceptions that occur or are thrown undo all changes
             with transaction.atomic():
+
+                if isAdmin:
+                    if message := itemFormInvalid(request):
+                        raise ValueError(message)
 
                 if itemId == '':
                     itemIsNew = True
@@ -126,8 +131,6 @@ class ItemDetailsView(TemplateView):
 
                 item.lastUsed = timezone.now()
                 # TODO: item lastUsed updated if decrement clicked
-
-                isAdmin = request.user.is_superuser
 
                 # Admin Fields updating fields other than quantities if admin
                 if isAdmin:
@@ -184,32 +187,49 @@ class ItemDetailsView(TemplateView):
                 # ----Item storage quantities at each location----
                 # itemStorages list of ItemStorage objects where the item is the current item form
                 itemStorages = ItemStorage.objects.filter(item=item)
+                # deletedStorages = list of storages ready to be deleted once POST request happens
+                deletedStorages = [int(i) for i in request.POST.getlist('deletedRows') if i != 'undefined']
 
                 for itemStorage in itemStorages:
-                    original_quantity = int(request.POST.get('original-quantity-location-' + str(itemStorage.location.id), "").strip())
-                    new_quantity = int(request.POST.get('quantity-location-' + str(itemStorage.location.id), "").strip())
+                    if itemStorage.location.id in deletedStorages:
+                        print(request.user, item, 0, itemStorage.location, LOGCODE_STOCKCHANGE,
+                              LOGMSG_STOCKCHANGE)
+                        itemStorage.delete()
+                        continue
+                    original_quantity = int(
+                        request.POST.get('original-quantity-location-' + str(itemStorage.location.id), "").strip())
+                    new_quantity = int(
+                        request.POST.get('quantity-location-' + str(itemStorage.location.id), "").strip())
                     diff = new_quantity - original_quantity
                     if diff == 0:
-                        pass
+                        continue
                     else:
                         itemStorage.quantity += diff
                         itemStorage.save()
+                        print(request.user, item, itemStorage.quantity, itemStorage.location, LOGCODE_STOCKCHANGE,
+                              LOGMSG_STOCKCHANGE)
                         ItemCountLogs.logging(request.user, item, itemStorage.quantity, itemStorage.location,
+                                              LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
+
+                newItemStorages = request.POST.getlist('newItemStorage')
+
+                if newItemStorages:
+                    for itemStorage in newItemStorages:
+                        # quantity of new item
+                        quan = request.POST.get('quantity-location-' + str(itemStorage), "").strip()
+                        loc = Location.objects.get(id=itemStorage)
+                        ItemStorage.objects.create(location=loc, quantity=quan, item=item).save()
+                        print(request.user, item, quan, loc, LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
+                        ItemCountLogs.logging(request.user, item, quan, loc,
                                               LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
 
                 # -------------------------------
 
-                # TODO: Post Images
-
-                # TODO: Input validation
-
-                # TODO: Return to homepage with same previous state after POST
                 return HttpResponse(status=204)
         except Exception as e:
             print(e)
             context = {"errorMessage": str(e)}
             return HttpResponse(status=400, content=json.dumps(context), content_type='application/json')
-
 
 
 def itemFormInvalid(request):

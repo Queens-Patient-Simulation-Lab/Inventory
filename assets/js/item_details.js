@@ -8,6 +8,10 @@ const uploadedImages = []
 
 $(".tagsInputBoxContainer").hide();
 
+if (!$("#locationSelect option:selected").length) {
+    $(".locationAdder").hide()
+}
+
 $("#tagsInputBox").tagsinput({
     trimValue: true
 });
@@ -32,19 +36,21 @@ $(".tagEditBtn").click(function () {
 /*
     Called when the plus button next to a quantity is pressed
  */
-$(".increment").click(function () {
-    addQuantity(1, $(this))
+$(".increment").click(e => {
+    addQuantity(1, $(e.target))
+    toggleDeleteButton($(e.target))
 });
 /*
     Called when the minus button next to a quantity is pressed
  */
-$(".decrement").click(function () {
+$(".decrement").click(e => {
     //if quantity is less than zero, do not decrement further
-    if (parseInt($(this).siblings(".item_quantity").val()) <= 0) {
+    if (parseInt($(e.target).siblings(".item_quantity").val()) <= 0) {
         console.log("Could not decrement further")
     } else {
-        addQuantity(-1, $(this))
+        addQuantity(-1, $(e.target))
     }
+    toggleDeleteButton($(e.target))
 });
 
 function addQuantity(value, caller) {
@@ -52,6 +58,26 @@ function addQuantity(value, caller) {
         parseInt(caller.siblings(".item_quantity").val()) + value
     );
 }
+
+$(".item_quantity").focusout(e => {
+    toggleDeleteButton($(e.target))
+})
+
+
+function toggleDeleteButton(target) {
+    let targetVal = $($(target).parent().children(".item_quantity")).val()
+    if (targetVal > 0) {
+        $(target).parent().children(".deleteRow").hide()
+    }
+    else {
+        $(target).parent().children(".deleteRow").show()
+    }
+}
+
+
+$(".item_quantity").each(function (index, element) {
+    toggleDeleteButton($(element));
+})
 
 // https://stackoverflow.com/a/6658774/5619385
 // since .delete-img-btn is dynamically generated, $(".delete-img-btn").click will not bind to new elements
@@ -95,7 +121,6 @@ $("#itemImageCarousel").on("click", ".delete-img-btn", function () {
         deleteDiv.addClass("empty-item")
         img.src = defaultSrc;
     }
-
 
 });
 
@@ -147,6 +172,110 @@ $("#add-image-input").change(function (e) {
     }
     $('.carousel').carousel(carouselIndicators.childElementCount - 1)
 });
+
+
+$(".deleteRow").click((e) => {
+    if ($(e.target).siblings(".item_quantity").val() > 0) {
+        return
+    }
+    let deletedLocation = $(e.target).closest("tr")
+    let deletedId = deletedLocation.attr("id")
+    let deletedName = $(deletedLocation).children("th").text()
+    deletedLocation.replaceWith("<input hidden name=\"deletedRows\" value=\""+ deletedId +"\">\n")
+
+    // Add back location to selector box after removal
+    let locationSelector = $("#locationSelect")
+    let locationSelectorAdd = "<option data-id=\""+deletedId+"\">"+ deletedName +"</option>"
+    locationSelector.append(locationSelectorAdd)
+
+    // show the location selector if there are locations to be shown
+    if (locationSelector.length > 0) {
+        $(".locationAdder").show()
+    }
+
+
+})
+
+
+$(".addRow").click(function () {
+    let locationSelector = $("#locationSelect option:selected");
+
+    let locationId = locationSelector.attr('data-id');
+    let locationName = locationSelector.val()
+    // This value is 
+    let itemStorageTag = "newItemStorage"
+
+    let newRow = $($.parseHTML(
+        "                    <tr id=\""+locationId+"\">\n" +
+        "                        <th scope=\"row\">"+ locationName +"</th>\n" +
+        "                        <td class=\"row th-lg\">\n" +
+        "                                <div class=\"input-group row\">\n" +
+        "                                    <button type=\"button\" class=\"btn btn-danger decrement rounded-0 disable-tap-zoom\">\n" +
+        "                                        -\n" +
+        "                                    </button>\n" +
+        "                                    <input hidden name=\""+ itemStorageTag +"\" value=\""+locationId+"\">" +
+        "                                    <input name=\"original-quantity-location-"+ locationId +"\" readonly hidden class=\"form-control\" id=\"item_quantity_original\" value=\"0\">\n" +
+        "                                    <input name=\"quantity-location-"+ locationId +"\" type=\"number\" min=\"0\" inputmode=\"numeric\" pattern=\"[0-9]*\" title=\"Non-negative integer\" id=\"item_quantity\"\n" +
+        "                                           class=\"form-control item_quantity col-sm-6 col-8 text-center\"\n" +
+        "                                           value=\"0\">\n" +
+        "                                    <button type=\"button\" class=\"btn btn-success increment rounded-0 disable-tap-zoom\">\n" +
+        "                                        +\n" +
+        "                                    </button>\n" +
+        "                                    <button type=\"button\" class=\"btn btn-sm btn-outline-danger m-1 deleteRow\">Delete</button>" +
+        "                                </div>\n" +
+        "                        </td>\n" +
+        "                    </tr>\n"
+    )[1]);
+
+    newRow.find(".increment").click(e => {
+        addQuantity(1, $(e.target))
+        toggleDeleteButton($(e.target))
+
+    });
+    newRow.find(".decrement").click(e => {
+        //if quantity is less than zero, do not decrement further
+        if (parseInt($(e.target).siblings(".item_quantity").val()) <= 0) {
+            console.log("Could not decrement further")
+        }
+        else{
+            addQuantity(-1, $(e.target))
+        }
+        toggleDeleteButton($(e.target))
+    });
+
+    newRow.find(".deleteRow").click(e => {
+        if ($(e.target).siblings(".item_quantity").val() > 0) {
+            return
+        }
+        let deletedLocation = $(e.target).closest("tr")
+        let deletedId = deletedLocation.attr("id")
+        let deletedName = $(deletedLocation).children("th").text()
+        deletedLocation.remove()
+
+        // Add back location to selector box after removal
+        let locationSelector = $("#locationSelect")
+        let locationSelectorAdd = "<option data-id=\""+deletedId+"\">"+ deletedName +"</option>"
+        locationSelector.append(locationSelectorAdd)
+
+        // show the location selector if there are locations to be shown
+        if (locationSelector.length > 0) {
+            $(".locationAdder").show()
+        }
+
+    })
+
+    $(".locationsTable > tbody").append(newRow);
+
+    locationSelector.remove()
+    locationSelector = $("#locationSelect option:selected");
+
+    if (!locationSelector.length) {
+        $(".locationAdder").hide()
+    }
+
+
+});
+
 
 
 /* Async submit request */
