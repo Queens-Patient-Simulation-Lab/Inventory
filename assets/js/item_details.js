@@ -65,15 +65,12 @@ $(".item_quantity").focusout(e => {
 
 
 function toggleDeleteButton(target) {
-    console.log(target)
-    let targetVal = $(target).siblings(".item_quantity").addBack().val()
-    console.log(targetVal)
+    let targetVal = $($(target).parent().children(".item_quantity")).val()
     if (targetVal > 0) {
-        console.log($(target).siblings(".deleteRow"))
-        $(target).siblings(".deleteRow").hide()
+        $(target).parent().children(".deleteRow").hide()
     }
     else {
-        $(target).siblings(".deleteRow").show()
+        $(target).parent().children(".deleteRow").show()
     }
 }
 
@@ -181,7 +178,7 @@ $(".deleteRow").click((e) => {
     if ($(e.target).siblings(".item_quantity").val() > 0) {
         return
     }
-    let deletedLocation = $(e.target).parent().parent().parent()
+    let deletedLocation = $(e.target).closest("tr")
     let deletedId = deletedLocation.attr("id")
     let deletedName = $(deletedLocation).children("th").text()
     deletedLocation.replaceWith("<input hidden name=\"deletedRows\" value=\""+ deletedId +"\">\n")
@@ -250,7 +247,7 @@ $(".addRow").click(function () {
         if ($(e.target).siblings(".item_quantity").val() > 0) {
             return
         }
-        let deletedLocation = $(e.target).parent().parent().parent()
+        let deletedLocation = $(e.target).closest("tr")
         let deletedId = deletedLocation.attr("id")
         let deletedName = $(deletedLocation).children("th").text()
         deletedLocation.remove()
