@@ -36,19 +36,21 @@ $(".tagEditBtn").click(function () {
 /*
     Called when the plus button next to a quantity is pressed
  */
-$(".increment").click(function () {
-    addQuantity(1, $(this))
+$(".increment").click(e => {
+    addQuantity(1, $(e.target))
+    toggleDeleteButton($(e.target))
 });
 /*
     Called when the minus button next to a quantity is pressed
  */
-$(".decrement").click(function () {
+$(".decrement").click(e => {
     //if quantity is less than zero, do not decrement further
-    if (parseInt($(this).siblings(".item_quantity").val()) <= 0) {
+    if (parseInt($(e.target).siblings(".item_quantity").val()) <= 0) {
         console.log("Could not decrement further")
     } else {
-        addQuantity(-1, $(this))
+        addQuantity(-1, $(e.target))
     }
+    toggleDeleteButton($(e.target))
 });
 
 function addQuantity(value, caller) {
@@ -56,6 +58,29 @@ function addQuantity(value, caller) {
         parseInt(caller.siblings(".item_quantity").val()) + value
     );
 }
+
+$(".item_quantity").focusout(e => {
+    toggleDeleteButton($(e.target))
+})
+
+
+function toggleDeleteButton(target) {
+    console.log(target)
+    let targetVal = $(target).siblings(".item_quantity").addBack().val()
+    console.log(targetVal)
+    if (targetVal > 0) {
+        console.log($(target).siblings(".deleteRow"))
+        $(target).siblings(".deleteRow").hide()
+    }
+    else {
+        $(target).siblings(".deleteRow").show()
+    }
+}
+
+
+$(".item_quantity").each(function (index, element) {
+    toggleDeleteButton($(element));
+})
 
 // https://stackoverflow.com/a/6658774/5619385
 // since .delete-img-btn is dynamically generated, $(".delete-img-btn").click will not bind to new elements
@@ -205,17 +230,20 @@ $(".addRow").click(function () {
         "                    </tr>\n"
     )[1]);
 
-    newRow.find(".increment").click(function () {
-        addQuantity(1, $(this))
+    newRow.find(".increment").click(e => {
+        addQuantity(1, $(e.target))
+        toggleDeleteButton($(e.target))
+
     });
-    newRow.find(".decrement").click(function () {
+    newRow.find(".decrement").click(e => {
         //if quantity is less than zero, do not decrement further
-        if (parseInt($(this).siblings(".item_quantity").val()) <= 0) {
+        if (parseInt($(e.target).siblings(".item_quantity").val()) <= 0) {
             console.log("Could not decrement further")
         }
         else{
-            addQuantity(-1, $(this))
+            addQuantity(-1, $(e.target))
         }
+        toggleDeleteButton($(e.target))
     });
 
     newRow.find(".deleteRow").click(e => {
