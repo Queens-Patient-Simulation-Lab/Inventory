@@ -35,21 +35,19 @@ input[type=number] {
   .delete-img-btn {
     position:absolute;
     box-sizing: border-box;
-    width: 3em;
-    height: 3em;
-    line-height: 0;
-    color: white;
+    width: 2em;
+    height: 2em;
+    line-height: 2em;
+    font-size: 1.5em;
     right: 5px;
     top: 5px;
-    padding: 0.75em;
-    margin: 0;
-    z-index: 2;
-    border-radius: 50%;
-    border: 1px solid white;
-    background-color: darkgray;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
+    padding: 0;
+    z-index: 2; // should be on top of next image region
+  }
+  .delete-img-btn:not(:hover){
+    // The transparency looks great but would render the button invisible on red backgrounds
+    // This needs to be in the not hover rule because the bootstap hover background is less specific than .delete-img-btn 
+    background-color: white;
   }
 
 }
