@@ -196,7 +196,6 @@ def userDelete(request, email):
 @user_passes_test(lambda u : u.is_superuser)
 def userAdmin(request, email):
     u = User.objects.filter(email=email).first()
-    print(u)
     u.is_superuser = True
     u.save()
     messages.success(request, f'{email}\'s account role was successfully changed!')
@@ -208,7 +207,6 @@ def userAdmin(request, email):
 @user_passes_test(lambda u : u.is_superuser)
 def userLabAssistant(request, email):
     u = User.objects.filter(email=email).first()
-    print(u)
     u.is_superuser = False
     u.save()
     messages.success(request, f'{email}\'s account role was successfully changed!')
