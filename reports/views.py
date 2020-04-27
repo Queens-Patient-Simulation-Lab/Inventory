@@ -9,10 +9,12 @@ from weasyprint import HTML
 from django.utils import timezone
 from emails.email import EmailManager
 from itemManagement.models import Item
-from logs.models import UserLogs
+from logs.models import UserLogs, ItemCountLogs, ItemInfoLogs
 from security.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.db.models import Q
+from itertools import chain
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -140,9 +142,18 @@ def UserHistory(request):
         data.extend([
             {"id": x.id, "time": x.time, "operator": x.operator_user, "operation": x.logMsg,
              "subject_account": x.subject_user}
-            for x in UserLogs.objects.all().filter(operator_user=target).order_by("-time")])
+            for x in UserLogs.objects.all().filter(Q(operator_user=target) | Q(subject_user=target)).order_by("-time")])
+        data.extend([
+            {"id": x.id, "time": x.time, "operator": x.operator_user, "operation": x.logMsg,
+             "item": x.item.title}
+            for x in ItemCountLogs.objects.all().filter(operator_user=target).order_by("-time")])
+        data.extend([
+            {"id": x.id, "time": x.time, "operator": x.operator_user, "operation": x.logMsg,
+             "item": x.item.title}
+            for x in ItemInfoLogs.objects.all().filter(operator_user=target).order_by("-time")])
+        data = sorted(data, key = lambda i: i['time'], reverse=True)
     if not isAjax:
         if format == "csv":
-             return __CSVResponseGenerator("user-history", ["Time", "Operator", "Operation", "Subject Account"], [[x["time"], x["operator"], x["operation"], x["subject_account"]] for x in data])
+             return __CSVResponseGenerator("user-history", ["Time", "Operator", "Operation", "Subject Account", "Item"], [[x["time"], x["operator"], x["operation"], x["subject_account"], x["item"]] for x in data])
         return __PDFResponseGenerator("user-history", "User History", 'pdf/userHistory.html', {"histories": data})
     return render(request, 'web/userHistoryData.html', {"histories": data})
