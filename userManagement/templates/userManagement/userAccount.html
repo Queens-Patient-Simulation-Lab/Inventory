@@ -28,8 +28,8 @@
                                 {% endif %}
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="{% url 'user-admin' person.email %}">Admin</a>
-                                <a class="dropdown-item" href="{% url 'user-lab-assistant' person.email %}">Lab Assistant</a>
+                                <a class="dropdown-item" href="{% url 'user-admin' person.pk %}">Admin</a>
+                                <a class="dropdown-item" href="{% url 'user-lab-assistant' person.pk %}">Lab Assistant</a>
                             </div>
                         </div>
                     {% else %}
@@ -38,7 +38,7 @@
                 </td>
                 <td class="row">
                     {% if person.email !=  request.user.email %}
-                        <form method="POST" action="{% url 'user-delete' person.email %}">
+                        <form method="POST" action="{% url 'user-delete' person.pk %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-sm btn-outline-danger m-1">delete user</button>
                         </form>

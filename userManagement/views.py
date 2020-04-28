@@ -183,32 +183,32 @@ def forgetPasswordConfirm(request, uidb64, token):
     return render(request, 'userManagement/forgetPasswordConfirm.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
-def userDelete(request, email):
-    u = User.objects.filter(email=email).first()
+def userDelete(request, pk):
+    u = User.objects.filter(pk=pk).first()
     u.deleted = True
     u.save()
-    messages.success(request, f'Account {email} was successfully deleted!')
+    messages.success(request, f'Account {u.email} was successfully deleted!')
     UserLogs.logging(operator_user=request.user, subject_user=u, logCode=Logs.LOGCODE_100002, logMsg=Logs.LOGMSG_100002)
     return redirect('user-account')
 
 
 # change user role to admin
 @user_passes_test(lambda u : u.is_superuser)
-def userAdmin(request, email):
-    u = User.objects.filter(email=email).first()
+def userAdmin(request, pk):
+    u = User.objects.filter(pk=pk).first()
     u.is_superuser = True
     u.save()
-    messages.success(request, f'{email}\'s account role was successfully changed!')
+    messages.success(request, f'{u.email}\'s account role was successfully changed!')
     UserLogs.logging(operator_user=request.user, subject_user=u, logCode=Logs.LOGCODE_100005, logMsg=Logs.LOGMSG_100005)
     return redirect('user-account')
 
 
 # change user role to lab assistant
 @user_passes_test(lambda u : u.is_superuser)
-def userLabAssistant(request, email):
-    u = User.objects.filter(email=email).first()
+def userLabAssistant(request, pk):
+    u = User.objects.filter(pk=pk).first()
     u.is_superuser = False
     u.save()
-    messages.success(request, f'{email}\'s account role was successfully changed!')
+    messages.success(request, f'{u.email}\'s account role was successfully changed!')
     UserLogs.logging(operator_user=request.user, subject_user=u, logCode=Logs.LOGCODE_100006, logMsg=Logs.LOGMSG_100006)
     return redirect('user-account')
