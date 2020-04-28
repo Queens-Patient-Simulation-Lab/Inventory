@@ -1,9 +1,7 @@
 {% for h in histories %}
 <tr>
   <td class="text-center">{{h.time}}</td>
-  <td class="text-center">{{h.operator}}</td>
-  <td class="text-center">{{h.operation}}</td>
-  <td class="text-center">{{h.subject_account}}</td>
-  <td class="text-center">{{h.item}}</td>
+  <td class="text-center">{{h.user}}</td>
+  <td class="text-center">{{h.action|safe}}</td>
 </tr>
 {% endfor %}
