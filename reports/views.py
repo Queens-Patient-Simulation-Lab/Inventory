@@ -93,7 +93,7 @@ def InventoryObsolescence(request, format=None):
 @user_passes_test(lambda u: u.is_superuser)
 def ReorderList(request, format=None):
     items = Item.objects.all().order_by("title").filter(deleted=False)
-    belowThreshold = filter(lambda x: x.alertThreshold is not None and x.totalQuantity < x.alertThreshold, items)
+    belowThreshold = filter(lambda x: x.needToNotifyAdmin(), items)
     data = [{"id": x.id, "name": x.title, "total": x.totalQuantity, "par": x.alertThreshold, "kghID": x.kghID} for x in belowThreshold]
     if format == "csv":
         return __CSVResponseGenerator("reorder", ["Name", "KGH ID", "Current Total", "Par Level"], [[x["name"], x["kghID"], x["total"], x["par"]] for x in data])

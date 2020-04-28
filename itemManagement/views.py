@@ -95,7 +95,7 @@ class ItemDetailsView(TemplateView):
 
         if itemId == '':
             context = {"itemId": '', "name": '', "kghId": '', "description": '', "price": '0.00', "unit": '',
-                       "totalQuantity": 0, 'remainingLocations': Location.objects.all()}
+                       "totalQuantity": 0, "parLevel": 0, "alertWhenLow": False, 'remainingLocations': Location.objects.all()}
         else:
             context = Item.objects.get(id=itemId).getItemDetails()
             # get all currently unused locations (for purposes of adding new itemStorages)
@@ -140,7 +140,10 @@ class ItemDetailsView(TemplateView):
                     item.description = request.POST.get('description', "").strip()
                     item.price = request.POST.get('price', "").strip()
                     item.unit = request.POST.get('unit', "").strip()
-                    item.save(update_fields=['title', 'kghID', 'description', 'price', 'unit'])
+                    item.alertThreshold = request.POST.get('parLevel', "").strip()
+                    item.alertWhenLow = True if request.POST.get('alertWhenLow', "").strip() == 'on' else False
+
+                    item.save(update_fields=['title', 'kghID', 'description', 'price', 'unit', 'alertThreshold', 'alertWhenLow'])
                     # ---------------------------
                     deletedImageIds = json.loads(request.POST.get("deletedImageIds"))
                     uploadedImages = json.loads(request.POST.get("uploadedImages"))

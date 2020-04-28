@@ -28,9 +28,10 @@ class Item(models.Model):
     unit = models.CharField(max_length=20, null=True)
     # Note I don't call now() - It will be called when the object is created
     lastUsed = models.DateTimeField(default=timezone.now)
-    price = models.DecimalField(max_digits=7,decimal_places=2, null=True, default=0)
+    price = models.DecimalField(max_digits=7, decimal_places=2, null=True, default=0)
     deleted = models.BooleanField(default=False)
-    alertThreshold = models.PositiveSmallIntegerField(null=True)
+    alertThreshold = models.PositiveSmallIntegerField(default=0)
+    alertWhenLow = models.BooleanField(default=False)
     locations = models.ManyToManyField(Location, through='ItemStorage')
 
 
@@ -41,11 +42,11 @@ class Item(models.Model):
 
     @property
     def needToNotifyAdmin(self):
-        return self.alertThreshold is not None and self.totalQuantity <= self.alertThreshold
+        return self.alertWhenLow and self.totalQuantity <= self.alertThreshold
 
     def getItemSummary(self):
         return {
-                'itemId' : self.id,
+                'itemId': self.id,
                 'name': self.title,
                 'locations': [x.name for x in self.locations.all()],
                 'totalQuantity': self.totalQuantity,
@@ -59,8 +60,10 @@ class Item(models.Model):
             'description' : self.description,
             'tags': [x.name for x in self.tag_set.all()],
             'images': self.photo_set,
-            'price' : self.price,
-            'unit' : self.unit,
+            'price': self.price,
+            'unit': self.unit,
+            'parLevel': self.alertThreshold,
+            'alertWhenLow': self.alertWhenLow,
             'locations': [x.getLocationDetailsForItem(self) for x in self.locations.all()],
             'totalQuantity': self.totalQuantity
         }
