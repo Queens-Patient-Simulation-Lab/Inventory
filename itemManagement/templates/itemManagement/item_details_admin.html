@@ -100,6 +100,18 @@
             <input type="unit_measure" class="form-control" name="unit" id="unit" value="{{ unit }}">
         </div>
 
+        <div class="form-group">
+            <label for="materialNo">Par Level Alert</label>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <input type="checkbox" {% if alertWhenLow %} checked {% endif %} aria-label="Enable Alerts" name="alertWhenLow" >
+                    </div>
+                </div>
+                <input inputmode="numeric" placeholder="Threshold Value" class="form-control" name="parLevel" id="parLevel" value="{{ parLevel }}">
+            </div>
+        </div>
+
 
         <table class="table table-striped mb-2 mt-2 locationsTable">
             <thead>
