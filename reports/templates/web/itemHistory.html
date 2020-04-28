@@ -1,0 +1,34 @@
+{% extends "itemManagement/chrome_template.html" %}
+{% block body %}
+<div class="container">
+    <div class="d-flex flex-row align-items-center flex-wrap justify-content-between">
+        <div>
+            <h3>Item History <a href="{% url 'item-details' itemId=item.id %}">{{item.name}}</a></h3>
+            <h5>Generated on {% now "Y-n-j" %}</h5>
+        </div>
+        <div class="text-center">
+            <a class="btn btn-primary" href="{% url 'item-history' format='csv' itemID=item.id%}">Download CSV</a>
+            <a class="btn btn-primary" href="{% url 'item-history' format='pdf' itemID=item.id %}">Download PDF</a>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+              <th scope="col" class="text-center">Timestamp</th>
+              <th scope="col" class="text-center">User</th>
+              <th scope="col" class="text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for log in logs %}
+            <tr>
+              <td class="text-center">{{log.time}}</td>
+              <td class="text-center">{{log.user}}</td>
+              <td class="text-center">{{log.action|safe}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock body %}

@@ -19,8 +19,7 @@ from haystack.generic_views import SearchView
 from haystack.query import SearchQuerySet
 
 from itemManagement.models import Item, Location, Photo, Tag, ItemStorage
-from logs.models import  ItemCountLogs, ItemInfoLogs, LOGCODE_CHANGEITEM, LOGMSG_CHANGEITEM, LOGCODE_STOCKCHANGE, \
-    LOGMSG_STOCKCHANGE, LOGCODE_CREATEITEM, LOGMSG_CREATEITEM, LOGCODE_DELETEITEM, LOGMSG_DELETEITEM
+from logs.models import Log
 from simulation_lab import settings
 from django.templatetags.static import static
 
@@ -89,7 +88,7 @@ class ItemDeleteView(UserPassesTestMixin, TemplateView):
 
 class ItemDetailsView(TemplateView):
     def get(self, request, itemId, *args, **kwargs):
-        isAjax =  "X-Requested-With" in request.headers and request.headers["X-Requested-With"] == "XMLHttpRequest"
+        isAjax = "X-Requested-With" in request.headers and request.headers["X-Requested-With"] == "XMLHttpRequest"
         isAdmin = request.user.is_superuser
         print(f"Item ID requested: {itemId}")
 
@@ -124,8 +123,7 @@ class ItemDetailsView(TemplateView):
                 if itemId == '':
                     itemIsNew = True
                     item = Item.objects.create()
-                    ItemInfoLogs.logging(request.user, item, LOGCODE_CREATEITEM, LOGMSG_CREATEITEM, kghID=item.kghID,
-                                         price=item.price, *args, **kwargs)
+                    Log.log(request.user, "Created {item}", item)
                 else:
                     item = Item.objects.get(id=itemId)
 
@@ -157,12 +155,12 @@ class ItemDetailsView(TemplateView):
                     for imageRawData in uploadedImages:
                         nextOrderNum += 1
                         separated = imageRawData.split(";", 1)
-                        mimeType = separated[0].replace("data:","")
+                        mimeType = separated[0].replace("data:", "")
                         if (not mimeType.startswith("image/")):
                             raise ValueError("File must be an image")
                         if "base64" not in separated[1]:
                             raise ValueError("File must be base64 encoded")
-                        data = urlsafe_base64_decode(separated[1].replace("base64,","", 1))
+                        data = urlsafe_base64_decode(separated[1].replace("base64,", "", 1))
                         Photo.objects.create(
                             depicts=item,
                             mimeType=mimeType,
@@ -181,9 +179,8 @@ class ItemDetailsView(TemplateView):
                             newTag.save()
                     # -------------------------
                     if not itemIsNew:
-                        ItemInfoLogs.logging(request.user, item, LOGCODE_CHANGEITEM, LOGMSG_CHANGEITEM, item.kghID,
-                                         item.price)
-
+                        #TODO: Log what field changed
+                        Log.log(request.user, "Updated item {item}", item)
 
                 # END if isAdmin
 
@@ -195,8 +192,7 @@ class ItemDetailsView(TemplateView):
 
                 for itemStorage in itemStorages:
                     if itemStorage.location.id in deletedStorages:
-                        print(request.user, item, 0, itemStorage.location, LOGCODE_STOCKCHANGE,
-                              LOGMSG_STOCKCHANGE)
+                        Log.log(request.user, "Deleted storage of {item} at {location}", item, itemStorage.location)
                         itemStorage.delete()
                         continue
                     original_quantity = int(
@@ -207,12 +203,9 @@ class ItemDetailsView(TemplateView):
                     if diff == 0:
                         continue
                     else:
+                        Log.log(request.user, "Set quantity of {item} to {string} (was {string}) at {location}", item, itemStorage.quantity+diff, itemStorage.quantity, itemStorage.location)
                         itemStorage.quantity += diff
                         itemStorage.save()
-                        print(request.user, item, itemStorage.quantity, itemStorage.location, LOGCODE_STOCKCHANGE,
-                              LOGMSG_STOCKCHANGE)
-                        ItemCountLogs.logging(request.user, item, itemStorage.quantity, itemStorage.location,
-                                              LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
 
                 newItemStorages = request.POST.getlist('newItemStorage')
 
@@ -222,9 +215,7 @@ class ItemDetailsView(TemplateView):
                         quan = request.POST.get('quantity-location-' + str(itemStorage), "").strip()
                         loc = Location.objects.get(id=itemStorage)
                         ItemStorage.objects.create(location=loc, quantity=quan, item=item).save()
-                        print(request.user, item, quan, loc, LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
-                        ItemCountLogs.logging(request.user, item, quan, loc,
-                                              LOGCODE_STOCKCHANGE, LOGMSG_STOCKCHANGE)
+                        Log.log(request.user, "Set quantity of {item} to {string} at {location}", item, quan, loc)
 
                 # -------------------------------
 

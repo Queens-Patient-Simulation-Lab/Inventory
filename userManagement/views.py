@@ -9,8 +9,7 @@ from emails.email import EmailManager as em
 from django.contrib.auth.tokens import default_token_generator
 from .forms import notificationUpdateForm, userCreationForm
 from security.models import User
-from logs.models import UserLogs
-import logs.models as Logs
+from logs.models import Log
 from global_login_required import login_not_required
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -28,12 +27,13 @@ def settings(request):
             user = p_form.save()
             update_session_auth_hash(request, user)  # Important!
             messages.success(request, 'Your password was successfully updated!')
+            Log.log(user, "Changed password")
             return redirect('settings-home')
         #  check the post request of notification status form
         elif n_form.is_valid() and 'notification' in request.POST:
             n_form.save()
             messages.success(request, 'Your notification status was successfully updated!')
-            UserLogs.logging(operator_user=request.user, logCode=Logs.LOGCODE_100003, logMsg=Logs.LOGMSG_100003)
+            Log.log(request.user, "Changed notification preference")
             return redirect('settings-home')
     else:
         p_form = PasswordChangeForm(request.user)
@@ -110,7 +110,7 @@ def userRegister(request, uidb64 ,token):
             if c_form.is_valid():
                 c_form.save()
                 messages.success(request, f'Account ({user.email}) has successfully been created!')
-                UserLogs.logging(operator_user=user, logCode=Logs.LOGCODE_100001, logMsg=Logs.LOGMSG_100001)
+                Log.log(user, "Setup their account")
                 return redirect('login')
         else:
             c_form = userCreationForm()
@@ -188,7 +188,7 @@ def userDelete(request, pk):
     u.deleted = True
     u.save()
     messages.success(request, f'Account {u.email} was successfully deleted!')
-    UserLogs.logging(operator_user=request.user, subject_user=u, logCode=Logs.LOGCODE_100002, logMsg=Logs.LOGMSG_100002)
+    Log.log(request.user, "Deleted account {user}", u)
     return redirect('user-account')
 
 
@@ -198,8 +198,8 @@ def userAdmin(request, pk):
     u = User.objects.filter(pk=pk).first()
     u.is_superuser = True
     u.save()
+    Log.log(request.user, "Set {user} to admin", u)
     messages.success(request, f'{u.email}\'s account role was successfully changed!')
-    UserLogs.logging(operator_user=request.user, subject_user=u, logCode=Logs.LOGCODE_100005, logMsg=Logs.LOGMSG_100005)
     return redirect('user-account')
 
 
@@ -209,6 +209,6 @@ def userLabAssistant(request, pk):
     u = User.objects.filter(pk=pk).first()
     u.is_superuser = False
     u.save()
+    Log.log(request.user, "Set {user} to lab assistant", u)
     messages.success(request, f'{u.email}\'s account role was successfully changed!')
-    UserLogs.logging(operator_user=request.user, subject_user=u, logCode=Logs.LOGCODE_100006, logMsg=Logs.LOGMSG_100006)
     return redirect('user-account')

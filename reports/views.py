@@ -9,12 +9,13 @@ from weasyprint import HTML
 from django.utils import timezone
 from emails.email import EmailManager
 from itemManagement.models import Item
-from logs.models import UserLogs, ItemCountLogs, ItemInfoLogs
+from logs.models import Log
 from security.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
-from django.db.models import Q
 from itertools import chain
+from django.urls import reverse
+
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -114,6 +115,22 @@ def InventoryValuation(request, format=None):
     else:
         return render(request, 'web/valuation.html', {"items": data, "total": total})
 
+
+@user_passes_test(lambda u: u.is_superuser)
+def ItemHistory(request, itemID, format=None):
+    item = Item.objects.get(pk=itemID)
+    data = Log.get_logs_for_item(item)
+    if format == "csv":
+        return __CSVResponseGenerator("item_history", ["Time", "User", "Action"], [[str(x.time), x.user.name, x.to_string()] for x in data])
+    elif format == "pdf":
+        return __PDFResponseGenerator("item_history", "Item History " + item.title, 'pdf/itemHistory.html', {"item": item, "logs": data})
+    else:
+        rich = map(lambda x: {"time": x.time.strftime("%Y-%m-%d %I:%M %p"), "user": x.user.name, "action": x.to_string(
+            lambda item: f"<a href=\"{reverse('item-details', args=(item.id,))}\">{item.title}</a>"
+        )}, data)
+        return render(request, 'web/itemHistory.html', {"item": item, "logs": rich})
+
+
 @user_passes_test(lambda u: u.is_superuser)
 def UserHistory(request):
     isAjax =  "X-Requested-With" in request.headers and request.headers["X-Requested-With"] == "XMLHttpRequest"
@@ -134,26 +151,14 @@ def UserHistory(request):
             return render(request, 'web/userHistory.html', {"users": User.objects.all(), "initalSelectedUser": user})
 
     if user == "all":
-        targetUsers = User.objects.all()
+        data = Log.objects.all()
     else:
-        targetUsers = User.objects.filter(id=user)
-    data = []
-    for target in targetUsers:
-        data.extend([
-            {"id": x.id, "time": x.time, "operator": x.operator_user, "operation": x.logMsg,
-             "subject_account": x.subject_user}
-            for x in UserLogs.objects.all().filter(Q(operator_user=target) | Q(subject_user=target)).order_by("-time")])
-        data.extend([
-            {"id": x.id, "time": x.time, "operator": x.operator_user, "operation": x.logMsg,
-             "item": x.item.title}
-            for x in ItemCountLogs.objects.all().filter(operator_user=target).order_by("-time")])
-        data.extend([
-            {"id": x.id, "time": x.time, "operator": x.operator_user, "operation": x.logMsg,
-             "item": x.item.title}
-            for x in ItemInfoLogs.objects.all().filter(operator_user=target).order_by("-time")])
-        data = sorted(data, key = lambda i: i['time'], reverse=True)
+        data = Log.get_logs_for_user(User.objects.get(pk=user))
     if not isAjax:
         if format == "csv":
-             return __CSVResponseGenerator("user-history", ["Time", "Operator", "Operation", "Subject Account", "Item"], [[x["time"], x["operator"], x["operation"], x["subject_account"], x["item"]] for x in data])
+             return __CSVResponseGenerator("user-history", ["Time", "User", "Action"], [[str(x.time), x.user.name, x.to_string()] for x in data])
         return __PDFResponseGenerator("user-history", "User History", 'pdf/userHistory.html', {"histories": data})
-    return render(request, 'web/userHistoryData.html', {"histories": data})
+    rich = map(lambda x: {"time": x.time.strftime("%Y-%m-%d %I:%M %p"), "user": x.user.name, "action": x.to_string(
+        lambda item: f"<a href=\"{reverse('item-details', args=(item.id,))}\">{item.title}</a>"
+    )}, data)
+    return render(request, 'web/userHistoryData.html', {"histories": rich})

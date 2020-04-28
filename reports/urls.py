@@ -7,6 +7,7 @@ urlpatterns = [
     re_path(r'^obsolecense/(?:(?P<format>(?:csv|pdf))/)?$', views.InventoryObsolescence, name="inventory-obsolecense"),
     re_path(r'^reorder/(?:(?P<format>(?:csv|pdf))/)?$', views.ReorderList, name="reorder"),
     re_path(r'^valuation/(?:(?P<format>(?:csv|pdf))/)?$', views.InventoryValuation, name="valuation"),
+    re_path(r'^item/(?P<itemID>\d+)/(?:(?P<format>(?:csv|pdf))/)?$', views.ItemHistory, name="item-history"),
     path('userHistory/', views.UserHistory, name="user-history"),
     path('cycle/', views.CycleCountHTML, name="cycle-count"),
     path('cycle/csv', views.CycleCountCSV, name="cycle-count-csv"),
