@@ -133,13 +133,39 @@ class ItemDetailsView(TemplateView):
                 # Admin Fields updating fields other than quantities if admin
                 if isAdmin:
                     # --------TEXT FIELDS--------
-                    item.title = request.POST.get('itemName', "").strip()
-                    item.kghID = request.POST.get('kghId', "").strip()
-                    item.description = request.POST.get('description', "").strip()
-                    item.price = request.POST.get('price', "").strip()
-                    item.unit = request.POST.get('unit', "").strip()
-                    item.alertThreshold = request.POST.get('parLevel', "").strip()
-                    item.alertWhenLow = request.POST.get('alertWhenLow', "").strip() == 'on'
+                    title = request.POST.get('itemName', "").strip()
+                    if item.title != title:
+                        item.title = title
+                        Log.log(request.user, "Updated {item} changed title to '{string}'", item, title)
+                    kghID = request.POST.get('kghId', "").strip()
+                    if kghID == "None":
+                        kghID = None
+                    if item.kghID != kghID:
+                        item.kghID = kghID
+                        Log.log(request.user, "Updated {item} changed KGH ID to '{string}'", item, kghID)
+                    description = request.POST.get('description', "").strip()
+                    if item.description != description:
+                        item.description = description
+                        Log.log(request.user, "Updated {item} changed description to '{string}'", item, description)
+                    price = request.POST.get('price', "").strip()
+                    if str(item.price) != price:
+                        item.price = price
+                        Log.log(request.user, "Updated {item} changed price to '{string}'", item, price)
+                    unit = request.POST.get('unit', "").strip()
+                    if item.unit != unit:
+                        item.unit = unit
+                        Log.log(request.user, "Updated {item} changed unit to '{string}'", item, unit)
+                    alertThreshold = request.POST.get('parLevel', "").strip()
+                    if str(item.alertThreshold) != alertThreshold:
+                        item.alertThreshold = alertThreshold
+                        Log.log(request.user, "Updated {item} changed par level to '{string}'", item, alertThreshold)
+                    alertWhenLow = request.POST.get('alertWhenLow', "").strip() == 'on'
+                    if item.alertWhenLow != alertWhenLow:
+                        item.alertWhenLow = alertWhenLow
+                        if alertWhenLow:
+                            Log.log(request.user, "Enabled par level alerts on {item}", item)
+                        else:
+                            Log.log(request.user, "Disabled par level alerts on {item}", item)
 
                     item.save(update_fields=['title', 'kghID', 'description', 'price', 'unit', 'alertThreshold', 'alertWhenLow'])
                     # ---------------------------
@@ -148,6 +174,8 @@ class ItemDetailsView(TemplateView):
 
                     for i in deletedImageIds:
                         Photo.objects.filter(id=i).delete()
+                        Log.log(request.user, "Deleted photo on {item}", item)
+
 
                     # Find the highest order element right now so the new image can go after it
                     highestOrderNum = Photo.objects.filter(depicts=item).aggregate(Max("order"))['order__max'] or 0
@@ -167,20 +195,22 @@ class ItemDetailsView(TemplateView):
                             data=data,
                             order=nextOrderNum
                         )
+                        Log.log(request.user, "Added photo to {item}", item)
+
 
                     # --------TAGS-------------
-                    newTags = request.POST.get('newTags', "").split(',')
-                    # clear all tags
-                    item.tag_set.all().delete()
-                    # add back all new edited tags
-                    for newTag in newTags:
-                        if newTag != "" and newTag is not None:
-                            newTag = Tag.objects.create(name=newTag.strip(), item=item)
-                            newTag.save()
+                    newTags = set(request.POST.get('newTags', "").split(','))
+                    tagsChanged = set(map(lambda x: x.name, item.tag_set.all())) != newTags
+                    if tagsChanged:
+                        Log.log(request.user, "Set tags on {item} to '{string}'", item, ", ".join(newTags))
+                        # clear all tags
+                        item.tag_set.all().delete()
+                        # add back all new edited tags
+                        for newTag in newTags:
+                            if newTag != "" and newTag is not None:
+                                newTag = Tag.objects.create(name=newTag.strip(), item=item)
+                                newTag.save()
                     # -------------------------
-                    if not itemIsNew:
-                        #TODO: Log what field changed
-                        Log.log(request.user, "Updated item {item}", item)
 
                 # END if isAdmin
 
@@ -223,6 +253,7 @@ class ItemDetailsView(TemplateView):
         except Exception as e:
             print(e)
             context = {"errorMessage": str(e)}
+            # Are you certain the user input is the source of the error? would a 500 be more appropriate?
             return HttpResponse(status=400, content=json.dumps(context), content_type='application/json')
 
 
