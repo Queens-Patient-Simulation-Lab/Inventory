@@ -30,3 +30,7 @@ $('#itemTable tr').click(function () {
 $('#itemCreationButton').click(function () {
     loadModal($(this).attr('data-access-url'));
 });
+
+if ($("#item-details-modal").data("show-default")){
+    $("#item-details-modal").modal("show");
+}
