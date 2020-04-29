@@ -141,7 +141,7 @@ class ItemDetailsView(TemplateView):
                     item.price = request.POST.get('price', "").strip()
                     item.unit = request.POST.get('unit', "").strip()
                     item.alertThreshold = request.POST.get('parLevel', "").strip()
-                    item.alertWhenLow = True if request.POST.get('alertWhenLow', "").strip() == 'on' else False
+                    item.alertWhenLow = request.POST.get('alertWhenLow', "").strip() == 'on'
 
                     item.save(update_fields=['title', 'kghID', 'description', 'price', 'unit', 'alertThreshold', 'alertWhenLow'])
                     # ---------------------------
