@@ -5,9 +5,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.paginator import Paginator
+from django.core.signing import Signer, BadSignature
 from django.db import IntegrityError, transaction
 from django.db.models import Max
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.template.loader import render_to_string
@@ -22,6 +23,8 @@ from itemManagement.models import Item, Location, Photo, Tag, ItemStorage
 from logs.models import Log
 from simulation_lab import settings
 from django.templatetags.static import static
+
+from global_login_required import login_not_required
 
 
 class HomePage(SearchView):
@@ -56,8 +59,14 @@ class HomePage(SearchView):
             messages.warning(self.request, "No results were found. Showing recently used items instead.")
         return context
 
-
+@login_not_required
 def getImage(request, id):
+    if not request.user.is_authenticated:
+        signer = Signer(sep='?')
+        try:
+            signer.unsign(request.get_raw_uri())
+        except BadSignature:
+            raise HttpResponseForbidden
     try:
         photo = Photo.objects.get(pk=id)
     except Photo.DoesNotExist:
