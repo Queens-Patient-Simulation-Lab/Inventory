@@ -1,9 +1,40 @@
 <mjml>
+  <mj-head>
+    <mj-font name="Arial"/>
+    <mj-style>
+      .title {
+        color:#fff;
+        font-size:20px;
+        font-weight:bold;
+      }
+    </mj-style>
+  </mj-head>
   <mj-body>
-    <mj-section>
+    <mj-section background-color="#343a40">
       <mj-column>
-        <mj-text>A Queen's Patient Simulation Lab Inventory System account has been created with your email address. <a href="{{link}}">Please click here to complete setup</a></mj-text>
+        <mj-table>
+          <tr>
+            <td style="width: 30px; height: 30px;">
+              <img src="{{icon}}" width="30px" height="30px"/>
+            </td>
+            <td>
+              <div class="title" style="padding-left: 15px">
+                Patient Simulation Lab
+              </div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
 
+    <mj-section background-color="#ffffff">
+      <mj-column>
+        <mj-text>
+          A Queen's Patient Simulation Lab Inventory System account has been created with your email address.
+          <a href="{{link}}">
+            Please click here to complete setup
+          </a>
+        </mj-text>
       </mj-column>
     </mj-section>
   </mj-body>

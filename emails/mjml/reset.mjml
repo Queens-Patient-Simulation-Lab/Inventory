@@ -1,9 +1,42 @@
 <mjml>
+  <mj-head>
+    <mj-font name="Arial"/>
+    <mj-style>
+      .title {
+        color:#fff;
+        font-size:20px;
+        font-weight:bold;
+      }
+    </mj-style>
+  </mj-head>
   <mj-body>
+    <mj-section background-color="#343a40">
+      <mj-column>
+        <mj-table>
+          <tr>
+            <td style="width: 30px; height: 30px;">
+              <img src="{{icon}}" width="30px" height="30px"/>
+            </td>
+            <td>
+              <div class="title" style="padding-left: 15px">
+                Patient Simulation Lab
+              </div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
     <mj-section>
       <mj-column>
-        <mj-text>An attempt has been made to reset the password associated with your patient simulation lab inventory account. If that was intentional <a href="{{link}}">click this link</a> to set your new password</mj-text>
-
+        <mj-text>
+          An attempt has been made to reset the password associated with your Patient Simulation Lab account.
+          If this was intentional,
+          <a href="{{link}}">
+              click this link
+          </a>
+          to set your new password
+        </mj-text>
       </mj-column>
     </mj-section>
   </mj-body>
