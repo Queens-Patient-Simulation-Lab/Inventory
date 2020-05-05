@@ -30,7 +30,7 @@ def settings(request):
             Log.log(user, "Changed password")
             return redirect('settings-home')
         #  check the post request of notification status form
-        elif n_form.is_valid() and 'notification' in request.POST:
+        elif n_form.is_valid() and 'notification' in request.POST and request.user.is_superuser:
             n_form.save()
             messages.success(request, 'Your notification status was successfully updated!')
             Log.log(request.user, "Changed notification preference")
@@ -208,6 +208,7 @@ def userAdmin(request, pk):
 def userLabAssistant(request, pk):
     u = User.objects.filter(pk=pk).first()
     u.is_superuser = False
+    u.receivesAlerts = False
     u.save()
     Log.log(request.user, "Set {user} to lab assistant", u)
     messages.success(request, f'{u.email}\'s account role was successfully changed!')
