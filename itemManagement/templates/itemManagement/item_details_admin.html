@@ -168,7 +168,9 @@
             <label for="stock">Total Stock</label>
             <input readonly type="total_stock" class="form-control" id="stock" value="{{ totalQuantity }}">
         </div>
-        <a href="{% url 'item-history' itemID=itemId %}">view history report</a>
+        {% if itemId is None %}
+            <a href="{% url 'item-history' itemID=itemId %}">view history report</a>
+        {% endif %}
 
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
