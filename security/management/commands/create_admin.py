@@ -20,7 +20,7 @@ class Command(BaseCommand):
         password = ''.join(secrets.choice(string.ascii_letters + string.digits) for i in range(16))
         existing = User.objects.filter(email="admin@admin")
         if existing.count() == 0: 
-            user = User.objects.create_user(email="admin@admin", password=password, is_superuser=True, receivesAlerts=False)
+            user = User.objects.create_user(name="admin", email="admin@admin", password=password, is_superuser=True, receivesAlerts=False)
         else:
             user = existing
             user.deleted = False
