@@ -7,7 +7,7 @@ from itemManagement.models import Item
 #   To check if models are being indexed properly, you can use this link: https://stackoverflow.com/a/13022937
 
 class ItemIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.EdgeNgramField(document=True, use_template=True)
+    text = indexes.CharField(document=True, use_template=True)
     deleted = indexes.BooleanField(model_attr='deleted')
 
     def get_model(self):

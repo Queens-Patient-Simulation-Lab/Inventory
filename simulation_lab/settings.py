@@ -116,14 +116,14 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger'  # Bootstrap alert color tags use danger instead of error
 }
 
-import os
+
 HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-        # If running on Heroku, place index in tmp
-        'PATH': '/tmp/whoosh' if "DYNO" in os.environ else os.path.join(os.path.dirname(__file__), 'whoosh_index'),
-    },
-}
+              'default': {
+                    'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+                    'URL': 'http://127.0.0.1:9200/',
+                    'INDEX_NAME': 'haystack_item',
+              },
+    }
 # Update one index every time an Item (or any indexed model) is saved or deleted
 # This is synchronous and can be slow in larger databases but works for the current use.
 # This keeps indices as up to date as possible. The alternative is scheduling index updating every x period of time

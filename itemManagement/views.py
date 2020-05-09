@@ -35,6 +35,7 @@ class HomePage(SearchView):
         return queryset.filter(deleted=False)
 
     def get_context_data(self, *args, **kwargs):
+        # SearchQuerySet().filter(fuzzy="")
         context = super(HomePage, self).get_context_data(*args, **kwargs)
         print(context)
         objectList = context['object_list']
