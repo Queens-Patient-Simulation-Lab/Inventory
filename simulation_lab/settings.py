@@ -28,8 +28,8 @@ SECRET_KEY = os.getenv("SECRET_KEY", 'li84equk#urmy64b5&ut22afkya=tl&j#5t%6nt0!4
 DEBUG = os.getenv("DEBUG", "True")
 
 ALLOWED_HOSTS = []
-if "DOMAIN" in os.environ:
-    ALLOWED_HOSTS = [os.environ["DOMAIN"]]
+if "DOMAINS" in os.environ:
+    ALLOWED_HOSTS = os.environ["DOMAINS"].split(",")
 # Application definition
 
 INSTALLED_APPS = [
@@ -177,6 +177,7 @@ EMAIL_HOST_USER = os.environ.get("SMTP_USERNAME", None)
 EMAIL_HOST_PASSWORD = os.environ.get("SMTP_PASSWORD", None)
 EMAIL_USE_TLS = os.environ.get("SMTP_USE_TLS", None)
 EMAIL_FROM = os.environ.get("FROM_ADDRESS", None)
-EMAIL_CONFIGURED = (EMAIL_HOST and EMAIL_PORT and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD and EMAIL_USE_TLS and EMAIL_FROM) is not None
+EMAIL_DOMAIN = os.environ.get("EMAIL_DOMAIN", None)
+EMAIL_CONFIGURED = (EMAIL_HOST and EMAIL_PORT and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD and EMAIL_USE_TLS and EMAIL_FROM and EMAIL_DOMAIN) is not None
 if not EMAIL_CONFIGURED:
     print("WARNING: SMTP Settings are missing, email can't be sent!")
